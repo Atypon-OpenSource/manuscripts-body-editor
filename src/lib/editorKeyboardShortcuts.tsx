@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-/** Mirrors shortcut labels in `menus.tsx` and keymaps in `src/keys/` for the help dialog. */
 import React from 'react'
 import { Shortcut, ShortcutConnector } from '@manuscripts/style-guide'
 
@@ -109,13 +108,6 @@ export const EDITOR_KEYBOARD_SHORTCUT_TABS: EditorShortcutTab[] = [
               pc: 'CommandOrControl+Shift+H',
             },
           },
-          // {
-          //   label: 'Keyboard shortcuts',
-          //   shortcut: {
-          //     mac: 'CommandOrControl+Shift+/',
-          //     pc: 'CommandOrControl+Shift+/',
-          //   },
-          // },
         ],
       },
       {
@@ -313,33 +305,49 @@ export const formatShortcutForDisplay = (
       {parts.map((part, index) => {
         let content: React.ReactNode = part
 
-        if (part === 'CommandOrControl') {
-          content = platform === 'mac' ? '⌘' : 'Ctrl'
-        } else if (part === 'Option') {
-          content = platform === 'mac' ? '⌥' : 'Alt'
-        } else if (part === 'Shift') {
-          content = platform === 'mac' ? '⇧' : 'Shift'
-        } else if (part === 'ArrowUp') {
-          content = '↑'
-        } else if (part === 'ArrowDown') {
-          content = '↓'
-        } else if (part === 'ArrowLeft') {
-          content = '←'
-        } else if (part === 'ArrowRight') {
-          content = '→'
-        } else if (part === 'BracketLeft') {
-          content = '['
-        } else if (part === 'BracketRight') {
-          content = ']'
-        } else if (part === 'Escape') {
-          content = 'Esc'
-        } else if (part === 'Tab') {
-          content = 'Tab'
-        } else if (part === 'Enter') {
-          content = '↵'
-        } else if (part === '/') {
-          // 👇 important for Cmd + ?
-          content = platform === 'mac' ? '?' : '/'
+        switch (part) {
+          case 'CommandOrControl':
+            content = platform === 'mac' ? '⌘' : 'Ctrl'
+            break
+          case 'Option':
+            content = platform === 'mac' ? '⌥' : 'Alt'
+            break
+          case 'Shift':
+            content = platform === 'mac' ? '⇧' : 'Shift'
+            break
+          case 'ArrowUp':
+            content = '↑'
+            break
+          case 'ArrowDown':
+            content = '↓'
+            break
+          case 'ArrowLeft':
+            content = '←'
+            break
+          case 'ArrowRight':
+            content = '→'
+            break
+          case 'BracketLeft':
+            content = '['
+            break
+          case 'BracketRight':
+            content = ']'
+            break
+          case 'Escape':
+            content = 'Esc'
+            break
+          case 'Tab':
+            content = 'Tab'
+            break
+          case 'Enter':
+            content = '↵'
+            break
+          case '/':
+            content = platform === 'mac' ? '?' : '/'
+            break
+          default:
+            content = part
+            break
         }
 
         return (
