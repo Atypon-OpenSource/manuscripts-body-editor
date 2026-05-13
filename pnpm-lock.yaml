@@ -235,8 +235,8 @@ importers:
         specifier: 30.4.2
         version: 30.4.2(@types/node@20.17.46)(babel-plugin-macros@3.1.0)
       jest-environment-jsdom:
-        specifier: 30.0.5
-        version: 30.0.5
+        specifier: 30.4.1
+        version: 30.4.1
       jest-prosemirror:
         specifier: 3.0.1
         version: 3.0.1(@types/node@20.17.46)(jest@30.4.2(@types/node@20.17.46)(babel-plugin-macros@3.1.0))(jsdom@26.1.0)
@@ -1268,8 +1268,8 @@ packages:
     resolution: {integrity: sha512-zOpzlfUs45l6u7jm39qr87JCHUDsaeCtvL+kQe/Vn9jSnRB4/5IPXISm0h9I1vZW/o00Kn4UTJ2MOlhnUGwv3g==}
     engines: {node: ^18.14.0 || ^20.0.0 || ^22.0.0 || >=24.0.0}
 
-  '@jest/environment-jsdom-abstract@30.0.5':
-    resolution: {integrity: sha512-gpWwiVxZunkoglP8DCnT3As9x5O8H6gveAOpvaJd2ATAoSh7ZSSCWbr9LQtUMvr8WD3VjG9YnDhsmkCK5WN1rQ==}
+  '@jest/environment-jsdom-abstract@30.4.1':
+    resolution: {integrity: sha512-dSlKrqug3siYNHVnjwIldShY12wAH3spwRltO/+8VOjg0X+xEq7vOs3DbBs4LRKsu7OH+NUb9kuZUNBF9Ho3TA==}
     engines: {node: ^18.14.0 || ^20.0.0 || ^22.0.0 || >=24.0.0}
     peerDependencies:
       canvas: ^3.0.0
@@ -1277,10 +1277,6 @@ packages:
     peerDependenciesMeta:
       canvas:
         optional: true
-
-  '@jest/environment@30.0.5':
-    resolution: {integrity: sha512-aRX7WoaWx1oaOkDQvCWImVQ8XNtdv5sEWgk4gxR6NXb7WBUnL5sRak4WRzIQRZ1VTWPvV4VI4mgGjNL9TeKMYA==}
-    engines: {node: ^18.14.0 || ^20.0.0 || ^22.0.0 || >=24.0.0}
 
   '@jest/environment@30.4.1':
     resolution: {integrity: sha512-AK9yNRqgKxiabqMoe4oW+3/TSSeV8vkdC7BGaxZdU0AFXfOpofTLqdru2GXKZghP3sdgwE9XXpnVwfZ8JnFV4w==}
@@ -1296,10 +1292,6 @@ packages:
 
   '@jest/expect@30.4.1':
     resolution: {integrity: sha512-ginrj6TMgh2GshLUGCjO94Ptx9HhdZA/I6A9iUfyeLKFtdAjnKzHDgzgP9HYQgbxM1lbXScQ2eUBz2lGeVDPWA==}
-    engines: {node: ^18.14.0 || ^20.0.0 || ^22.0.0 || >=24.0.0}
-
-  '@jest/fake-timers@30.0.5':
-    resolution: {integrity: sha512-ZO5DHfNV+kgEAeP3gK3XlpJLL4U3Sz6ebl/n68Uwt64qFFs5bv4bfEEjyRGK5uM0C90ewooNgFuKMdkbEoMEXw==}
     engines: {node: ^18.14.0 || ^20.0.0 || ^22.0.0 || >=24.0.0}
 
   '@jest/fake-timers@30.4.1':
@@ -1569,9 +1561,6 @@ packages:
 
   '@sinonjs/commons@3.0.1':
     resolution: {integrity: sha512-K3mCHKQ9sVh8o1C9cxkwxaOmXoAMlDxC1mYyHrjqOWEcBjYr76t96zL2zlj5dUGZ3HSw240X1qgH3Mjf1yJWpQ==}
-
-  '@sinonjs/fake-timers@13.0.5':
-    resolution: {integrity: sha512-36/hTbH2uaWuGVERyC6da9YwGWnzUZXuPro/F2LfsdOsLnCojz/iSH8MxUt/FD2S5XBSVPhmArFUXcpCQ2Hkiw==}
 
   '@sinonjs/fake-timers@15.4.0':
     resolution: {integrity: sha512-DsG+8/LscQIQg68J6Ef3dv10u6nVyetYn923s3/sus5eaGfTo1of5WMZSLf0UJc9KDuKPilPH0UDJCjvNbDNCA==}
@@ -3311,8 +3300,8 @@ packages:
     resolution: {integrity: sha512-/8MJbH6fuj48TstjrMf+u/pd06Qezz5xOXvZA6442heNOWr8bdeoGZX2d9fCn028CoMgYmroH9//zky5GfyYmA==}
     engines: {node: ^18.14.0 || ^20.0.0 || ^22.0.0 || >=24.0.0}
 
-  jest-environment-jsdom@30.0.5:
-    resolution: {integrity: sha512-BmnDEoAH+jEjkPrvE9DTKS2r3jYSJWlN/r46h0/DBUxKrkgt2jAZ5Nj4wXLAcV1KWkRpcFqA5zri9SWzJZ1cCg==}
+  jest-environment-jsdom@30.4.1:
+    resolution: {integrity: sha512-o3nfaN4zej7qgk2X0j8Jhq/S9nAVKs2xK3QeQxeHVvpkEPxaA1yxDGydR+iVI7zPy7Cp62Aq2h3Ja46QvfWHGA==}
     engines: {node: ^18.14.0 || ^20.0.0 || ^22.0.0 || >=24.0.0}
     peerDependencies:
       canvas: ^3.0.0
@@ -4902,6 +4891,7 @@ packages:
   whatwg-encoding@3.1.1:
     resolution: {integrity: sha512-6qN4hJdMwfYBtE3YBTTHhoeuUrDBPZmbQaxWAqSALV/MeEnR5z1xd8UKud2RAkFoPkmB+hli1TZSnyi84xz1vQ==}
     engines: {node: '>=18'}
+    deprecated: Use @exodus/bytes instead for a more spec-conformant and faster implementation
 
   whatwg-mimetype@4.0.0:
     resolution: {integrity: sha512-QaKxh0eNIi2mE9p2vEdzfagOKHCcj1pJ56EEHGQOVxp8r9/iszLUUV7v89x9O1p/T+NlTM5W7jW6+cz4Fq1YVg==}
@@ -6341,23 +6331,16 @@ snapshots:
 
   '@jest/diff-sequences@30.4.0': {}
 
-  '@jest/environment-jsdom-abstract@30.0.5(jsdom@26.1.0)':
+  '@jest/environment-jsdom-abstract@30.4.1(jsdom@26.1.0)':
     dependencies:
-      '@jest/environment': 30.0.5
-      '@jest/fake-timers': 30.0.5
-      '@jest/types': 30.0.5
+      '@jest/environment': 30.4.1
+      '@jest/fake-timers': 30.4.1
+      '@jest/types': 30.4.1
       '@types/jsdom': 21.1.7
       '@types/node': 20.17.46
-      jest-mock: 30.0.5
-      jest-util: 30.0.5
+      jest-mock: 30.4.1
+      jest-util: 30.4.1
       jsdom: 26.1.0
-
-  '@jest/environment@30.0.5':
-    dependencies:
-      '@jest/fake-timers': 30.0.5
-      '@jest/types': 30.0.5
-      '@types/node': 20.17.46
-      jest-mock: 30.0.5
 
   '@jest/environment@30.4.1':
     dependencies:
@@ -6380,15 +6363,6 @@ snapshots:
       jest-snapshot: 30.4.1
     transitivePeerDependencies:
       - supports-color
-
-  '@jest/fake-timers@30.0.5':
-    dependencies:
-      '@jest/types': 30.0.5
-      '@sinonjs/fake-timers': 13.0.5
-      '@types/node': 20.17.46
-      jest-message-util: 30.0.5
-      jest-mock: 30.0.5
-      jest-util: 30.0.5
 
   '@jest/fake-timers@30.4.1':
     dependencies:
@@ -6857,10 +6831,6 @@ snapshots:
   '@sinonjs/commons@3.0.1':
     dependencies:
       type-detect: 4.0.8
-
-  '@sinonjs/fake-timers@13.0.5':
-    dependencies:
-      '@sinonjs/commons': 3.0.1
 
   '@sinonjs/fake-timers@15.4.0':
     dependencies:
@@ -8590,14 +8560,14 @@ snapshots:
   http-proxy-agent@7.0.2:
     dependencies:
       agent-base: 7.1.4
-      debug: 4.4.1(supports-color@5.5.0)
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
 
   https-proxy-agent@7.0.6:
     dependencies:
       agent-base: 7.1.4
-      debug: 4.4.1(supports-color@5.5.0)
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
 
@@ -8972,12 +8942,10 @@ snapshots:
       jest-util: 30.4.1
       pretty-format: 30.4.1
 
-  jest-environment-jsdom@30.0.5:
+  jest-environment-jsdom@30.4.1:
     dependencies:
-      '@jest/environment': 30.0.5
-      '@jest/environment-jsdom-abstract': 30.0.5(jsdom@26.1.0)
-      '@types/jsdom': 21.1.7
-      '@types/node': 20.17.46
+      '@jest/environment': 30.4.1
+      '@jest/environment-jsdom-abstract': 30.4.1(jsdom@26.1.0)
       jsdom: 26.1.0
     transitivePeerDependencies:
       - bufferutil
