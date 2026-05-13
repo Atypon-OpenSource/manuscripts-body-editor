@@ -1,1 +1,1 @@
-pnpm npm-run-all --parallel typecheck lint build
+pnpm preversion
