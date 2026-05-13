@@ -88,6 +88,15 @@ const getParagraphPlaceholderText = (
   }
 }
 
+const isTextBlockOfQuoteElement = (
+  node: ManuscriptNode,
+  parent: ManuscriptNode | null
+) =>
+  node.type === schema.nodes.text_block &&
+  parent &&
+  (parent.type === schema.nodes.pullquote_element ||
+    parent.type === schema.nodes.blockquote_element)
+
 /**
  * This plugin adds a placeholder decoration to empty nodes
  */
@@ -109,7 +118,7 @@ export default () =>
             }
             if (
               node.type === node.type.schema.nodes.paragraph ||
-              node.type === node.type.schema.nodes.text_block
+              isTextBlockOfQuoteElement(node, parent)
             ) {
               const text = getParagraphPlaceholderText(parent, node)
               if (text) {
@@ -155,6 +164,24 @@ export default () =>
                   pos + 1,
                   placeholderWidget('Type new abstract title here')
                 )
+              )
+            } else if (node.type === schema.nodes.caption_title) {
+              decorations.push(
+                Decoration.widget(
+                  pos + 1,
+                  placeholderWidget('Caption title...'),
+                  {
+                    key: node.attrs.id,
+                  }
+                )
+              )
+            } else if (
+              node.type === schema.nodes.text_block &&
+              parent &&
+              parent.type === schema.nodes.caption
+            ) {
+              decorations.push(
+                Decoration.widget(pos + 1, placeholderWidget('Caption...'))
               )
             } else {
               const placeholder = placeholderMap[node.type.name]

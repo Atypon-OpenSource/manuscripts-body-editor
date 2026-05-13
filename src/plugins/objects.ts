@@ -61,8 +61,6 @@ export default () => {
               const target = targets.get(id)
 
               if (target) {
-                const labelNode = document.createElement('span')
-                labelNode.className = 'element-label'
                 const caption = findChildren(
                   node,
                   (node) =>
@@ -76,15 +74,30 @@ export default () => {
                   pos,
                   caption
                 )
-                labelNode.textContent = caption
-                  ? target.label + ':'
-                  : target.label
-                decorations.push(
-                  Decoration.widget(labelPos, labelNode, {
-                    side: -1,
-                    key: `element-label-${id}-${target.label}`,
-                  })
-                )
+                // in case node element has a caption or caption_title will add label beside it
+                if (caption) {
+                  let from = labelPos + caption.pos
+                  let to = from + caption.node.nodeSize
+                  if (caption.node.type === schema.nodes.caption) {
+                    from = labelPos + 1
+                    to = from + (caption.node.firstChild?.nodeSize || 0)
+                  }
+                  decorations.push(
+                    Decoration.node(from, to, {
+                      'element-label': target.label + ':',
+                    })
+                  )
+                } else {
+                  const labelNode = document.createElement('span')
+                  labelNode.className = 'element-label'
+                  labelNode.textContent = target.label
+                  decorations.push(
+                    Decoration.widget(labelPos, labelNode, {
+                      side: -1,
+                      key: `element-label-${id}-${target.label}`,
+                    })
+                  )
+                }
               }
             }
           })

@@ -314,27 +314,40 @@
 
 /* Caption and Element Label */
 
-.ProseMirror .caption-title:not(.empty-node), .ProseMirror .element-label {
+.ProseMirror .element-label, .ProseMirror .caption-title[element-label]::before, .ProseMirror .caption-description > [element-label]::before {
+  content: attr(element-label);
+  color: #353535;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 16px;
+  margin-right: 5px;
+}
+
+.ProseMirror .caption-title .placeholder-text::before, .ProseMirror .caption-description .placeholder-text::before {
+  color: #000;
+  font-style: normal;
+}
+
+.ProseMirror .caption-title:not(:has(.placeholder-text)) {
   font-weight: bold;
 }
 
-.ProseMirror .element-label, .ProseMirror .caption-description, .ProseMirror .caption-title {
-  font-size: 14px;
-  outline: none;
-  margin: 0;
+.ProseMirror .caption-title {
+  display: block;
+}
+
+.ProseMirror .caption-description, .ProseMirror .caption-description[element-label] > p:first-child {
   display: inline;
 }
 
-.ProseMirror .element-label + .caption-description > p:first-child {
-  display: inline;
+.ProseMirror .caption-description, .ProseMirror .caption-title, .ProseMirror .element-label {
+  font-size: 14px;
+  outline: none;
+  margin: 0;
 }
 
 .ProseMirror .caption-description > p {
   margin: 0;
-}
-
-.ProseMirror .element-label {
-  margin-right: 5px;
 }
 
 .ProseMirror .block-equation_element .element-label {
@@ -342,23 +355,33 @@
   text-align: center;
 }
 
-.ProseMirror .caption-title.empty-node::before {
-  content: 'Caption Title...';
-  color: #000;
-  cursor: text;
-}
-
-.ProseMirror .caption-description > p.empty-node::before {
-  content: 'Caption...';
-  color: #000;
-  cursor: text;
-}
-
-.ProseMirror .block-table_element .caption-title.empty-node::before {
+.ProseMirror .block-table_element .caption-title .placeholder-text::before {
   content: 'Table title';
 }
 
-.ProseMirror .box-element > .caption-title.empty-node::before {
+.ProseMirror .supplement-item .caption-title .placeholder-text::before,
+.ProseMirror .supplement-item .caption-description .placeholder-text::before {
+  color: #c9c9c9;
+  font-style: italic;
+}
+
+.ProseMirror .supplement-item .caption-title .placeholder-text::before {
+  content: 'Insert caption title...';
+}
+
+.ProseMirror .supplement-item .caption-description .placeholder-text::before {
+  content: 'Insert caption...';
+}
+
+.ProseMirror .supplement-item .caption-description > p {
+  text-align: start;
+}
+
+.ProseMirror .box-element > .caption-title {
+  margin: 0 52px;
+}
+
+.ProseMirror .box-element > .caption-title .placeholder-text::before {
   color: #999;
   font-style: italic;
 }
@@ -1203,22 +1226,6 @@
 
 .ProseMirror .supplement-item:last-child {
   border-bottom: none;
-}
-
-.ProseMirror .supplement-item .caption-title.empty-node::before {
-  content: 'Insert caption title...';
-  color: #c9c9c9;
-  font-style: italic;
-}
-
-.ProseMirror .supplement-item .caption-description > p.empty-node::before {
-  content: 'Insert caption...';
-  color: #c9c9c9;
-  font-style: italic;
-}
-
-.ProseMirror .supplement-item .caption-description > p {
-  text-align: start;
 }
 
 .ProseMirror .supplement-file-info {
