@@ -93,7 +93,7 @@ const isTextBlockOfQuoteElement = (
   parent: ManuscriptNode | null
 ) =>
   node.type === schema.nodes.text_block &&
-  parent &&
+  !!parent &&
   (parent.type === schema.nodes.pullquote_element ||
     parent.type === schema.nodes.blockquote_element)
 

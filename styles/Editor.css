@@ -314,13 +314,20 @@
 
 /* Caption and Element Label */
 
-.ProseMirror .element-label, .ProseMirror .caption-title[element-label]::before, .ProseMirror .caption-description > [element-label]::before {
-  content: attr(element-label);
+/* Shared typography for all label variants */
+.ProseMirror .element-label,
+.ProseMirror .caption-title[element-label]::before,
+.ProseMirror .caption-description > [element-label]::before {
   color: #353535;
   font-style: normal;
   font-weight: 700;
   line-height: 16px;
   margin-right: 5px;
+}
+
+.ProseMirror .caption-title[element-label]::before,
+.ProseMirror .caption-description > [element-label]::before {
+  content: attr(element-label);
 }
 
 .ProseMirror .caption-title .placeholder-text::before, .ProseMirror .caption-description .placeholder-text::before {
