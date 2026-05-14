@@ -62,18 +62,6 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
 
   useFocusCycle(containerRef, isOpen)
 
-  // const [open, setOpen] = useState(true)
-
-  // const handleClose = useCallback(() => {
-  //   setOpen(false)
-  // }, [])
-
-  // useEffect(() => {
-  //   if (!open) {
-  //     queueMicrotask(onDispose)
-  //   }
-  // }, [open, onDispose])
-
   return (
     <ThemeProvider theme={editorProps.theme}>
       <StyledModal
