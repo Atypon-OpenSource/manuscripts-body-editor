@@ -238,7 +238,9 @@ export default (props: EditorProps) =>
 
                   return $btn
                 },
-                { key: `lang-selector-${node.attrs.id}` }
+                {
+                  key: `lang-selector-${node.attrs.id || pos}-${node.attrs.lang}`,
+                }
               )
             )
           }
