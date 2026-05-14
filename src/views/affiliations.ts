@@ -27,10 +27,7 @@ import {
   AuthorsAndAffiliationsModalsProps,
 } from '../components/authors-affiliations/AuthorsAndAffiliationsModals'
 import { alertIcon } from '../icons'
-import {
-  AffiliationAttrs,
-  affiliationName,
-} from '../lib/authors'
+import { AffiliationAttrs, affiliationName } from '../lib/authors'
 import { handleComment } from '../lib/comments'
 
 import { findChildByID, findChildrenAttrsByType } from '../lib/view'

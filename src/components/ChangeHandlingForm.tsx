@@ -46,8 +46,9 @@ export const ChangeHandlingForm = <Values,>(
 }
 
 export const FlexForm = styled(Form)`
-  height: 100%;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  min-height: 0;
+  width: 100%;
+  box-sizing: border-box;
 `
