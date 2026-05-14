@@ -81,7 +81,6 @@ const InsertSpecialCharacterDialog: React.FC<{
       isOpen={isOpen}
       onRequestClose={handleClose}
       shouldCloseOnOverlayClick={true}
-      id="special-characters-modal"
     >
       <Container data-cy="special-characters-modal">
         <ModalHeader>

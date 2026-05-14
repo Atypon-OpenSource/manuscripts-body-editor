@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-import React from 'react'
-import { Shortcut, ShortcutConnector } from '@manuscripts/style-guide'
-
-export type EditorShortcutRow = {
+type EditorShortcutRow = {
   label: string
   shortcut: { mac: string; pc: string }
 }
 
-export type EditorShortcutSection = {
+type EditorShortcutSection = {
   title: string
   rows: EditorShortcutRow[]
 }
 
-export type EditorShortcutTab = {
+type EditorShortcutTab = {
   id: string
   label: string
   sections: EditorShortcutSection[]
@@ -119,11 +116,17 @@ export const EDITOR_KEYBOARD_SHORTCUT_TABS: EditorShortcutTab[] = [
           },
           {
             label: 'Insert section',
-            shortcut: { mac: 'CommandOrControl+Enter', pc: 'CommandOrControl+Enter' },
+            shortcut: {
+              mac: 'CommandOrControl+Enter',
+              pc: 'CommandOrControl+Enter',
+            },
           },
           {
             label: 'Insert sub section',
-            shortcut: { mac: 'Shift+CommandOrControl+Enter', pc: 'Shift+CommandOrControl+Enter' },
+            shortcut: {
+              mac: 'Shift+CommandOrControl+Enter',
+              pc: 'Shift+CommandOrControl+Enter',
+            },
           },
         ],
       },
@@ -144,11 +147,17 @@ export const EDITOR_KEYBOARD_SHORTCUT_TABS: EditorShortcutTab[] = [
           },
           {
             label: 'Ordered list',
-            shortcut: { mac: 'CommandOrControl+Option+O', pc: 'CommandOrControl+Option+O' },
+            shortcut: {
+              mac: 'CommandOrControl+Option+O',
+              pc: 'CommandOrControl+Option+O',
+            },
           },
           {
             label: 'Bullet list',
-            shortcut: { mac: 'CommandOrControl+Option+K', pc: 'CommandOrControl+Option+K' },
+            shortcut: {
+              mac: 'CommandOrControl+Option+K',
+              pc: 'CommandOrControl+Option+K',
+            },
           },
         ],
       },
@@ -254,7 +263,6 @@ export const EDITOR_KEYBOARD_SHORTCUT_TABS: EditorShortcutTab[] = [
             label: 'Exit editor to container',
             shortcut: { mac: 'Escape', pc: 'Escape' },
           },
-          
         ],
       },
       {
@@ -275,7 +283,7 @@ export const EDITOR_KEYBOARD_SHORTCUT_TABS: EditorShortcutTab[] = [
             },
           },
           {
-            label: 'Lift block out of it\'s parent',
+            label: "Lift block out of it's parent",
             shortcut: {
               mac: 'CommandOrControl+[ ',
               pc: 'CommandOrControl+Option+K',
@@ -293,72 +301,3 @@ export const EDITOR_KEYBOARD_SHORTCUT_TABS: EditorShortcutTab[] = [
     ],
   },
 ]
-
-export const formatShortcutForDisplay = (
-  accelerator: string,
-  platform: 'mac' | 'other'
-): React.ReactNode => {
-  const parts = accelerator.split('+').map((p) => p.trim())
-
-  return (
-    <>
-      {parts.map((part, index) => {
-        let content: React.ReactNode = part
-
-        switch (part) {
-          case 'CommandOrControl':
-            content = platform === 'mac' ? '⌘' : 'Ctrl'
-            break
-          case 'Option':
-            content = platform === 'mac' ? '⌥' : 'Alt'
-            break
-          case 'Shift':
-            content = platform === 'mac' ? '⇧' : 'Shift'
-            break
-          case 'ArrowUp':
-            content = '↑'
-            break
-          case 'ArrowDown':
-            content = '↓'
-            break
-          case 'ArrowLeft':
-            content = '←'
-            break
-          case 'ArrowRight':
-            content = '→'
-            break
-          case 'BracketLeft':
-            content = '['
-            break
-          case 'BracketRight':
-            content = ']'
-            break
-          case 'Escape':
-            content = 'Esc'
-            break
-          case 'Tab':
-            content = 'Tab'
-            break
-          case 'Enter':
-            content = '↵'
-            break
-          case '/':
-            content = platform === 'mac' ? '?' : '/'
-            break
-          default:
-            content = part
-            break
-        }
-
-        return (
-          <React.Fragment key={index}>
-            <Shortcut>{content}</Shortcut>
-            {index < parts.length - 1 && (
-              <ShortcutConnector>+</ShortcutConnector>
-            )}
-          </React.Fragment>
-        )
-      })}
-    </>
-  )
-}

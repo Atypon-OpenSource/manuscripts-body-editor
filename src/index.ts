@@ -19,8 +19,10 @@ export { ManuscriptOutline } from './components/outline/ManuscriptOutline'
 export { OutlineItemIcon } from './components/outline/Outline'
 export { TypeSelector } from './components/toolbar/type-selector/TypeSelector'
 export { default as LanguageDropdown } from './components/LanguageDropdown'
-export { KeyboardShortcutsModal } from './components/views/KeyboardShortcutsModal'
-export { openKeyboardShortcuts } from './lib/keyboard-shortcuts-modal-request'
+export {
+  KeyboardShortcutsModal,
+  openKeyboardShortcuts,
+} from './components/keyboard-shortcuts-modal/KeyboardShortcutsModal'
 export { getEditorProps } from './plugins/editor-props'
 export * from './components/toolbar/ListMenuItem'
 export * from './components/toolbar/InsertTableDialog'

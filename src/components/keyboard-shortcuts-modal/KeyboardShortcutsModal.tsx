@@ -30,19 +30,17 @@ import {
   StyledModal,
   useFocusCycle,
 } from '@manuscripts/style-guide'
-import React, { useEffect, useRef, useState } from 'react'
+import { EditorView } from 'prosemirror-view'
+import React, { useRef, useState } from 'react'
 import styled, { ThemeProvider } from 'styled-components'
 
 import type { EditorProps } from '../../configs/ManuscriptsEditor'
+import { isMac } from '../../lib/platform'
+import { getEditorProps } from '../../plugins/editor-props'
+import { createSubViewAsync } from '../../views/ReactSubView'
 import { ModalTabs } from '../authors-affiliations/ModalTabs'
-import {
-  EDITOR_KEYBOARD_SHORTCUT_TABS,
-  formatShortcutForDisplay,
-} from '../../lib/editorKeyboardShortcuts'
-
-const isMacPlatform =
-  typeof navigator !== 'undefined' &&
-  /Mac|iPhone|iPod|iPad/i.test(navigator.userAgent)
+import { formattedShortCut } from './FormattedShortcut'
+import { EDITOR_KEYBOARD_SHORTCUT_TABS } from './keyboard-shortcuts'
 
 const TAB_LABELS = EDITOR_KEYBOARD_SHORTCUT_TABS.map((t) => t.label)
 const KEYBOARD_SHORTCUTS_MODAL_TITLE_ID = 'keyboard-shortcuts-modal-title'
@@ -61,15 +59,20 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
 }) => {
   const [tabIndex, setTabIndex] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
-  const platform = isMacPlatform ? 'mac' : 'other'
-
-  useEffect(() => {
-    if (isOpen) {
-      setTabIndex(0)
-    }
-  }, [isOpen])
 
   useFocusCycle(containerRef, isOpen)
+
+  // const [open, setOpen] = useState(true)
+
+  // const handleClose = useCallback(() => {
+  //   setOpen(false)
+  // }, [])
+
+  // useEffect(() => {
+  //   if (!open) {
+  //     queueMicrotask(onDispose)
+  //   }
+  // }, [open, onDispose])
 
   return (
     <ThemeProvider theme={editorProps.theme}>
@@ -81,7 +84,7 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
         id={KEYBOARD_SHORTCUTS_MODAL_ID}
       >
         <Container ref={containerRef} data-cy="keyboard-shortcuts-modal">
-          <ModalHeader className="modal-header">
+          <ModalHeader>
             <CloseButton onClick={onClose} data-cy="modal-close-button" />
           </ModalHeader>
           <StyledModalBody>
@@ -104,21 +107,18 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
                   <InspectorTabPanels>
                     {EDITOR_KEYBOARD_SHORTCUT_TABS.map((tab) => (
                       <ShortcutTabPanel key={tab.id}>
-                        {tab.sections.map((section) => (
-                          <Section key={section.title}>
+                        {tab.sections.map((section, sectionIndex) => (
+                          <Section key={`${tab.id}:${sectionIndex}`}>
                             <SectionTitle>{section.title}</SectionTitle>
                             <ShortcutTable>
-                              {section.rows.map((row) => (
+                              {section.rows.map((row, rowIndex) => (
                                 <ShortcutRow
-                                  key={`${tab.id}-${section.title}-${row.label}`}
+                                  key={`${tab.id}-${sectionIndex}-${rowIndex}`}
                                 >
                                   <ShortcutLabel>{row.label}</ShortcutLabel>
                                   <ShortcutKeys>
-                                    {formatShortcutForDisplay(
-                                      platform === 'mac'
-                                        ? row.shortcut.mac
-                                        : row.shortcut.pc,
-                                      platform
+                                    {formattedShortCut(
+                                      isMac ? row.shortcut.mac : row.shortcut.pc
                                     )}
                                   </ShortcutKeys>
                                 </ShortcutRow>
@@ -208,7 +208,7 @@ const ShortcutTable = styled.div`
   border-collapse: collapse;
   font-size: ${(props) => props.theme.font.size.normal};
 `
-const ShortcutRow = styled.div` 
+const ShortcutRow = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -217,8 +217,8 @@ const ShortcutRow = styled.div`
 `
 const ShortcutLabel = styled.div`
   padding: ${(props) => props.theme.grid.unit * 1.5}px
-    ${(props) => props.theme.grid.unit * 2}px ${(props) => props.theme.grid.unit * 1.5}px
-    0;
+    ${(props) => props.theme.grid.unit * 2}px
+    ${(props) => props.theme.grid.unit * 1.5}px 0;
   vertical-align: top;
   color: ${(props) => props.theme.colors.text.secondary};
 `
@@ -235,3 +235,43 @@ const ButtonsContainer = styled(ButtonGroup)`
   padding-top: ${(props) => props.theme.grid.unit * 5}px;
   flex-shrink: 0;
 `
+
+let dialog: HTMLDivElement | null = null
+
+export async function openKeyboardShortcuts(view?: EditorView): Promise<void> {
+  if (!view || dialog) {
+    return
+  }
+
+  const { state } = view
+  const editorProps = getEditorProps(state)
+
+  const cleanup = () => {
+    if (dialog) {
+      dialog.remove()
+      dialog = null
+    }
+    // modals are rendered outside tools-panel (dialog) because of react-modal,
+    // so we need to remove them manually
+    //@TODO The implementation in the body editor is incorrect and needs to be fixed.
+    const modal = document.getElementById(KEYBOARD_SHORTCUTS_MODAL_ID)
+    if (modal) {
+      modal.remove()
+    }
+  }
+
+  dialog = await createSubViewAsync(
+    editorProps,
+    KeyboardShortcutsModal,
+    {
+      editorProps,
+      isOpen: true,
+      onClose: cleanup,
+    },
+    state.doc,
+    () => -1,
+    view
+  )
+
+  document.body.appendChild(dialog)
+}

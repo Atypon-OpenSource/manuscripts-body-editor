@@ -54,7 +54,7 @@ import {
 import { openInsertTableDialog } from './components/toolbar/InsertTableDialog'
 import { ListMenuItem } from './components/toolbar/ListMenuItem'
 import { openInsertSpecialCharacterDialog } from './components/views/InsertSpecialCharacter'
-import { openKeyboardShortcuts } from './lib/keyboard-shortcuts-modal-request'
+import { openKeyboardShortcuts } from './components/keyboard-shortcuts-modal/KeyboardShortcutsModal'
 import {
   deleteClosestParentElement,
   findClosestParentElementNodeName,
