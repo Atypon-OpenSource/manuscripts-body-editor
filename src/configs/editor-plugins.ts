@@ -117,7 +117,3 @@ export default (props: EditorProps) => {
 
   return allPlugins
 }
-
-// for tables
-document.execCommand('enableObjectResizing', false, 'false')
-document.execCommand('enableInlineTableEditing', false, 'false')
