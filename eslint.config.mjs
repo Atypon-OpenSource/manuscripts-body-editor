@@ -29,4 +29,5 @@ const compat = new FlatCompat({
 export default defineConfig([
   ...compat.config(config),
   ...compat.extends('plugin:diff/diff'),
+  ignores: ['dist/**', 'build/**', 'coverage/**', 'node_modules/**', '**/versions.ts'],
 ])
