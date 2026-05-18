@@ -33,8 +33,8 @@ importers:
         specifier: 1.1.2
         version: 1.1.2
       '@manuscripts/style-guide':
-        specifier: 3.5.23-LEAN-5633.0
-        version: 3.5.23-LEAN-5633.0(@babel/core@7.29.0)(@types/hoist-non-react-statics@3.3.7(@types/react@19.2.3))(@types/node@20.17.46)(@types/react@19.2.3)
+        specifier: 3.5.23-LEAN-5633.1
+        version: 3.5.23-LEAN-5633.1(@babel/core@7.29.0)(@types/hoist-non-react-statics@3.3.7(@types/react@19.2.3))(@types/node@20.17.46)(@types/react@19.2.3)
       '@manuscripts/track-changes-plugin':
         specifier: 2.3.11
         version: 2.3.11
@@ -628,8 +628,8 @@ packages:
       eslint-plugin-simple-import-sort: '>= 8'
       typescript: '*'
 
-  '@manuscripts/style-guide@3.5.23-LEAN-5633.0':
-    resolution: {integrity: sha512-95c6UQX+dK5VYj2qPugJ6DhWRZpwcavzCd/pajGetGDg1ewNQxd3AgPchVkrMVehG+GyqPOs1uBjUiyrBoX3tg==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/style-guide/-/@manuscripts/style-guide-3.5.23-LEAN-5633.0.tgz}
+  '@manuscripts/style-guide@3.5.23-LEAN-5633.1':
+    resolution: {integrity: sha512-MbdWFiUa6Nrx5yve+nPb3NmYZ69dq98Gy4ZfwL1cOEwbcpkwGEhwG+fX/6070e4dT2tGG9m5leWoEv2qwu9j3Q==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/style-guide/-/@manuscripts/style-guide-3.5.23-LEAN-5633.1.tgz}
     engines: {node: '>=20.16.0'}
 
   '@manuscripts/track-changes-plugin@2.3.11':
@@ -4432,7 +4432,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@manuscripts/style-guide@3.5.23-LEAN-5633.0(@babel/core@7.29.0)(@types/hoist-non-react-statics@3.3.7(@types/react@19.2.3))(@types/node@20.17.46)(@types/react@19.2.3)':
+  '@manuscripts/style-guide@3.5.23-LEAN-5633.1(@babel/core@7.29.0)(@types/hoist-non-react-statics@3.3.7(@types/react@19.2.3))(@types/node@20.17.46)(@types/react@19.2.3)':
     dependencies:
       '@headlessui/react': 2.2.9(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       date-fns: 2.30.0
