@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`transformPasted handler: transform-pasted 1`] = `
+exports[`transformPasted handler > transform-pasted 1`] = `
 Object {
   "content": Array [
     Object {

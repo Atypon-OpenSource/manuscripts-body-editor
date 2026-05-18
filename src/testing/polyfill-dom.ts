@@ -20,12 +20,14 @@
  * jest-prosemirror implements these polyfills by default
  * https://github.com/remirror/remirror/blob/8a6524a8da1a48b85fdde8f1c8b62375fbd5a318/packages/jest-remirror/src/jsdom-polyfills.ts
  */
+import { vi } from 'vitest'
+
 export function polyfillDom() {
-  window.scrollBy = jest.fn()
+  window.scrollBy = vi.fn()
 
   // This could return a null but ProseMirror expects an object causing an error otherwise.
   // @ts-ignore
-  document.getSelection = jest.fn(() => ({
+  document.getSelection = vi.fn(() => ({
     anchorNode: null,
     anchorOffset: 0,
     baseNode: null,
