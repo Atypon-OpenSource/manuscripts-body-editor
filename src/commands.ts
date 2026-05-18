@@ -493,7 +493,8 @@ export const insertTable = (
 
 export const insertSupplement = (
   file: FileAttachment,
-  view: ManuscriptEditorView
+  view: ManuscriptEditorView,
+  setSelection = true
 ) => {
   const supplement = schema.nodes.supplement.createAndFill(
     {
@@ -504,11 +505,12 @@ export const insertSupplement = (
   ) as SupplementNode
 
   const tr = view.state.tr
-  const { pos } = upsertSupplementsSection(tr, supplement)
-  tr.setSelection(NodeSelection.create(tr.doc, pos))
+  if (setSelection) {
+    const { pos } = upsertSupplementsSection(tr, supplement)
+    tr.setSelection(NodeSelection.create(tr.doc, pos))
+  }
   view.focus()
   view.dispatch(tr.scrollIntoView())
-
   return true
 }
 
