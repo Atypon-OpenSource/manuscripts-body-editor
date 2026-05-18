@@ -33,8 +33,8 @@ importers:
         specifier: 1.1.2
         version: 1.1.2
       '@manuscripts/style-guide':
-        specifier: 3.5.22
-        version: 3.5.22(@babel/core@7.28.0)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)
+        specifier: 3.5.23
+        version: 3.5.23(@babel/core@7.28.0)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)
       '@manuscripts/track-changes-plugin':
         specifier: 2.3.11
         version: 2.3.11
@@ -989,8 +989,8 @@ packages:
       eslint-plugin-simple-import-sort: '>= 8'
       typescript: '*'
 
-  '@manuscripts/style-guide@3.5.22':
-    resolution: {integrity: sha512-hA/YKJBb6eOL+rNxSy8KZtMPEUWZoFnzRhvm+CBiigB5LL3kshuyrHV4AiC79PPh7JabyH5eomkLejPIIorjHg==}
+  '@manuscripts/style-guide@3.5.23':
+    resolution: {integrity: sha512-dFIBGHdUo0Hf4XPrXJsZvEDnfMus8+RtF3XNOrX9jADfxJ3R8cSSX5zc4hrhChHq96RMIG+PDbIwLMBR+YzJCA==}
     engines: {node: '>=20.16.0'}
 
   '@manuscripts/track-changes-plugin@2.3.11':
@@ -5732,7 +5732,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@manuscripts/style-guide@3.5.22(@babel/core@7.28.0)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)':
+  '@manuscripts/style-guide@3.5.23(@babel/core@7.28.0)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)':
     dependencies:
       '@headlessui/react': 2.2.9(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       date-fns: 2.30.0
