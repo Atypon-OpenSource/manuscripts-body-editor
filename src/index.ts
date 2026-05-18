@@ -23,7 +23,6 @@ export {
   KeyboardShortcutsModal,
   openKeyboardShortcuts,
 } from './components/keyboard-shortcuts-modal/KeyboardShortcutsModal'
-export { getEditorProps } from './plugins/editor-props'
 export * from './components/toolbar/ListMenuItem'
 export * from './components/toolbar/InsertTableDialog'
 export * from './menus'
