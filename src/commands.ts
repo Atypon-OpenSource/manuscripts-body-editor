@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { isDeleted, skipTracking } from '@manuscripts/track-changes-plugin'
+import { isDeleted, skipTracking, skipSelect } from '@manuscripts/track-changes-plugin'
 import {
   AttachmentNode,
   AwardNode,
@@ -504,11 +504,13 @@ export const insertSupplement = (
     createAndFillCaption()
   ) as SupplementNode
 
-  const tr = view.state.tr
+  let tr = view.state.tr
   const { pos } = upsertSupplementsSection(tr, supplement)
 
   if (setSelection) {
     tr.setSelection(NodeSelection.create(tr.doc, pos))
+  } else {
+    tr = skipSelect(tr)
   }
   view.focus()
   view.dispatch(tr.scrollIntoView())
