@@ -33,14 +33,14 @@ importers:
         specifier: 1.1.2
         version: 1.1.2
       '@manuscripts/style-guide':
-        specifier: 3.5.24-LEAN-5713.0
-        version: 3.5.24-LEAN-5713.0(@babel/core@7.28.0)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)
+        specifier: 3.5.25-LEAN-5713.0
+        version: 3.5.25-LEAN-5713.0(@babel/core@7.28.0)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)
       '@manuscripts/track-changes-plugin':
-        specifier: 2.3.12-LEAN-5713.0
-        version: 2.3.12-LEAN-5713.0
+        specifier: 2.3.13-LEAN-5713.0
+        version: 2.3.13-LEAN-5713.0
       '@manuscripts/transform':
-        specifier: 4.3.45-LEAN-5713.0
-        version: 4.3.45-LEAN-5713.0(prosemirror-state@1.4.3)
+        specifier: 4.3.47-LEAN-5713.0
+        version: 4.3.47-LEAN-5713.0(prosemirror-state@1.4.3)
       '@popperjs/core':
         specifier: 2.11.8
         version: 2.11.8
@@ -989,16 +989,16 @@ packages:
       eslint-plugin-simple-import-sort: '>= 8'
       typescript: '*'
 
-  '@manuscripts/style-guide@3.5.24-LEAN-5713.0':
-    resolution: {integrity: sha512-Y+c1rcykNOTkJR2IyAzkvkksucBYOEZJ6O1pQ7DY2r/JAMj+2WT/ZA1aJpBBFPhsLgz24pEd8EQ7Bbgl8h/HdQ==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/style-guide/-/@manuscripts/style-guide-3.5.24-LEAN-5713.0.tgz}
+  '@manuscripts/style-guide@3.5.25-LEAN-5713.0':
+    resolution: {integrity: sha512-wtbDUT3tv6HJq7NzpQDeHK6/8koSlDVa7Yze8W0Fq5xwS9IfIABZxwU+7qj1WpLkZkRLg8nlVB+Cczta7x4b8Q==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/style-guide/-/@manuscripts/style-guide-3.5.25-LEAN-5713.0.tgz}
     engines: {node: '>=22'}
 
-  '@manuscripts/track-changes-plugin@2.3.12-LEAN-5713.0':
-    resolution: {integrity: sha512-R/02qn9gULFQRx9KA5tcWj/gN97DgH1FCWHNLJzVdyMmhgm4QwLUhjkhgbfm7FERajwrema8y0wEb6TzqF9pgA==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/track-changes-plugin/-/@manuscripts/track-changes-plugin-2.3.12-LEAN-5713.0.tgz}
+  '@manuscripts/track-changes-plugin@2.3.13-LEAN-5713.0':
+    resolution: {integrity: sha512-3TO5mAf3XYbsvg46XL02s9S65KHXhJlITf7DD33lkspBIRlR/fFwCGdcZ/MVmGTmJelfaQfnyb2RIzk+ieF85g==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/track-changes-plugin/-/@manuscripts/track-changes-plugin-2.3.13-LEAN-5713.0.tgz}
     engines: {node: '>=22'}
 
-  '@manuscripts/transform@4.3.45-LEAN-5713.0':
-    resolution: {integrity: sha512-pxG2Hh0VcQtgwvP23aJLJP9IKw6/5cqRAfu5dNBr+Sscub7aBwfKomeYW6jaOzmP91gtfK5jdTRpsNqHnrFu0A==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/transform/-/@manuscripts/transform-4.3.45-LEAN-5713.0.tgz}
+  '@manuscripts/transform@4.3.47-LEAN-5713.0':
+    resolution: {integrity: sha512-j2ArTS3TLRGBouwz2p/mZSM8wHG9pO45voJ5OvOUPn7IsfnKEq7MlDjIsyM4V5JQP6uaiJaADfrJTobIJNyPpA==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/transform/-/@manuscripts/transform-4.3.47-LEAN-5713.0.tgz}
     engines: {node: '>=22'}
 
   '@napi-rs/wasm-runtime@0.2.12':
@@ -5733,7 +5733,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@manuscripts/style-guide@3.5.24-LEAN-5713.0(@babel/core@7.28.0)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)':
+  '@manuscripts/style-guide@3.5.25-LEAN-5713.0(@babel/core@7.28.0)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)':
     dependencies:
       '@headlessui/react': 2.2.9(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       date-fns: 2.30.0
@@ -5762,7 +5762,7 @@ snapshots:
       - '@types/react'
       - supports-color
 
-  '@manuscripts/track-changes-plugin@2.3.12-LEAN-5713.0':
+  '@manuscripts/track-changes-plugin@2.3.13-LEAN-5713.0':
     dependencies:
       debug: 4.4.1(supports-color@5.5.0)
       prosemirror-commands: 1.7.1
@@ -5774,7 +5774,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@manuscripts/transform@4.3.45-LEAN-5713.0(prosemirror-state@1.4.3)':
+  '@manuscripts/transform@4.3.47-LEAN-5713.0(prosemirror-state@1.4.3)':
     dependencies:
       citeproc: 2.4.63
       jszip: 3.10.1
