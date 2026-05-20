@@ -19,6 +19,7 @@ import {
   ManuscriptEditorView,
 } from '@manuscripts/transform'
 import { EditorView } from 'prosemirror-view'
+import { Selection } from 'prosemirror-state'
 import { findParentNode } from 'prosemirror-utils'
 
 import { Dispatch } from '../commands'
@@ -170,8 +171,7 @@ export const focusNearestElement = (
 
   const { from } = view.state.selection
   const coords = view.coordsAtPos(from)
-  const container = getCursorContainer(view)
-  const target = findNearestTabbable(container, coords.top)
+  const target = findTabbableInHierarchy(view, from, coords.top)
 
   if (!target) {
     return false
@@ -180,18 +180,17 @@ export const focusNearestElement = (
   return true
 }
 
-export function getCursorContainer(view: EditorView): HTMLElement {
-  const scoped = findParentNode(
-    (node) => node.type !== node.type.schema.nodes.supplement && node.attrs.id
-  )(view.state.selection)
+export function getCursorContainer(view: EditorView, pos: number) {
+  const $pos = view.state.doc.resolve(pos)
+  const scoped = findParentNode((node) => node.attrs.id)(Selection.near($pos))
   if (scoped) {
     const dom = view.nodeDOM(scoped.pos)
     if (dom instanceof HTMLElement) {
-      return dom
+      return { container: dom, pos: scoped.pos }
     }
   }
 
-  return view.dom as HTMLElement
+  return { container: view.dom as HTMLElement, pos: 0 }
 }
 
 export function findNearestTabbable(
@@ -215,4 +214,38 @@ export function findNearestTabbable(
   })
 
   return target
+}
+
+function findTabbableInHierarchy(
+  view: EditorView,
+  pos: number,
+  verticalPosition: number
+) {
+  let currentPos = pos
+  while (currentPos != null) {
+    const cursorContainer = getCursorContainer(view, currentPos)
+    if (!cursorContainer) {
+      return null
+    }
+    const { container, pos: containerPos } = cursorContainer
+    if (container instanceof HTMLElement) {
+      const target = findNearestTabbable(container, verticalPosition)
+      if (target) {
+        return target
+      }
+    }
+
+    if (containerPos === 0) {
+      return null
+    }
+
+    // Move up one level
+    const $pos = view.state.doc.resolve(containerPos)
+    if ($pos.depth <= 0) {
+      return null
+    }
+    currentPos = $pos.before($pos.depth)
+  }
+
+  return null
 }
