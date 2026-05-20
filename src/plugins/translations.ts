@@ -169,7 +169,7 @@ export default (props: EditorProps) =>
                     )
                     return $span
                   },
-                  { key: `add-trans-${node.attrs.id || pos}` }
+                  { key: `add-trans-${node.attrs.id}-${pos}` }
                 )
               )
             }
@@ -250,7 +250,7 @@ export default (props: EditorProps) =>
                   return $btn
                 },
                 {
-                  key: `lang-selector-${node.attrs.id || pos}-${node.attrs.lang}`,
+                  key: `lang-selector-${node.attrs.id}-${pos}-${node.attrs.lang}`,
                 }
               )
             )
