@@ -173,14 +173,16 @@ export const focusNearestElement = (
   const coords = view.coordsAtPos(from)
   const container = getCursorContainer(view)
   let target = findNearestTabbable(container, coords.top)
-  // TODO:: that need to replaced with reliable way to find the correct nearest tabbable element
-  // that just to fix issue of supplements view by looking at the top node
+  // TODO: Consider a more generic solution based on hierarchy-walking to find the nearest tabbable element.
+  // Currently only looks one level up, which is sufficient to resolve focus issue when inside supplement item children.
   if (!target) {
-    const grandparent = ((p) =>
-      p &&
-      findParentNodeWithIdValue({
-        $from: view.state.doc.resolve(p.pos),
-      } as Selection))(findParentNodeWithIdValue(view.state.selection))
+    const parent = findParentNodeWithIdValue(view.state.selection)
+
+    const grandparent = parent
+      ? findParentNodeWithIdValue({
+          $from: view.state.doc.resolve(parent.pos),
+        } as Selection)
+      : null
     if (grandparent) {
       const dom = view.nodeDOM(grandparent.pos)
 
