@@ -80,7 +80,7 @@ export default () => {
                     // appears inline before the caption text
                     const firstChild = caption.node.firstChild
                     from = pos + 1 + caption.pos + 1
-                    to = from + (firstChild?.nodeSize || 0)
+                    to = from + (firstChild?.nodeSize || caption.node.nodeSize)
                   }
 
                   decorations.push(
