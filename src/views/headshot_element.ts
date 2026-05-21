@@ -52,23 +52,21 @@ export class HeadshotElement extends BaseNodeView<
     const can = this.props.getCapabilities()
 
     if (can.editArticle) {
-    this.deleteHeadshotButton = document.createElement('button')
-    this.deleteHeadshotButton.innerHTML = plusIcon
-    this.deleteHeadshotButton.classList.add('headshot-remove-button')
-    this.deleteHeadshotButton.setAttribute('data-cy', 'headshot-delete')
-    this.deleteHeadshotButton.contentEditable = 'false'
-    this.deleteHeadshotButton.addEventListener(
-      'click',
-      this.handleDeleteHeadshot
-    )
-    this.deleteHeadshotButton.addEventListener(
-      'keydown',
-      handleEnterKey(this.handleDeleteHeadshot)
-    )
-    this.container.appendChild(this.deleteHeadshotButton)
+      this.deleteHeadshotButton = document.createElement('button')
+      this.deleteHeadshotButton.innerHTML = plusIcon
+      this.deleteHeadshotButton.classList.add('headshot-remove-button')
+      this.deleteHeadshotButton.setAttribute('data-cy', 'headshot-delete')
+      this.deleteHeadshotButton.contentEditable = 'false'
+      this.deleteHeadshotButton.addEventListener(
+        'click',
+        this.handleDeleteHeadshot
+      )
+      this.deleteHeadshotButton.addEventListener(
+        'keydown',
+        handleEnterKey(this.handleDeleteHeadshot)
+      )
+      this.container.appendChild(this.deleteHeadshotButton)
     }
-
-    this.dom.appendChild(this.container)
   }
 
   private handleDeleteHeadshot = () => {

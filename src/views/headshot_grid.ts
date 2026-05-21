@@ -37,11 +37,11 @@ export class HeadshotGridView extends BlockView<HeadshotGridNode> {
 
   public createElement = () => {
     this.container = document.createElement('div')
-    this.container.classList.add('block', 'headshot-gird-container')
+    this.container.classList.add('block', 'headshot-grid-container')
     this.dom.appendChild(this.container)
 
     this.contentDOM = document.createElement('div')
-    this.contentDOM.classList.add('headshot-gird-block')
+    this.contentDOM.classList.add('headshot-grid-block')
     this.contentDOM.setAttribute('id', this.node.attrs.id)
     this.removeKeydownListener = createKeyboardInteraction({
       container: this.contentDOM,
@@ -55,21 +55,21 @@ export class HeadshotGridView extends BlockView<HeadshotGridNode> {
     const can = this.props.getCapabilities()
 
     if (can.editArticle) {
-    this.addHeadshotButton = document.createElement('button')
-    this.addHeadshotButton.classList.add('add-headshot-element-button')
-    this.addHeadshotButton.setAttribute('data-cy', 'headshot-add')
-    this.addHeadshotButton.contentEditable = 'false'
-    this.addHeadshotButton.innerHTML = addAuthorIcon
-    const buttonText = document.createElement('span')
-    buttonText.classList.add('add-headshot-element-text')
-    buttonText.innerText = 'Add Headshot'
-    this.addHeadshotButton.appendChild(buttonText)
-    this.addHeadshotButton.addEventListener('click', this.handleAddHeadshot)
-    this.addHeadshotButton.addEventListener(
-      'keydown',
-      handleEnterKey(this.handleAddHeadshot)
-    )
-    this.container.appendChild(this.addHeadshotButton)
+      this.addHeadshotButton = document.createElement('button')
+      this.addHeadshotButton.classList.add('add-headshot-element-button')
+      this.addHeadshotButton.setAttribute('data-cy', 'headshot-add')
+      this.addHeadshotButton.contentEditable = 'false'
+      this.addHeadshotButton.innerHTML = addAuthorIcon
+      const buttonText = document.createElement('span')
+      buttonText.classList.add('add-headshot-element-text')
+      buttonText.innerText = 'Add Headshot'
+      this.addHeadshotButton.appendChild(buttonText)
+      this.addHeadshotButton.addEventListener('click', this.handleAddHeadshot)
+      this.addHeadshotButton.addEventListener(
+        'keydown',
+        handleEnterKey(this.handleAddHeadshot)
+      )
+      this.container.appendChild(this.addHeadshotButton)
     }
 
     this.dom.appendChild(this.container)

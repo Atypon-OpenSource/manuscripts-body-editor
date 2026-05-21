@@ -16,6 +16,6 @@
 
 import { createEditableNodeView } from './creators'
 import { EditableBlock } from './editable_block'
-import { HeadshotGridView } from './headshot_gird'
+import { HeadshotGridView } from './headshot_grid'
 
 export default createEditableNodeView(EditableBlock(HeadshotGridView))

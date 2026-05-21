@@ -939,8 +939,8 @@ export const insertHeadshotGrid = (
       schema.nodes.headshot_element.createAndFill() as ManuscriptNode
     const node = nodes.headshot_grid.create({}, headshotElement)
     const tr = state.tr.insert(position, node)
-    const sectionTitlePosition = position + 2
-    tr.setSelection(TextSelection.create(tr.doc, sectionTitlePosition))
+    const headshotNamePosition = position + 2
+    tr.setSelection(TextSelection.create(tr.doc, headshotNamePosition))
     dispatch(tr.scrollIntoView())
   }
 

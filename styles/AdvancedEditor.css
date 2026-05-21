@@ -1056,7 +1056,7 @@ figure.block:has(.equation.selected-suggestion) {
   .ProseMirror
   [data-track-op='set_attrs']
   .block:not(.trans-abstract):not(.trans-graphical-abstract),
-.tracking-visible .block:has(figure[data-track-op='set_attrs']):not(.headshot-gird-container),
+.tracking-visible .block:has(figure[data-track-op='set_attrs']):not(.headshot-grid-container),
 .tracking-visible figure.block:has(.equation.set_attrs),
 .tracking-visible
   .ProseMirror
@@ -1777,12 +1777,12 @@ th:hover > .table-context-menu-button,
   border: 1px solid #F2F2F2;
 }
 
-.ProseMirror .headshot-gird-block {
+.ProseMirror .headshot-grid-block {
   display: grid;
   gap: 16px;
 }
 
-.ProseMirror .headshot-gird-container .headshot-gird-block .headshot-element {
+.ProseMirror .headshot-grid-container .headshot-grid-block .headshot-element {
   border-radius: 4px;
   border: 1px solid #E2E2E2 !important;
   background: #FFF;
