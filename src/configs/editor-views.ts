@@ -45,6 +45,9 @@ import footnote from '../views/footnote'
 import footnotesElement from '../views/footnotes_element'
 import generalTableFootnote from '../views/general_table_footnote'
 import heroImage from '../views/hero_image_editable'
+import headshotGrid from '../views/headshot_gird_editable'
+import headshotElement from '../views/headshot_element'
+import headshotImage from '../views/headshot_image_editable'
 import imageElement from '../views/image_element_editable'
 import inlineEquation from '../views/inline_equation_editable'
 import inlineFootnote from '../views/inline_footnote_editable'
@@ -130,6 +133,9 @@ export default (
     long_desc: accessibilityElement(props, dispatch),
     alt_text: accessibilityElement(props, dispatch),
     hero_image: heroImage(props, dispatch),
+    headshot_grid: headshotGrid(props, dispatch),
+    headshot_element: headshotElement(props, dispatch),
+    headshot_image: headshotImage(props, dispatch),
     abstracts: abstracts(props),
     trans_abstract: transAbstract(props),
     trans_graphical_abstract: transGraphicalAbstract(props),
