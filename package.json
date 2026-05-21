@@ -1,7 +1,7 @@
 {
   "name": "@manuscripts/body-editor",
   "description": "Prosemirror components for editing and viewing manuscripts",
-  "version": "3.12.46-LEAN-5586.2",
+  "version": "3.12.54",
   "repository": "github:Atypon-OpenSource/manuscripts-body-editor",
   "license": "Apache-2.0",
   "main": "dist/cjs",
@@ -25,9 +25,9 @@
     "prebuild": "rimraf dist && pnpm dependencies-versions",
     "dependencies-versions": "node versions.mjs > src/versions.ts",
     "prettier": "prettier --write 'src/**/*.{ts,tsx}'",
-    "prepare": "husky",
-    "preversion": "npm-run-all2 --parallel typecheck lint test",
-    "test": "jest --runInBand",
+    "prepare": "husky install",
+    "preversion": "npm-run-all --parallel typecheck lint test",
+    "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "version": "pnpm build",
     "unlink-all": "rm pnpm-workspace.yaml && pnpm install"
@@ -41,9 +41,9 @@
     "@citation-js/plugin-pubmed": "0.3.0",
     "@citation-js/plugin-ris": "0.7.18",
     "@iarna/word-count": "1.1.2",
-    "@manuscripts/style-guide": "3.5.22-LEAN-5586.0",
-    "@manuscripts/track-changes-plugin": "2.3.11-LEAN-5586.0",
-    "@manuscripts/transform": "4.3.43-LEAN-5586.3",
+    "@manuscripts/style-guide": "3.5.25",
+    "@manuscripts/track-changes-plugin": "2.3.13",
+    "@manuscripts/transform": "4.3.51",
     "@popperjs/core": "2.11.8",
     "citeproc": "2.4.63",
     "codemirror": "5.65.19",
@@ -77,17 +77,14 @@
     "styled-components": "5.3.11"
   },
   "devDependencies": {
-    "@babel/core": "7.29.0",
-    "@babel/preset-env": "7.29.5",
-    "@babel/preset-react": "7.28.5",
-    "@babel/preset-typescript": "7.28.5",
+    "@vitest/coverage-v8": "4.1.6",
     "@eslint/eslintrc": "3.3.5",
     "@eslint/js": "9.39.1",
     "@manuscripts/eslint-config": "0.5.1",
     "@types/codemirror": "5.60.17",
     "@types/csl": "npm:csl-json@0.1.0",
-    "@types/jest": "30.0.0",
-    "@types/lodash": "4.17.24",
+    "jsdom": "29.1.1",
+    "@types/lodash": "4.17.16",
     "@types/node": "20.17.46",
     "@types/react": "19.2.3",
     "@types/react-dom": "19.2.3",
@@ -100,7 +97,6 @@
     "eslint-plugin-diff": "2.1.7",
     "eslint-plugin-header": "3.1.1",
     "eslint-plugin-import": "2.32.0",
-    "eslint-plugin-jest": "29.15.2",
     "eslint-plugin-jsx-a11y": "6.10.2",
     "eslint-plugin-mdx": "3.7.0",
     "eslint-plugin-node": "11.1.0",
@@ -110,6 +106,7 @@
     "eslint-plugin-react-hooks": "7.1.1",
     "eslint-plugin-simple-import-sort": "12.1.1",
     "husky": "9.1.7",
+    "vitest": "4.1.7",
     "jest": "30.4.2",
     "jest-environment-jsdom": "30.4.1",
     "jest-prosemirror": "3.0.1",
@@ -121,6 +118,6 @@
     "uuid": "14.0.0"
   },
   "engines": {
-    "node": ">=20.16.0"
+    "node": ">=22"
   }
 }
