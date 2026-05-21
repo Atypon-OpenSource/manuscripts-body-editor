@@ -85,12 +85,7 @@ export class HeadshotImageEditableView extends FigureEditableView {
   }
 
   public destroy() {
-    if (this.detachImageButton) {
-      this.detachImageButton.removeEventListener(
-        'click',
-        this.handleDetachImage
-      )
-    }
+    this.detachImageButton?.removeEventListener('click', this.handleDetachImage)
     super.destroy()
   }
 }

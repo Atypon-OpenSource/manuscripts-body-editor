@@ -52,6 +52,9 @@ export class HeadshotGridView extends BlockView<HeadshotGridNode> {
     })
     this.container.appendChild(this.contentDOM)
 
+    const can = this.props.getCapabilities()
+
+    if (can.editArticle) {
     this.addHeadshotButton = document.createElement('button')
     this.addHeadshotButton.classList.add('add-headshot-element-button')
     this.addHeadshotButton.setAttribute('data-cy', 'headshot-add')
@@ -67,6 +70,7 @@ export class HeadshotGridView extends BlockView<HeadshotGridNode> {
       handleEnterKey(this.handleAddHeadshot)
     )
     this.container.appendChild(this.addHeadshotButton)
+    }
 
     this.dom.appendChild(this.container)
   }
@@ -85,7 +89,7 @@ export class HeadshotGridView extends BlockView<HeadshotGridNode> {
   }
 
   public destroy() {
-    this.addHeadshotButton.removeEventListener('click', this.handleAddHeadshot)
+    this.addHeadshotButton?.removeEventListener('click', this.handleAddHeadshot)
     this.removeKeydownListener?.()
     super.destroy()
   }

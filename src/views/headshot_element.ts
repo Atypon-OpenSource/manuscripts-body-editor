@@ -38,6 +38,7 @@ export class HeadshotElement extends BaseNodeView<
   public createElement = () => {
     this.dom = document.createElement('div')
     this.dom.classList.add('headshot-element')
+    this.dom.tabIndex = 0
     this.dom.setAttribute('id', this.node.attrs.id)
 
     this.container = document.createElement('div')
@@ -48,6 +49,9 @@ export class HeadshotElement extends BaseNodeView<
     this.contentDOM.classList.add('block-container', 'headshot-element-block')
     this.container.appendChild(this.contentDOM)
 
+    const can = this.props.getCapabilities()
+
+    if (can.editArticle) {
     this.deleteHeadshotButton = document.createElement('button')
     this.deleteHeadshotButton.innerHTML = plusIcon
     this.deleteHeadshotButton.classList.add('headshot-remove-button')
@@ -62,12 +66,9 @@ export class HeadshotElement extends BaseNodeView<
       handleEnterKey(this.handleDeleteHeadshot)
     )
     this.container.appendChild(this.deleteHeadshotButton)
+    }
 
     this.dom.appendChild(this.container)
-  }
-
-  public updateContents() {
-    super.updateContents()
   }
 
   private handleDeleteHeadshot = () => {
@@ -88,7 +89,7 @@ export class HeadshotElement extends BaseNodeView<
   }
 
   public destroy() {
-    this.deleteHeadshotButton.removeEventListener(
+    this.deleteHeadshotButton?.removeEventListener(
       'click',
       this.handleDeleteHeadshot
     )
