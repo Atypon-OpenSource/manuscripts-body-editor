@@ -246,6 +246,10 @@ export async function openKeyboardShortcuts(view?: EditorView): Promise<void> {
     if (modal) {
       modal.remove()
     }
+    // Restore editor focus at the existing selection after the dialog is torn down.
+    requestAnimationFrame(() => {
+      view.focus()
+    })
   }
 
   dialog = await createSubViewAsync(
