@@ -265,39 +265,39 @@ export const EDITOR_KEYBOARD_SHORTCUT_TABS: EditorShortcutTab[] = [
           },
         ],
       },
-      {
-        title: 'Others',
-        rows: [
-          {
-            label: 'Move block up (joinUp) - join with sibling above it',
-            shortcut: {
-              mac: 'Option+ArrowUp',
-              pc: 'Option+ArrowUp',
-            },
-          },
-          {
-            label: 'Move block down (joinDown) - join with sibling after it',
-            shortcut: {
-              mac: 'Option+ArrowDown',
-              pc: 'Option+ArrowDown',
-            },
-          },
-          {
-            label: "Lift block out of it's parent",
-            shortcut: {
-              mac: 'CommandOrControl+[ ',
-              pc: 'CommandOrControl+Option+K',
-            },
-          },
-          {
-            label: 'Wrap in Blockquote',
-            shortcut: {
-              mac: 'CommandOrControl+>',
-              pc: 'CommandOrControl+>',
-            },
-          },
-        ],
-      },
+      // {
+      //   title: 'Others',
+      //   rows: [
+      //     {
+      //       label: 'Move block up (joinUp) - join with sibling above it',
+      //       shortcut: {
+      //         mac: 'Option+ArrowUp',
+      //         pc: 'Option+ArrowUp',
+      //       },
+      //     },
+      //     {
+      //       label: 'Move block down (joinDown) - join with sibling after it',
+      //       shortcut: {
+      //         mac: 'Option+ArrowDown',
+      //         pc: 'Option+ArrowDown',
+      //       },
+      //     },
+      //     {
+      //       label: "Lift block out of it's parent",
+      //       shortcut: {
+      //         mac: 'CommandOrControl+[ ',
+      //         pc: 'CommandOrControl+Option+K',
+      //       },
+      //     },
+      //     {
+      //       label: 'Wrap in Blockquote',
+      //       shortcut: {
+      //         mac: 'CommandOrControl+>',
+      //         pc: 'CommandOrControl+>',
+      //       },
+      //     },
+      //   ],
+      // },
     ],
   },
 ]
