@@ -56,6 +56,9 @@ export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
   public updateContents() {
     super.updateContents()
     this.refreshFileInfo()
+    const can = this.props.getCapabilities()
+    this.dom.style.pointerEvents = can.editArticle ? 'auto' : 'none'
+    this.dom.draggable = can.editArticle
   }
 
   private getDropSide(element: Element, clientY: number): 'before' | 'after' {
