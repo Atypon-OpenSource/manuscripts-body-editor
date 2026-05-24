@@ -34,7 +34,6 @@ export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
   public initialise() {
     this.createElement()
     this.updateContents()
-    this.setupDragAndDrop()
   }
 
   public createElement = () => {
@@ -57,8 +56,13 @@ export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
     super.updateContents()
     this.refreshFileInfo()
     const can = this.props.getCapabilities()
-    this.dom.style.pointerEvents = can.editArticle ? 'auto' : 'none'
     this.dom.draggable = can.editArticle
+    if (can.editArticle) {
+      this.setupDragAndDrop()
+    } else {
+      this.dragIcon?.remove()
+      this.dragIcon = undefined
+    }
   }
 
   private getDropSide(element: Element, clientY: number): 'before' | 'after' {
