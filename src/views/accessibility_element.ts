@@ -45,7 +45,6 @@ export class AccessibilityElementView extends BlockView<LongDescNode> {
   public createElement() {
     super.createElement()
     this.contentDOM.className = 'accessibility_element_input'
-    this.contentDOM.setAttribute('contenteditable', 'true')
 
     this.contentDOM.tabIndex = this.node.type === schema.nodes.alt_text ? 0 : -1
 

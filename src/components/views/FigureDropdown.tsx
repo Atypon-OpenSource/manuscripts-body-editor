@@ -173,6 +173,10 @@ export const FigureOptions: React.FC<WrappedProps> = ({
     return false
   }
 
+  if (!can.editArticle && !showDownload) {
+    return null
+  }
+
   useEffect(() => {
     const activeClass = 'figure-dropdown-active'
     if (isOpen) {

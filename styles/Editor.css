@@ -1311,7 +1311,7 @@
   z-index: 1000;
 }
 
-.ProseMirror .supplement-item:hover {
+.ProseMirror .supplement-item[draggable="true"]:hover {
   background-color: #f2f2f2 !important;
   cursor: move;
 }
