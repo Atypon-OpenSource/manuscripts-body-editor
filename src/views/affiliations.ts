@@ -75,6 +75,7 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
 
   private buildAffiliations(affs: PluginState) {
     const can = this.props.getCapabilities()
+    this.container.removeEventListener('click', this.handleClick)
     if (can.editMetadata) {
       this.container.addEventListener('click', this.handleClick)
     }

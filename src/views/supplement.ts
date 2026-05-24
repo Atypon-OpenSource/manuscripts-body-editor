@@ -28,7 +28,7 @@ export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
   private supplementInfoEl: HTMLDivElement
   private static currentDragSupplementId: string | null = null
   private dragIcon: HTMLDivElement | undefined
-
+  private dragAndDropInitialized = false
   public ignoreMutation = () => true
 
   public initialise() {
@@ -58,7 +58,13 @@ export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
     const can = this.props.getCapabilities()
     this.dom.draggable = can.editArticle
     if (can.editArticle) {
-      this.setupDragAndDrop()
+      if (!this.dragAndDropInitialized) {
+        this.setupDragAndDrop()
+        this.dragAndDropInitialized = true
+      }
+      if (!this.dragIcon) {
+        this.addDragIcon()
+      }
     } else {
       this.dragIcon?.remove()
       this.dragIcon = undefined
