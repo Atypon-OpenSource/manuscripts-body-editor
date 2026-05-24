@@ -52,12 +52,6 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
     this.container = document.createElement('div')
     this.container.classList.add('affiliations', 'block')
     this.container.contentEditable = 'false'
-
-    const can = this.props.getCapabilities()
-    if (can.editMetadata) {
-    this.container.addEventListener('click', this.handleClick)
-    }
-
     this.dom.setAttribute('contenteditable', 'false')
     this.dom.appendChild(this.container)
   }
@@ -80,6 +74,11 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
   }
 
   private buildAffiliations(affs: PluginState) {
+    const can = this.props.getCapabilities()
+    if (can.editMetadata) {
+      this.container.addEventListener('click', this.handleClick)
+    }
+
     const elements = []
     for (const affiliation of affs.affiliations) {
       const index = affs.indexedAffiliationIds.get(affiliation.id)

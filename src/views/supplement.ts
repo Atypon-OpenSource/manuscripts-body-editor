@@ -43,18 +43,14 @@ export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
     this.dom.classList.add('block')
     this.dom.setAttribute('id', this.node.attrs.id)
     this.dom.setAttribute('href', this.node.attrs.href)
+    this.dom.draggable = true
 
     this.contentDOM = document.createElement('div')
     this.contentDOM.classList.add('supplement-caption')
     this.dom.appendChild(this.contentDOM)
 
     this.addFileInfo()
-
-    const can = this.props.getCapabilities()
-    if (can.editArticle) {
-      this.dom.draggable = true
-      this.addDragIcon()
-    }
+    this.addDragIcon()
   }
 
   public updateContents() {
@@ -84,12 +80,6 @@ export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
   }
 
   private setupDragAndDrop() {
-    const can = this.props.getCapabilities()
-
-    if (!can.editArticle) {
-      return
-    }
-
     const clearDropClasses = () => {
       this.dom.classList.remove('drop-target-above', 'drop-target-below')
     }

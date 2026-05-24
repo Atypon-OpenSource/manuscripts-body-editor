@@ -1330,6 +1330,10 @@
   pointer-events: auto;
 }
 
+.ProseMirror .supplement-item[draggable="false"] .drag-icon {
+  display: none;
+}
+
 .ProseMirror .supplement-item:hover .drag-icon {
   opacity: 1;
 }
