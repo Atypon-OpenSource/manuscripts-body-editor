@@ -499,7 +499,6 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                       </AuthorTabPanel>
                     )}
                     <AuthorTabPanel>
-                      <FormSubtitle>Contributions (CRediT)</FormSubtitle>
                       <ContributionsDescriptionSubtitle>
                         Select the roles this author contributed to according to
                         the CRediT taxonomy

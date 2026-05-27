@@ -119,7 +119,7 @@ export const CreateAuthorModal: React.FC<CreateAuthorModalProps> = ({
         </ModalHeader>
         <StyledModalBody>
           <StyledScrollableModalContent>
-            <FormTitle>Create New Author</FormTitle>
+            <FormTitle>Create Author</FormTitle>
             <AuthorDetailsForm
               values={normalizeAuthor(selection)}
               onChange={handleChange}
@@ -141,7 +141,7 @@ export const CreateAuthorModal: React.FC<CreateAuthorModalProps> = ({
               form="author-details-form"
               newEntity={true}
               isDisableSave={isDisableSave || hasError}
-              createLabel="Create New Author"
+              createLabel="Create Author"
               onSubmitForm={() => actionsRef.current?.submitForm?.()}
             />
           }
