@@ -44,6 +44,7 @@ import {
   SectionNode,
   SupplementNode,
   TransGraphicalAbstractNode,
+  weblinkSupplementAttrs,
 } from '@manuscripts/transform'
 import {
   Attrs,
@@ -509,6 +510,48 @@ export const insertSupplement = (
   view.focus()
   view.dispatch(tr.scrollIntoView())
 
+  return true
+}
+
+export const insertSupplementWeblink = (
+  url: string,
+  title: string,
+  view: ManuscriptEditorView
+) => {
+  const attrs = weblinkSupplementAttrs(
+    url,
+    generateNodeID(schema.nodes.supplement)
+  )
+  const supplement = schema.nodes.supplement.create(
+    attrs,
+    createAndFillCaption()
+  ) as SupplementNode
+
+  const tr = view.state.tr
+  const { pos } = upsertSupplementsSection(tr, supplement)
+  tr.setSelection(NodeSelection.create(tr.doc, pos))
+  view.focus()
+  view.dispatch(skipTracking(tr.scrollIntoView()))
+
+  return true
+}
+
+export const updateSupplementWeblink = (
+  pos: number,
+  url: string,
+  title: string,
+  view: ManuscriptEditorView
+) => {
+  const node = view.state.doc.nodeAt(pos)
+  if (!node) {
+    return false
+  }
+  const tr = view.state.tr
+  tr.setNodeMarkup(pos, undefined, {
+    ...node.attrs,
+    ...weblinkSupplementAttrs(url, node.attrs.id),
+  })
+  view.dispatch(skipTracking(tr))
   return true
 }
 
