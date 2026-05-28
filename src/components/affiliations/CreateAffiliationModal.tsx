@@ -50,6 +50,8 @@ export const CreateAffiliationModal: React.FC<CreateAffiliationModalProps> = ({
   const [isDisableSave, setIsDisableSave] = useState(true)
   const actionsRef = useRef<FormActions>(undefined)
 
+  console.log("stuff")
+
   // Wait for the close animation to finish before calling onClose.
   const prevIsOpenRef = useRef(true)
   useEffect(() => {

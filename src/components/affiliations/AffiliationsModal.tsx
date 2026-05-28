@@ -101,6 +101,9 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     $authors.sort(authorComparator)
   )
   useEffect(() => {
+    setTimeout(() => {
+      alert("stuff done")
+    }, 1500)
     dispatchAuthors({
       type: 'set',
       state: [...$authors].sort(authorComparator),
@@ -641,6 +644,7 @@ const AddAffiliationButton = styled.button`
   &[data-active='true'] {
     background: ${(props) => props.theme.colors.background.fifth};
     border: 1px solid ${(props) => props.theme.colors.border.primary};
+    padding: 11px 8px 11px 12px;
     border-left: 0;
     border-right: 0;
   }
