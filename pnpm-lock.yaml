@@ -33,11 +33,11 @@ importers:
         specifier: 1.1.2
         version: 1.1.2
       '@manuscripts/style-guide':
-        specifier: 3.5.26-LEAN-5654.0
-        version: 3.5.26-LEAN-5654.0(@babel/core@7.28.0)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)
+        specifier: 3.5.26-LEAN-5654.1
+        version: 3.5.26-LEAN-5654.1(@babel/core@7.28.0)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)
       '@manuscripts/track-changes-plugin':
-        specifier: 2.3.13
-        version: 2.3.13
+        specifier: 2.3.14-LEAN-5654.0
+        version: 2.3.14-LEAN-5654.0
       '@manuscripts/transform':
         specifier: 4.3.51
         version: 4.3.51(prosemirror-state@1.4.3)
@@ -989,12 +989,12 @@ packages:
       eslint-plugin-simple-import-sort: '>= 8'
       typescript: '*'
 
-  '@manuscripts/style-guide@3.5.26-LEAN-5654.0':
-    resolution: {integrity: sha512-ZYGgrjBa+BGkxxUi1b6mxDcmT0Vz54rdpC/wffNvckOtTSNxRvHxpQWc9FqHJznmXasrq1LJbJgZoxETbScZ9w==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/style-guide/-/@manuscripts/style-guide-3.5.26-LEAN-5654.0.tgz}
+  '@manuscripts/style-guide@3.5.26-LEAN-5654.1':
+    resolution: {integrity: sha512-xV6ea8tjB6kNCp0FAKQpU6zPAXw+T3QKbJd6ri7W8jE2Kb41LoSmzh3zFeiQEVyPj0XGpN5Cxq8zZ/LnbuAvCA==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/style-guide/-/@manuscripts/style-guide-3.5.26-LEAN-5654.1.tgz}
     engines: {node: '>=22'}
 
-  '@manuscripts/track-changes-plugin@2.3.13':
-    resolution: {integrity: sha512-VvtHBOketDxkO5oN7QNMW+X5GoBFs1y1ayUj93sftITrUbKeCIoPflUzv8ulZMEOpwpr9mCvf0nN69iczJ2Jhg==}
+  '@manuscripts/track-changes-plugin@2.3.14-LEAN-5654.0':
+    resolution: {integrity: sha512-yRQjX7F3z2Ev4OAZxz9dlu2ngwNvxttj2W9oKlkG7/tdWBDkRk36OS5Nk+YJVW3yqg9tyjaY6vb+waS0FwgVqw==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/track-changes-plugin/-/@manuscripts/track-changes-plugin-2.3.14-LEAN-5654.0.tgz}
     engines: {node: '>=22'}
 
   '@manuscripts/transform@4.3.51':
@@ -5733,7 +5733,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@manuscripts/style-guide@3.5.26-LEAN-5654.0(@babel/core@7.28.0)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)':
+  '@manuscripts/style-guide@3.5.26-LEAN-5654.1(@babel/core@7.28.0)(@types/hoist-non-react-statics@3.3.6)(@types/node@20.17.46)(@types/react@19.2.3)':
     dependencies:
       '@headlessui/react': 2.2.9(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       date-fns: 2.30.0
@@ -5762,7 +5762,7 @@ snapshots:
       - '@types/react'
       - supports-color
 
-  '@manuscripts/track-changes-plugin@2.3.13':
+  '@manuscripts/track-changes-plugin@2.3.14-LEAN-5654.0':
     dependencies:
       debug: 4.4.1(supports-color@5.5.0)
       prosemirror-commands: 1.7.1
