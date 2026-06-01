@@ -101,9 +101,6 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     $authors.sort(authorComparator)
   )
   useEffect(() => {
-    setTimeout(() => {
-      alert("stuff done")
-    }, 1500)
     dispatchAuthors({
       type: 'set',
       state: [...$authors].sort(authorComparator),
