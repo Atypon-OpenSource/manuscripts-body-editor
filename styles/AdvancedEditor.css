@@ -1876,11 +1876,23 @@ th:hover > .table-context-menu-button,
   position: relative;
 }
 
+/* Right padding so abstract titles do not run under translation widgets. 
+ * If we later block editing these titles, this padding can go away. 
+ */
+.ProseMirror .abstracts .block-section .block-section_title h1,
+.ProseMirror .abstracts .block-trans_abstract .block-section_title h1{
+  padding-right:  150px;
+}
+
 .ProseMirror .add-trans-abstract {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  float: right;
   gap: 8px;
+  margin: 8px 0;
+  padding: 6px 12px;
+  position: absolute;
+  right: 50px;
+  top: 0;
   z-index: 5;
   cursor: pointer;
   background: unset;
@@ -1916,13 +1928,18 @@ th:hover > .table-context-menu-button,
 }
 .ProseMirror .block-trans_abstract .language-selector-btn,
 .ProseMirror .block-trans_graphical_abstract .language-selector-btn {
-  display: inline-flex;
-  float: right;
+  display: flex;
+  position: absolute;
+  top: 14px;
+  right: 50px;
   line-height: 1.6;
   background: unset;
   border: none;
+  padding: 0;
+  margin: 0 6px;
   cursor: pointer;
   z-index: 10;
+  align-items: end;
   gap: 8px;
   font-size: 14px;
   color: #6e6e6e;
