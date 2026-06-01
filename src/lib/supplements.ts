@@ -15,7 +15,7 @@
  */
 
 import {
-  isSupplementWeblink,
+  // isSupplementWeblink,
   ManuscriptEditorView,
   ManuscriptNode,
   schema,
@@ -26,8 +26,6 @@ import { findChildren, findParentNodeClosestToPos } from 'prosemirror-utils'
 
 import { allowedHref } from './url'
 
-export { isSupplementWeblink }
-
 export type NodeWeblink = {
   node: SupplementNode
   pos: number
@@ -35,6 +33,9 @@ export type NodeWeblink = {
 }
 
 export const isValidWeblinkUrl = (url: string): boolean => allowedHref(url)
+
+export const isSupplementWeblink = (href: string): boolean =>
+  Boolean(href) && !href.startsWith('attachment:')
 
 export const findCrossReferencesToId = (doc: ManuscriptNode, id: string) =>
   findChildren(

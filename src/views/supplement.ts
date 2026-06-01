@@ -109,6 +109,14 @@ export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
 
     const href = this.node.attrs.href
     const isWeblink = isSupplementWeblink(href)
+    console.log('')
+    console.log('isWeblink', isWeblink)
+    console.log('href', href)
+    console.log('node', this.node)
+    console.log('node.attrs', this.node.attrs)
+    console.log('node.attrs.href', this.node.attrs.href)
+    console.log('node.attrs.mimeType', this.node.attrs.mimeType)
+    console.log('node.attrs.mimeSubType', this.node.attrs.mimeSubType)
 
     if (isWeblink) {
       this.labelEl.textContent = ''
@@ -142,7 +150,7 @@ export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
       link.href = href
       link.target = '_blank'
       link.rel = 'noopener noreferrer'
-      link.textContent = href
+      link.textContent = `${href}`
       this.metaEl.appendChild(link)
       return
     }
