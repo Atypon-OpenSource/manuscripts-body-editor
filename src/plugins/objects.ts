@@ -85,7 +85,7 @@ export default () => {
 
                   decorations.push(
                     Decoration.node(from, to, {
-                      'element-label': target.label + ':',
+                      'element-label': target.label,
                     })
                   )
                 } else {

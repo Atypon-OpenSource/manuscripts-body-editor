@@ -327,12 +327,7 @@
 
 .ProseMirror .caption-title[element-label]::before,
 .ProseMirror .caption-description > [element-label]::before {
-  content: attr(element-label);
-}
-
-.ProseMirror .caption-title .placeholder-text::before, .ProseMirror .caption-description .placeholder-text::before {
-  color: #000;
-  font-style: normal;
+  content: attr(element-label)":";
 }
 
 .ProseMirror .caption-title:not(:has(.placeholder-text)) {
