@@ -42,6 +42,7 @@ export const defaultEditorProps: EditorProps = {
   getCurrentUser: () => ({
     _id: 'test-user-profile-1-id',
     userID: '',
+    connectID: '',
   }),
   // @ts-ignore
   history: createBrowserHistory(),
