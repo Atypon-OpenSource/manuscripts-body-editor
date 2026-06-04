@@ -139,9 +139,8 @@ export const CreateAuthorModal: React.FC<CreateAuthorModalProps> = ({
           primaryAction={
             <ModalFormSaveButton
               form="author-details-form"
-              newEntity={true}
               isDisableSave={isDisableSave || hasError}
-              createLabel="Create New Author"
+              label="Create New Author"
               onSubmitForm={() => actionsRef.current?.submitForm?.()}
             />
           }
