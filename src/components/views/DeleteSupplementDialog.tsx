@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 import {
-  AttentionOrangeIcon,
   Category,
   Dialog,
 } from '@manuscripts/style-guide'
-import { ManuscriptEditorView } from '@manuscripts/transform'
+import { ManuscriptEditorView, SupplementNode } from '@manuscripts/transform'
 import React, { useState } from 'react'
 
 import {
-  findCrossReferencesToId,
   getSupplementDisplayLabel,
   performDeleteSupplement,
 } from '../../lib/supplements'
@@ -31,36 +29,17 @@ import ReactSubView from '../../views/ReactSubView'
 
 const DeleteSupplementDialog: React.FC<{
   label: string
-  crossRefCount: number
   onDelete: () => void
-}> = ({ label, crossRefCount, onDelete }) => {
+}> = ({ label, onDelete }) => {
   const [isOpen, setOpen] = useState(true)
 
   return (
     <Dialog
       isOpen={isOpen}
       category={Category.confirmation}
-      header={
-        crossRefCount > 0 ? (
-          <>
-            <AttentionOrangeIcon />
-            Delete supplement
-          </>
-        ) : (
-          'Delete supplement'
-        )
-      }
+      header={'Delete supplement'}
       message={
         <>
-          {crossRefCount > 0 && (
-            <>
-              This supplement is referenced by {crossRefCount} cross-reference
-              {crossRefCount === 1 ? '' : 's'} in the manuscript. Deleting it may
-              break those references.
-              <br />
-              <br />
-            </>
-          )}
           Are you sure you want to delete &ldquo;{label}&rdquo;?
         </>
       }
@@ -93,20 +72,15 @@ export const openDeleteSupplementDialog = (
   const { state } = view
   const props = getEditorProps(state)
   const label = getSupplementDisplayLabel(
-    node as import('@manuscripts/transform').SupplementNode,
+    node as SupplementNode,
     props.getFiles()
   )
-  const crossRefCount = findCrossReferencesToId(
-    state.doc,
-    node.attrs.id
-  ).length
 
   const dialog = ReactSubView(
     props,
     DeleteSupplementDialog,
     {
       label,
-      crossRefCount,
       onDelete: () => performDeleteSupplement(view, pos),
     },
     state.doc,

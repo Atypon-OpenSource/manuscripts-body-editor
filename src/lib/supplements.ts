@@ -15,7 +15,7 @@
  */
 
 import {
-  // isSupplementWeblink,
+  isSupplementWeblink,
   ManuscriptEditorView,
   ManuscriptNode,
   schema,
@@ -34,44 +34,13 @@ export type NodeWeblink = {
 
 export const isValidWeblinkUrl = (url: string): boolean => allowedHref(url)
 
-export const isSupplementWeblink = (href: string): boolean =>
-  Boolean(href) && !href.startsWith('attachment:')
+export const getSupplementCaptionTitle = (node: SupplementNode): string => {
+  const captionTitle = findChildren(
+    node,
+    (child) => child.type === schema.nodes.caption_title
+  )[0]
 
-export const findCrossReferencesToId = (doc: ManuscriptNode, id: string) =>
-  findChildren(
-    doc,
-    (node) =>
-      node.type === schema.nodes.cross_reference &&
-      Boolean((node.attrs.rids as string[] | undefined)?.includes(id))
-  )
-
-export const getSupplementNumber = (
-  doc: ManuscriptNode,
-  supplementPos: number
-): number => {
-  const $pos = doc.resolve(supplementPos)
-  const supplementsSection = findParentNodeClosestToPos(
-    $pos,
-    (node) => node.type === schema.nodes.supplements
-  )
-  if (!supplementsSection) {
-    return 1
-  }
-
-  let number = 0
-  let offset = supplementsSection.pos + 1
-  for (let i = 0; i < supplementsSection.node.childCount; i++) {
-    const child = supplementsSection.node.child(i)
-    if (child.type === schema.nodes.supplement) {
-      number++
-      if (offset === supplementPos) {
-        return number
-      }
-    }
-    offset += child.nodeSize
-  }
-
-  return number || 1
+  return captionTitle?.node.textContent.trim() ?? ''
 }
 
 export const getSupplementDisplayLabel = (

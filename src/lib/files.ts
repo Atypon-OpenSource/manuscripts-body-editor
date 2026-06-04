@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ManuscriptNode, schema, SupplementNode } from '@manuscripts/transform'
+import { ManuscriptNode, schema, SupplementNode, isSupplementWeblink } from '@manuscripts/transform'
 import { findChildrenByType } from 'prosemirror-utils'
 
 import { isHidden } from './track-changes-utils'
 
-import { isSupplementWeblink, NodeWeblink } from './supplements'
+import { NodeWeblink } from './supplements'
 
 export type FileAttachment = {
   id: string

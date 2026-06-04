@@ -24,28 +24,19 @@ import { createNodeView } from './creators'
 
 export class SupplementsView extends BlockView<Trackable<SupplementsNode>> {
   private collapsed = false
-  private toggleButton: HTMLButtonElement
+  private toggleButton: HTMLElement
 
   public ignoreMutation = () => true
 
   public createElement = () => {
     this.toggleButton = document.createElement('button')
-    this.toggleButton.classList.add(
-      'supplements-toggle-btn',
-      'supplements-section-toggle',
-      'button-reset'
-    )
-    this.toggleButton.setAttribute('aria-label', 'Toggle supplementary elements')
-    this.toggleButton.setAttribute('aria-expanded', 'true')
+    this.toggleButton.classList.add('supplements-toggle-btn', 'button-reset')
     this.toggleButton.innerHTML = arrowUp
+    
     const handleToggle = () => {
       this.collapsed = !this.collapsed
-      this.toggleButton?.classList.toggle('collapsed', this.collapsed)
-      this.toggleButton?.setAttribute(
-        'aria-expanded',
-        this.collapsed ? 'false' : 'true'
-      )
       this.toggleContent()
+      this.toggleButton?.classList.toggle('collapsed', this.collapsed)
     }
 
     this.toggleButton.onclick = handleToggle
@@ -55,35 +46,15 @@ export class SupplementsView extends BlockView<Trackable<SupplementsNode>> {
     this.contentDOM.classList.add('supplements-content')
     this.contentDOM.classList.add('block')
 
+    this.dom.appendChild(this.toggleButton)
     this.dom.setAttribute('id', this.node.attrs.id)
+    this.dom.setAttribute('data-cy', 'supplements_dom')
+
     this.dom.appendChild(this.contentDOM)
   }
 
-  public update(newNode: import('@manuscripts/transform').ManuscriptNode) {
-    if (newNode.type.name !== this.node.type.name) {
-      return false
-    }
-    this.node = newNode as Trackable<SupplementsNode>
-    this.updateContents()
-    return true
-  }
-
-  public updateContents() {
-    super.updateContents()
-    this.placeToggleInSectionHeader()
-  }
-
-  private placeToggleInSectionHeader() {
-    const header = this.contentDOM?.querySelector(
-      '.block-section_title h1'
-    ) as HTMLElement | null
-    if (!header || header.contains(this.toggleButton)) {
-      return
-    }
-    header.appendChild(this.toggleButton)
-  }
-
   private toggleContent() {
+    // Hide/show supplement items
     const supplementItems =
       this.contentDOM?.querySelectorAll('.supplement-item')
     supplementItems?.forEach((item) => {

@@ -1221,7 +1221,7 @@
   text-align: start;
 }
 
-.ProseMirror .supplement-meta {
+/* .ProseMirror .supplement-meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -1268,7 +1268,7 @@
 
 .ProseMirror .supplement-delete-btn:hover {
   opacity: 1;
-}
+} */
 
 .ProseMirror .supplement-file-info {
   display: flex;
@@ -1308,8 +1308,10 @@
   align-items: center;
   justify-content: center;
   transition: opacity 0.2s ease;
-  flex-shrink: 0;
-  margin-left: auto;
+  position: absolute;
+  top: 16px;
+  right: 65px;
+  z-index: 10;
 }
 
 .ProseMirror .supplements-toggle-btn svg {

@@ -14,42 +14,23 @@
  * limitations under the License.
  */
 
-import { getFileIcon, LinkIcon } from '@manuscripts/style-guide'
-import { SupplementNode } from '@manuscripts/transform'
-import { ViewMutationRecord } from 'prosemirror-view'
-import React from 'react'
+import { getFileIcon } from '@manuscripts/style-guide'
+import { isSupplementWeblink, SupplementNode } from '@manuscripts/transform'
 import { renderToStaticMarkup } from 'react-dom/server'
 
-import { openDeleteSupplementDialog } from '../components/views/DeleteSupplementDialog'
-import { deleteIcon, draggableIcon } from '../icons'
+import { draggableIcon, webLinkIcon } from '../icons'
 import { findNodeByID } from '../lib/doc'
-import {
-  getSupplementDisplayLabel,
-  getSupplementNumber,
-  isSupplementWeblink,
-} from '../lib/supplements'
+import { allowedHref } from '../lib/url'
 import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
 export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
-  private metaEl: HTMLDivElement
-  private numberEl: HTMLSpanElement
-  private labelEl: HTMLSpanElement
-  private deleteBtn: HTMLButtonElement | null = null
+  private supplementInfoEl: HTMLDivElement
   private static currentDragSupplementId: string | null = null
   private dragIcon: HTMLDivElement | undefined
 
-  public ignoreMutation(mutation: ViewMutationRecord) {
-    if (!this.contentDOM) {
-      return true
-    }
-    const target = mutation.target as Node
-    if (this.contentDOM.contains(target) || target === this.contentDOM) {
-      return false
-    }
-    return true
-  }
+  public ignoreMutation = () => true
 
   public initialise() {
     this.createElement()
@@ -65,136 +46,17 @@ export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
     this.dom.setAttribute('href', this.node.attrs.href)
     this.dom.draggable = true
 
-    this.metaEl = document.createElement('div')
-    this.metaEl.classList.add('supplement-meta')
-    this.metaEl.contentEditable = 'false'
-
-    this.numberEl = document.createElement('span')
-    this.numberEl.classList.add('supplement-number')
-    this.metaEl.appendChild(this.numberEl)
-
-    this.labelEl = document.createElement('span')
-    this.labelEl.classList.add('supplement-label')
-    this.metaEl.appendChild(this.labelEl)
-
-    this.dom.appendChild(this.metaEl)
-
     this.contentDOM = document.createElement('div')
     this.contentDOM.classList.add('supplement-caption')
     this.dom.appendChild(this.contentDOM)
 
+    this.addFileInfo()
     this.addDragIcon()
-    this.refreshMetadata()
-    this.maybeAddDeleteButton()
   }
 
   public updateContents() {
     super.updateContents()
-    this.refreshMetadata()
-  }
-
-  public update(newNode: import('@manuscripts/transform').ManuscriptNode) {
-    const prevHref = this.node.attrs.href
-    const updated = super.update(newNode)
-    if (updated && prevHref !== newNode.attrs.href) {
-      this.refreshMetadata()
-    }
-    return updated
-  }
-
-  private refreshMetadata() {
-    const pos = this.getPos()
-    const number = getSupplementNumber(this.view.state.doc, pos)
-    this.numberEl.textContent = `Supplement ${number}`
-
-    const href = this.node.attrs.href
-    const isWeblink = isSupplementWeblink(href)
-    console.log('')
-    console.log('isWeblink', isWeblink)
-    console.log('href', href)
-    console.log('node', this.node)
-    console.log('node.attrs', this.node.attrs)
-    console.log('node.attrs.href', this.node.attrs.href)
-    console.log('node.attrs.mimeType', this.node.attrs.mimeType)
-    console.log('node.attrs.mimeSubType', this.node.attrs.mimeSubType)
-
-    if (isWeblink) {
-      this.labelEl.textContent = ''
-      this.labelEl.hidden = true
-    } else {
-      this.labelEl.hidden = false
-      this.labelEl.textContent = getSupplementDisplayLabel(
-        this.node,
-        this.props.getFiles()
-      )
-    }
-
-    Array.from(this.metaEl.children).forEach((child) => {
-      if (
-        child !== this.numberEl &&
-        child !== this.labelEl &&
-        child !== this.deleteBtn
-      ) {
-        child.remove()
-      }
-    })
-
-    if (isWeblink) {
-      const iconElement = document.createElement('span')
-      iconElement.classList.add('supplement-url-icon')
-      iconElement.innerHTML = renderToStaticMarkup(React.createElement(LinkIcon))
-      this.metaEl.appendChild(iconElement)
-
-      const link = document.createElement('a')
-      link.classList.add('supplement-url')
-      link.href = href
-      link.target = '_blank'
-      link.rel = 'noopener noreferrer'
-      link.textContent = `${href}`
-      this.metaEl.appendChild(link)
-      return
-    }
-
-    const files = this.props.getFiles()
-    const file = files.find((f) => f.id === href)
-    if (file) {
-      const fileRow = document.createElement('span')
-      fileRow.classList.add('supplement-file-row')
-
-      const iconElement = document.createElement('span')
-      iconElement.classList.add('supplement-file-icon')
-      const icon = getFileIcon(file.name)
-      if (icon) {
-        iconElement.innerHTML = renderToStaticMarkup(icon)
-      }
-      fileRow.appendChild(iconElement)
-
-      const fileName = document.createElement('span')
-      fileName.classList.add('supplement-file-name')
-      fileName.textContent = file.name
-      fileRow.appendChild(fileName)
-
-      this.metaEl.appendChild(fileRow)
-    }
-  }
-
-  private maybeAddDeleteButton() {
-    if (!this.props.getCapabilities()?.editArticle) {
-      return
-    }
-
-    const button = document.createElement('button')
-    button.type = 'button'
-    button.classList.add('supplement-delete-btn', 'button-reset')
-    button.setAttribute('aria-label', 'Delete supplement')
-    button.innerHTML = deleteIcon
-    button.addEventListener('click', (e) => {
-      e.preventDefault()
-      e.stopPropagation()
-      openDeleteSupplementDialog(this.view, this.getPos())
-    })
-    this.metaEl.appendChild(button)
-    this.deleteBtn = button
+    this.refreshFileInfo()
   }
 
   private getDropSide(element: Element, clientY: number): 'before' | 'after' {
@@ -208,6 +70,7 @@ export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
     nodeSize: number,
     targetPos: number
   ): boolean {
+    // No-move if dropping at the node’s start or end position
     return targetPos === currentPos || targetPos === currentPos + nodeSize
   }
 
@@ -275,6 +138,7 @@ export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
       const side = this.getDropSide(this.dom, e.clientY)
       const targetPos = side === 'before' ? toPos : toPos + this.node.nodeSize
 
+      // Check if this would be a no actual position change
       if (
         this.noActualMove(supplement.pos, supplement.node.nodeSize, targetPos)
       ) {
@@ -305,6 +169,72 @@ export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
     tr.delete(mappedFrom, mappedFrom + fromNode.nodeSize)
 
     this.view.dispatch(tr)
+  }
+
+  private addFileInfo() {
+    this.supplementInfoEl = document.createElement('div')
+    this.supplementInfoEl.classList.add('supplement-file-info')
+    this.supplementInfoEl.contentEditable = 'false'
+
+    const href = this.node.attrs.href
+
+    if (isSupplementWeblink(href)) {
+      const iconElement = document.createElement('span')
+      iconElement.classList.add('supplement-file-icon')
+      iconElement.innerHTML = webLinkIcon
+      this.supplementInfoEl.appendChild(iconElement)
+
+      const urlLink = document.createElement('a')
+      urlLink.classList.add('supplement-weblink-url')
+      urlLink.textContent = href
+      if (allowedHref(href)) {
+        urlLink.href = href
+        urlLink.target = '_blank'
+        urlLink.rel = 'noopener noreferrer'
+      }
+      urlLink.addEventListener('mousedown', (e) => e.stopPropagation())
+      this.supplementInfoEl.appendChild(urlLink)
+
+      this.dom.appendChild(this.supplementInfoEl)
+      return
+    }
+
+    // Get the file from the file management system
+    const files = this.props.getFiles()
+    const file = files.find((f) => f.id === href)
+
+    if (file) {
+      const iconElement = document.createElement('span')
+      iconElement.classList.add('supplement-file-icon')
+
+      const icon = getFileIcon(file.name)
+      if (icon) {
+        iconElement.innerHTML = renderToStaticMarkup(icon)
+      }
+
+      this.supplementInfoEl.appendChild(iconElement)
+
+      // Add file name
+      const fileName = document.createElement('span')
+      fileName.classList.add('supplement-file-name')
+      fileName.textContent = file.name
+      this.supplementInfoEl.appendChild(fileName)
+    } else {
+      // Show placeholder if file not found
+      const placeholder = document.createElement('span')
+      placeholder.textContent = 'File not found'
+      this.supplementInfoEl.appendChild(placeholder)
+    }
+
+    // Add file info to the supplement-item
+    this.dom.appendChild(this.supplementInfoEl)
+  }
+
+  private refreshFileInfo() {
+    this.supplementInfoEl.remove()
+
+    // Rebuild with the latest attrs
+    this.addFileInfo()
   }
 
   private addDragIcon() {
