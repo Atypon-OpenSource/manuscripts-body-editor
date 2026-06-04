@@ -592,7 +592,6 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
             selection ? (
               <ModalFormSaveButton
                 form="affiliation-form"
-                newEntity={newAffiliation}
                 isDisableSave={isDisableSave}
                 onSubmitForm={() => actionsRef.current?.submitForm?.()}
               />

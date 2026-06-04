@@ -552,7 +552,6 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
             selection ? (
               <ModalFormSaveButton
                 form="author-details-form"
-                newEntity={newEntity}
                 isDisableSave={isDisableSave}
                 onSubmitForm={() => actionsRef.current?.submitForm?.()}
               />
