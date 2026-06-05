@@ -19,6 +19,7 @@ import {
   ManuscriptEditorView,
 } from '@manuscripts/transform'
 import { EditorView } from 'prosemirror-view'
+import { Selection } from 'prosemirror-state'
 
 import { Dispatch } from '../commands'
 import { findParentNodeWithIdValue } from './utils'
@@ -171,7 +172,25 @@ export const focusNearestElement = (
   const { from } = view.state.selection
   const coords = view.coordsAtPos(from)
   const container = getCursorContainer(view)
-  const target = findNearestTabbable(container, coords.top)
+  let target = findNearestTabbable(container, coords.top)
+  // TODO: Consider a more generic solution based on hierarchy-walking to find the nearest tabbable element.
+  // Currently only looks one level up, which is sufficient to resolve focus issue when inside supplement item children.
+  if (!target) {
+    const parent = findParentNodeWithIdValue(view.state.selection)
+
+    const grandparent = parent
+      ? findParentNodeWithIdValue({
+          $from: view.state.doc.resolve(parent.pos),
+        } as Selection)
+      : null
+    if (grandparent) {
+      const dom = view.nodeDOM(grandparent.pos)
+
+      if (dom instanceof HTMLElement) {
+        target = findNearestTabbable(dom, coords.top)
+      }
+    }
+  }
 
   if (!target) {
     return false
