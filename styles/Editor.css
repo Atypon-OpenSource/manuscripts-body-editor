@@ -1221,55 +1221,6 @@
   text-align: start;
 }
 
-/* .ProseMirror .supplement-meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px 12px;
-  margin-bottom: 8px;
-  font-size: 14px;
-}
-
-.ProseMirror .supplement-number {
-  font-weight: 600;
-  color: #333;
-}
-
-.ProseMirror .supplement-label {
-  color: #333;
-}
-
-.ProseMirror .supplement-url-icon,
-.ProseMirror .supplement-file-row {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.ProseMirror .supplement-url {
-  font-size: 14px;
-  color: #20aedf;
-  text-decoration: none;
-  word-break: break-all;
-}
-
-.ProseMirror .supplement-url:hover {
-  text-decoration: underline;
-}
-
-.ProseMirror .supplement-delete-btn {
-  margin-left: auto;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  padding: 4px;
-  opacity: 0.7;
-}
-
-.ProseMirror .supplement-delete-btn:hover {
-  opacity: 1;
-} */
-
 .ProseMirror .supplement-file-info {
   display: flex;
   align-items: center;

@@ -48,7 +48,6 @@ export class SupplementsView extends BlockView<Trackable<SupplementsNode>> {
 
     this.dom.appendChild(this.toggleButton)
     this.dom.setAttribute('id', this.node.attrs.id)
-    this.dom.setAttribute('data-cy', 'supplements_dom')
 
     this.dom.appendChild(this.contentDOM)
   }

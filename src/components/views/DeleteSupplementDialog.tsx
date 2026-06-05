@@ -1,5 +1,5 @@
 /*!
- * © 2025 Atypon Systems LLC
+ * © 2026 Atypon Systems LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,12 +37,8 @@ const DeleteSupplementDialog: React.FC<{
     <Dialog
       isOpen={isOpen}
       category={Category.confirmation}
-      header={'Delete supplement'}
-      message={
-        <>
-          Are you sure you want to delete &ldquo;{label}&rdquo;?
-        </>
-      }
+      header='Delete supplement'
+      message='Are you sure you want to delete &ldquo;{label}&rdquo;?'
       actions={{
         primary: {
           action: () => {
