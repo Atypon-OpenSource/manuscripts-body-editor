@@ -123,9 +123,8 @@ export const CreateAffiliationModal: React.FC<CreateAffiliationModalProps> = ({
           primaryAction={
             <ModalFormSaveButton
               form="affiliation-form"
-              newEntity={true}
               isDisableSave={isDisableSave || hasError}
-              createLabel="Create New Affiliation"
+              label="Create New Affiliation"
               onSubmitForm={() => actionsRef.current?.submitForm?.()}
             />
           }

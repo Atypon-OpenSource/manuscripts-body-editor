@@ -21,27 +21,22 @@ import styled from 'styled-components'
 
 export interface ModalFormSaveButtonProps {
   form: string
-  newEntity: boolean
   isDisableSave: boolean
   onSubmitForm?: () => void | Promise<void>
-  createLabel?: string
-  updateLabel?: string
+  label?: string
 }
 
 export const ModalFormSaveButton: React.FC<ModalFormSaveButtonProps> = ({
   form,
-  newEntity,
   isDisableSave,
   onSubmitForm,
-  createLabel,
-  updateLabel,
+  label,
 }) => {
-  const label = newEntity
-    ? (createLabel ?? 'Save Changes')
-    : (updateLabel ?? 'Update Changes')
+  label = label || 'Save Changes'
 
   const saveButton = onSubmitForm ? (
     <StylePrimaryButton
+      data-cy="save-changes"
       disabled={isDisableSave}
       type="button"
       onClick={() => {
