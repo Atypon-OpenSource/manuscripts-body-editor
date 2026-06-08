@@ -64,7 +64,6 @@ export const ReferenceTextArea = styled(TextArea)`
 
 export const FormFields = styled.div`
   flex: 1;
-  overflow-y: auto;
 `
 
 export const DeleteButton = styled(IconButton)`
