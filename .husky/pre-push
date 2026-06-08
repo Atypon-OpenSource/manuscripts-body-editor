@@ -1,4 +1,1 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
-pnpm npm-run-all --parallel typecheck lint build
+pnpm preversion
