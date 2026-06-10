@@ -61,8 +61,6 @@ export default () => {
               const target = targets.get(id)
 
               if (target) {
-                const labelNode = document.createElement('span')
-                labelNode.className = 'element-label'
                 const caption = findChildren(
                   node,
                   (node) =>
@@ -70,21 +68,39 @@ export default () => {
                     node.type === schema.nodes.caption_title,
                   false
                 )[0]
-                const labelPos = getDecorationPos(
-                  target,
-                  state.doc,
-                  pos,
-                  caption
-                )
-                labelNode.textContent = caption
-                  ? target.label + ':'
-                  : target.label
-                decorations.push(
-                  Decoration.widget(labelPos, labelNode, {
-                    side: -1,
-                    key: `element-label-${id}-${target.label}`,
-                  })
-                )
+
+                if (caption) {
+                  let from: number
+                  let to: number
+                  if (caption.node.type === schema.nodes.caption_title) {
+                    from = pos + 1 + caption.pos
+                    to = from + caption.node.nodeSize
+                  } else {
+                    // caption node: decorate its first child (text_block) so the label
+                    // appears inline before the caption text
+                    const firstChild = caption.node.firstChild
+                    from = pos + 1 + caption.pos + 1
+                    to = from + (firstChild?.nodeSize || caption.node.nodeSize)
+                  }
+
+                  decorations.push(
+                    Decoration.node(from, to, {
+                      'element-label': target.label,
+                    })
+                  )
+                } else {
+                  // No caption at all — fall back to a widget label at the end of the node
+                  const labelPos = getDecorationPos(target, state.doc, pos)
+                  const labelNode = document.createElement('span')
+                  labelNode.className = 'element-label'
+                  labelNode.textContent = target.label
+                  decorations.push(
+                    Decoration.widget(labelPos, labelNode, {
+                      side: -1,
+                      key: `element-label-${id}-${target.label}`,
+                    })
+                  )
+                }
               }
             }
           })
@@ -96,24 +112,14 @@ export default () => {
 }
 
 /**
- *  position of the decoration will be before a caption or caption_title,
- *  or if we don't have at all caption will be at the end of node
+ * Returns the position for a widget decoration when there is no caption.
+ * Falls back to the end of the node.
  */
 const getDecorationPos = (
   target: Target,
   doc: ManuscriptNode,
-  pos: number,
-  caption?: { node: ManuscriptNode; pos: number }
+  pos: number
 ) => {
-  const $pos = doc.resolve(pos + (caption?.pos || 1) + 1)
-  let targetPos = $pos.pos
-  if (!caption) {
-    targetPos = $pos.end()
-  } else if (!$pos.nodeBefore) {
-    // this for the case of table as caption will be first element
-    // that will make sure it stays before caption
-    targetPos -= 1
-  }
-
-  return targetPos
+  const $pos = doc.resolve(pos + 1)
+  return $pos.end()
 }

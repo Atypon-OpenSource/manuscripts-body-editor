@@ -346,7 +346,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
             {(props: FieldProps) => (
               <>
                 <UnsavedLabel htmlFor="role" showDot={showUnsavedDot('role')}>
-                  Job Title
+                  Job title
                 </UnsavedLabel>
                 <TextField id={'role'} {...props.field} />
               </>

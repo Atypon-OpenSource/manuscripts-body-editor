@@ -268,7 +268,8 @@
                   "type": "caption",
                   "attrs": {
                     "placeholder": "Caption..."
-                  }
+                  },
+                  "content": [{ "type": "text_block" }]
                 },
                 {
                   "type": "alt_text"
