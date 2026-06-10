@@ -71,7 +71,10 @@ const isSelectionWithin = (
 const buildExpandButtonDecorations = (doc: ManuscriptNode) => {
   const decorations: Decoration[] = []
   doc.descendants((node, pos) => {
-    if (node.type.spec.content?.includes('alt_text')) {
+    if (
+      node.type !== schema.nodes.headshot_element &&
+      node.type.spec.content?.includes('alt_text')
+    ) {
       decorations.push(
         Decoration.widget(
           pos + node.nodeSize - 1,

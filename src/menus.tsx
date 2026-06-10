@@ -40,6 +40,7 @@ import {
   insertCrossReference,
   insertEmbed,
   insertGraphicalAbstract,
+  insertHeadshotGrid,
   insertHeroImage,
   insertInlineCitation,
   insertInlineEquation,
@@ -331,6 +332,15 @@ export const getEditorMenus = (
           isCommandValid(canInsert(schema.nodes.box_element)),
         run: doCommand(insertBoxElement),
         isHidden: !templateAllows(state, schema.nodes.box_element),
+      },
+      {
+        id: 'insert-headshot-grid',
+        label: 'Headshot Panel',
+        isEnabled:
+          isEditAllowed(state) &&
+          isCommandValid(canInsert(schema.nodes.headshot_grid)),
+        run: doCommand(insertHeadshotGrid),
+        isHidden: !templateAllows(state, schema.nodes.headshot_grid),
       },
       {
         role: 'separator',
