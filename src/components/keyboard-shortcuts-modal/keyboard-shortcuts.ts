@@ -184,13 +184,14 @@ export const EDITOR_KEYBOARD_SHORTCUT_TABS: EditorShortcutTab[] = [
               pc: 'CommandOrControl + Option + T',
             },
           },
-          {
-            label: 'Insert listing',
-            shortcut: {
-              mac: 'CommandOrControl + Option + L',
-              pc: 'CommandOrControl + Option + L',
-            },
-          },
+          // not clear what this is for
+          // {
+          //   label: 'Insert listing',
+          //   shortcut: {
+          //     mac: 'CommandOrControl + Option + L',
+          //     pc: 'CommandOrControl + Option + L',
+          //   },
+          // },
           {
             label: 'Insert equation block',
             shortcut: {
@@ -257,7 +258,7 @@ export const EDITOR_KEYBOARD_SHORTCUT_TABS: EditorShortcutTab[] = [
           },
           {
             label: 'Previous table cell / focus nearest element back',
-            shortcut: { mac: 'Escape', pc: 'Escape' },
+            shortcut: { mac: 'Shift + Tab', pc: 'Shift + Tab' },
           },
           {
             label: 'Exit editor to container',

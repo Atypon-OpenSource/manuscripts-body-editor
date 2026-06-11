@@ -71,27 +71,29 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
         ariaLabelledby={KEYBOARD_SHORTCUTS_MODAL_TITLE_ID}
         id={KEYBOARD_SHORTCUTS_MODAL_ID}
       >
-        <Container ref={containerRef} data-cy="keyboard-shortcuts-modal">
+        <ModalContainer ref={containerRef}>
           <ModalHeader>
             <CloseButton onClick={onClose} data-cy="modal-close-button" />
           </ModalHeader>
           <StyledModalBody>
             <StyledModalSidebar>
-              <ModalSidebarHeader>
-                <ModalSidebarTitle
+              <StyledModalSidebarHeader>
+                <StyledModalSidebarTitle
                   as="h2"
                   id={KEYBOARD_SHORTCUTS_MODAL_TITLE_ID}
                 >
                   Keyboard shortcuts
-                </ModalSidebarTitle>
-              </ModalSidebarHeader>
+                </StyledModalSidebarTitle>
+              </StyledModalSidebarHeader>
               <StyledSidebarContent>
                 <ShortcutTabs
                   selectedIndex={tabIndex}
                   onChange={setTabIndex}
-                  data-cy="keyboard-shortcuts-tabs"
                 >
-                  <ModalTabs tabLabels={TAB_LABELS} />
+                  <ModalTabsWrapper>
+                    <ModalTabs tabLabels={TAB_LABELS} />
+                  </ModalTabsWrapper>
+                  
                   <InspectorTabPanels>
                     {EDITOR_KEYBOARD_SHORTCUT_TABS.map((tab) => (
                       <ShortcutTabPanel key={tab.id}>
@@ -124,20 +126,20 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
               </ButtonsContainer>
             </StyledModalSidebar>
           </StyledModalBody>
-        </Container>
+        </ModalContainer>
       </StyledModal>
     </ThemeProvider>
   )
 }
 
-const Container = styled(ModalContainer)`
-  padding: 8px;
-`
-
 const ShortcutTabs = styled(InspectorTabs)`
   display: flex;
   flex-direction: column;
   min-height: 0;
+`
+
+const ModalTabsWrapper = styled('div')`
+  margin: 0 ${(props) => props.theme.grid.unit * 8}px ${(props) => props.theme.grid.unit * 3}px;
 `
 
 const ShortcutTabPanel = styled(InspectorTabPanel).attrs({
@@ -153,10 +155,21 @@ const ShortcutTabPanel = styled(InspectorTabPanel).attrs({
 const StyledModalSidebar = styled(ModalSidebar)`
   position: relative;
   background: white;
-  width: min(560px, 92vw);
-  max-height: 72vh;
+  max-width: none;
+  width: min(664px, 90vw);
   display: flex;
   flex-direction: column;
+  padding: 0;
+`
+
+const StyledModalSidebarHeader = styled(ModalSidebarHeader)`
+  margin: 0 ${(props) => props.theme.grid.unit * 8}px;
+  padding: 0;
+`
+
+const StyledModalSidebarTitle = styled(ModalSidebarTitle)`
+  margin: ${(props) => props.theme.grid.unit * 6}px 0;
+  padding: 0;
 `
 
 const StyledModalBody = styled(ModalBody)`
@@ -173,6 +186,7 @@ const StyledSidebarContent = styled(SidebarContent)`
   flex: 1;
   min-height: 0;
   gap: ${(props) => props.theme.grid.unit * 2}px;
+  padding: 0;
 `
 
 const Section = styled.section`
@@ -184,7 +198,7 @@ const Section = styled.section`
 `
 
 const SectionTitle = styled.h3`
-  margin: 0 0 ${(props) => props.theme.grid.unit * 2}px;
+  margin: 0 ${(props) => props.theme.grid.unit * 8}px ${(props) => props.theme.grid.unit * 2}px;
   font-size: ${(props) => props.theme.font.size.large};
   font-weight: ${(props) => props.theme.font.weight.normal};
   line-height: ${(props) => props.theme.font.lineHeight.large};
@@ -192,16 +206,15 @@ const SectionTitle = styled.h3`
 `
 
 const ShortcutTable = styled.div`
-  width: 100%;
   border-collapse: collapse;
   font-size: ${(props) => props.theme.font.size.normal};
+  margin: 0 ${(props) => props.theme.grid.unit * 8}px;
 `
 const ShortcutRow = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: ${({ theme }) => theme.grid.unit * 1.5}px 0;
-  margin: ${({ theme }) => theme.grid.unit * 1.5}px 0;
 `
 const ShortcutLabel = styled.div`
   padding: ${(props) => props.theme.grid.unit * 1.5}px
@@ -220,7 +233,8 @@ const ShortcutKeys = styled.div`
 `
 
 const ButtonsContainer = styled(ButtonGroup)`
-  padding-top: ${(props) => props.theme.grid.unit * 5}px;
+  padding: ${(props) => props.theme.grid.unit * 4}px 0;
+  margin: 0 ${(props) => props.theme.grid.unit * 8}px;
   flex-shrink: 0;
 `
 
