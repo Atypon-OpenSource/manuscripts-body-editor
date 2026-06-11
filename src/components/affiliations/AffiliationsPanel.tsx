@@ -46,8 +46,7 @@ export const AffiliationsPanel: React.FC<AffiliationsPanelProps> = ({
 
   return (
     <GenericPanel
-      title="Institutional Affiliations"
-      createLabel="Create New Affiliation"
+      createLabel="New Affiliation"
       onCreate={onOpenAffiliationsModal}
       createDataCy="add-affiliations-link"
       emptyDataCy="affiliations-panel-empty"
@@ -57,7 +56,7 @@ export const AffiliationsPanel: React.FC<AffiliationsPanelProps> = ({
         <>
           There are no affiliations attributed yet!
           <br />
-          Click &lsquo;Create New Affiliation&rsquo;
+          Click &lsquo;+ New Affiliation&rsquo;
         </>
       }
     >
