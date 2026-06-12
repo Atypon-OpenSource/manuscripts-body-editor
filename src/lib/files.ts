@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ManuscriptNode, schema } from '@manuscripts/transform'
+import { ManuscriptNode, schema, SupplementNode, isSupplementWeblink } from '@manuscripts/transform'
 import { findChildrenByType } from 'prosemirror-utils'
 
 import { isHidden } from './track-changes-utils'
+
+import { NodeWeblink } from './supplements'
 
 export type FileAttachment = {
   id: string
@@ -40,6 +42,7 @@ export type ElementFiles = {
 export type ManuscriptFiles = {
   figures: ElementFiles[]
   supplements: NodeFile[]
+  weblinks: NodeWeblink[]
   attachments: NodeFile[]
   linkedFiles: NodeFile[]
   others: FileAttachment[]
@@ -94,6 +97,7 @@ export const groupFiles = (
   const fileMap = new Map(files.map((f) => [f.id, f]))
   const figures: ElementFiles[] = []
   const supplements: NodeFile[] = []
+  const weblinks: NodeWeblink[] = []
   const linkedFiles: NodeFile[] = []
   const attachments: NodeFile[] = []
 
@@ -155,11 +159,20 @@ export const groupFiles = (
       }
     }
     if (node.type === schema.nodes.supplement) {
-      supplements.push({
-        node,
-        pos,
-        file: getFile(node.attrs.href),
-      })
+      const href = node.attrs.href as string
+      if (isSupplementWeblink(href)) {
+        weblinks.push({
+          node: node as SupplementNode,
+          pos,
+          url: href,
+        })
+      } else {
+        supplements.push({
+          node,
+          pos,
+          file: getFile(href),
+        })
+      }
     }
     if (node.type === schema.nodes.attachment) {
       attachments.push({
@@ -173,6 +186,7 @@ export const groupFiles = (
   return {
     figures,
     supplements,
+    weblinks,
     attachments,
     linkedFiles,
     others: [...fileMap.values()],

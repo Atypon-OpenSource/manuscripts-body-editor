@@ -22,7 +22,14 @@ import { createNodeView } from './creators'
 export class CaptionTitleView extends BaseNodeView<CaptionTitleNode> {
   public initialise = () => {
     this.createDOM()
+    this.updateContents()
   }
+
+  public updateContents() {
+    super.updateContents()
+    this.dom.classList.toggle('empty-node', !this.node.textContent.length)
+  }
+
   protected createDOM() {
     this.dom = document.createElement('label')
     this.dom.className = 'caption-title placeholder'

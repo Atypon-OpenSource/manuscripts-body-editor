@@ -15,11 +15,12 @@
  */
 
 import { getFileIcon } from '@manuscripts/style-guide'
-import { SupplementNode } from '@manuscripts/transform'
+import { isSupplementWeblink, SupplementNode } from '@manuscripts/transform'
 import { renderToStaticMarkup } from 'react-dom/server'
 
-import { draggableIcon } from '../icons'
+import { draggableIcon, webLinkIcon } from '../icons'
 import { findNodeByID } from '../lib/doc'
+import { allowedHref } from '../lib/url'
 import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
@@ -175,9 +176,32 @@ export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
     this.supplementInfoEl.classList.add('supplement-file-info')
     this.supplementInfoEl.contentEditable = 'false'
 
+    const href = this.node.attrs.href
+
+    if (isSupplementWeblink(href)) {
+      const iconElement = document.createElement('span')
+      iconElement.classList.add('supplement-file-icon')
+      iconElement.innerHTML = webLinkIcon
+      this.supplementInfoEl.appendChild(iconElement)
+
+      const urlLink = document.createElement('a')
+      urlLink.classList.add('supplement-weblink-url')
+      urlLink.textContent = href
+      if (allowedHref(href)) {
+        urlLink.href = href
+        urlLink.target = '_blank'
+        urlLink.rel = 'noopener noreferrer'
+      }
+      urlLink.addEventListener('mousedown', (e) => e.stopPropagation())
+      this.supplementInfoEl.appendChild(urlLink)
+
+      this.dom.appendChild(this.supplementInfoEl)
+      return
+    }
+
     // Get the file from the file management system
     const files = this.props.getFiles()
-    const file = files.find((f) => f.id === this.node.attrs.href)
+    const file = files.find((f) => f.id === href)
 
     if (file) {
       const iconElement = document.createElement('span')

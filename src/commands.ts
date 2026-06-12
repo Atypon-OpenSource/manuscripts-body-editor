@@ -517,6 +517,48 @@ export const insertSupplement = (
   return true
 }
 
+export const insertSupplementWeblink = (
+  url: string,
+  title: string,
+  view: ManuscriptEditorView
+) => {
+  const supplement = schema.nodes.supplement.createAndFill(
+    {
+      id: generateNodeID(schema.nodes.supplement),
+      href: url
+    },
+    createAndFillCaption()
+  ) as SupplementNode
+
+  const tr = view.state.tr
+  const { pos } = upsertSupplementsSection(tr, supplement)
+  tr.setSelection(NodeSelection.create(tr.doc, pos))
+  view.focus()
+  view.dispatch(skipTracking(tr.scrollIntoView()))
+
+  return true
+}
+
+export const updateSupplementWeblink = (
+  pos: number,
+  url: string,
+  title: string,
+  view: ManuscriptEditorView
+) => {
+  const node = view.state.doc.nodeAt(pos)
+  if (!node) {
+    return false
+  }
+  const tr = view.state.tr
+  tr.setNodeMarkup(pos, undefined, {
+    ...node.attrs,
+    href: url,
+    title: title,
+    })
+  view.dispatch(skipTracking(tr))
+  return true
+}
+
 export const insertAttachment = (
   file: FileAttachment,
   state: ManuscriptEditorState,

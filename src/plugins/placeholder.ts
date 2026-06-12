@@ -125,6 +125,12 @@ export default () =>
                 decorations.push(
                   Decoration.widget(pos + 1, placeholderWidget(text))
                 )
+              } else if (parent?.type === schema.nodes.caption) {
+                decorations.push(
+                  Decoration.node(pos, pos + node.nodeSize, {
+                    class: 'empty-node',
+                  })
+                )
               }
             } else if (node.type === node.type.schema.nodes.section_title) {
               const $pos = state.doc.resolve(pos)
