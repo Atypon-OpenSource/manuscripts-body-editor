@@ -43,14 +43,6 @@ const PanelHeader = styled.div`
     ${(props) => props.theme.grid.unit * 4}px;
 `
 
-const PanelTitle = styled.span`
-  font-family: ${(props) => props.theme.font.family.sans};
-  font-size: 18px;
-  line-height: 24px;
-  letter-spacing: -0.37px;
-  color: ${(props) => props.theme.colors.text.secondary};
-`
-
 const PanelCreateButton = styled(IconButton)`
   color: #0d79d0;
   font-size: 14px;
@@ -97,7 +89,6 @@ const PanelEmptyText = styled.p`
 `
 
 export interface GenericPanelProps {
-  title: string
   createLabel: string
   onCreate: () => void
   createDataCy: string
@@ -109,7 +100,6 @@ export interface GenericPanelProps {
 }
 
 export const GenericPanel: React.FC<GenericPanelProps> = ({
-  title,
   createLabel,
   onCreate,
   createDataCy,
@@ -121,7 +111,6 @@ export const GenericPanel: React.FC<GenericPanelProps> = ({
 }) => (
   <Panel>
     <PanelHeader>
-      <PanelTitle>{title}</PanelTitle>
       <PanelCreateButton onClick={onCreate} data-cy={createDataCy}>
         <PlusIcon />
         {createLabel}
