@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ManuscriptNode, schema, SupplementNode, isSupplementWeblink } from '@manuscripts/transform'
+import { ManuscriptNode, schema, SupplementNode } from '@manuscripts/transform'
 import { findChildrenByType } from 'prosemirror-utils'
 
 import { isHidden } from './track-changes-utils'
 
 import { NodeWeblink } from './supplements'
+import { allowedHref } from './url'
 
 export type FileAttachment = {
   id: string
@@ -160,7 +161,7 @@ export const groupFiles = (
     }
     if (node.type === schema.nodes.supplement) {
       const href = node.attrs.href as string
-      if (isSupplementWeblink(href)) {
+      if (allowedHref(href)) {
         weblinks.push({
           node: node as SupplementNode,
           pos,

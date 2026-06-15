@@ -15,7 +15,7 @@
  */
 
 import { getFileIcon } from '@manuscripts/style-guide'
-import { isSupplementWeblink, SupplementNode } from '@manuscripts/transform'
+import { SupplementNode } from '@manuscripts/transform'
 import { renderToStaticMarkup } from 'react-dom/server'
 
 import { draggableIcon, webLinkIcon } from '../icons'
@@ -24,6 +24,7 @@ import { allowedHref } from '../lib/url'
 import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
+
 
 export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
   private supplementInfoEl: HTMLDivElement
@@ -178,7 +179,7 @@ export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
 
     const href = this.node.attrs.href
 
-    if (isSupplementWeblink(href)) {
+    if (allowedHref(href)) {
       const iconElement = document.createElement('span')
       iconElement.classList.add('supplement-file-icon')
       iconElement.innerHTML = webLinkIcon

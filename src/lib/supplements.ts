@@ -15,7 +15,6 @@
  */
 
 import {
-  isSupplementWeblink,
   ManuscriptEditorView,
   ManuscriptNode,
   schema,
@@ -48,7 +47,7 @@ export const getSupplementDisplayLabel = (
   files: { id: string; name: string }[]
 ): string => {
   const href = node.attrs.href
-  if (isSupplementWeblink(href)) {
+  if (allowedHref(href)) {
     return href
   }
 
