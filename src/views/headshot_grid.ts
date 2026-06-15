@@ -35,6 +35,8 @@ export class HeadshotGridView extends BlockView<HeadshotGridNode> {
   private addHeadshotButton: HTMLElement
   private removeKeydownListener?: () => void
 
+  public ignoreMutation = () => true
+
   public createElement = () => {
     this.container = document.createElement('div')
     this.container.classList.add('block', 'headshot-grid-container')
