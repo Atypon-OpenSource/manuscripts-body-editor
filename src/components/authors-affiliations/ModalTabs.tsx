@@ -29,12 +29,12 @@ export const ModalTabs: React.FC<ModalTabsProps> = ({
   tabErrorIndicators,
   tabWarningIndicators,
 }) => (
-  <StyledTabList>
+  <StyledTabList data-cy="ModalTabs">
     {tabLabels.map((label, i) => {
       const hasError = tabErrorIndicators?.[i]
       const showWarning = tabWarningIndicators?.[i] && !hasError
       return (
-        <StyledTab key={label}>
+        <StyledTab key={label} data-cy="ModalTab">
           {label}
           {(showWarning || hasError) && (
             <TabIndicatorGroup role="presentation">
