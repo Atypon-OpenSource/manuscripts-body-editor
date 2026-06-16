@@ -1756,9 +1756,10 @@ th:hover > .table-context-menu-button,
 .ProseMirror .layout-header {
   font-size: 18px;
   font-weight: 400;
-  padding: 0 16px;
+  padding: 4px 8px;
+  padding-right: 5px;
   margin: 8px;
-  background: #fff;
+  background: unset;
   border: none;
 }
 

@@ -76,7 +76,7 @@ export class HeroImageView extends BlockView<Trackable<FigureElementNode>> {
     this.container.appendChild(this.createPanel())
     this.container.appendChild(this.createLayoutPanel())
 
-    this.layoutOptions = this.creatLayoutOptions()
+    this.layoutOptions = this.createLayoutOptions()
     this.layoutOptions.addEventListener('change', this.onSelectOption, {
       signal: this.abortController.signal,
     })
@@ -160,12 +160,12 @@ export class HeroImageView extends BlockView<Trackable<FigureElementNode>> {
     return panel
   }
 
-  creatLayoutOptions() {
+  createLayoutOptions() {
     const optionsGroup = document.createElement('div')
     optionsGroup.className = 'layout-options-group'
 
-    LAYOUT_OPTIONS_CONFIG.map(({ label, icon, attr }) => {
-      const image = document.createElement('div')
+    LAYOUT_OPTIONS_CONFIG.forEach(({ label, icon, attr }) => {
+      const image = document.createElement('span')
       image.className = 'layout-option-image'
       image.innerHTML = icon
 
@@ -177,13 +177,13 @@ export class HeroImageView extends BlockView<Trackable<FigureElementNode>> {
 
       const inputLabel = document.createElement('span')
       inputLabel.className = 'layout-option-label'
-      inputLabel.innerText = label
+      inputLabel.textContent = label
 
-      const wrapper = document.createElement('div')
+      const wrapper = document.createElement('span')
       wrapper.className = 'layout-option-label-wrapper'
       wrapper.append(input, inputLabel)
 
-      const container = document.createElement('label')
+      const container = document.createElement('div')
       container.className = 'layout-option'
       container.append(image, wrapper)
       optionsGroup.appendChild(container)
