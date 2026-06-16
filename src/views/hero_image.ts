@@ -60,7 +60,7 @@ const LAYOUT_OPTIONS_CONFIG = [
 export class HeroImageView extends BlockView<Trackable<FigureElementNode>> {
   private container: HTMLElement
   private layoutOptions: HTMLElement
-  private layoutOptionsController: AbortController
+  private abortController: AbortController
   private collapsed = false
   private layoutPanelCollapsed = false
 
@@ -71,13 +71,14 @@ export class HeroImageView extends BlockView<Trackable<FigureElementNode>> {
     this.container.classList.add('block', 'hero-image-container')
     this.dom.appendChild(this.container)
 
+    this.abortController = new AbortController()
+
     this.container.appendChild(this.createPanel())
     this.container.appendChild(this.createLayoutPanel())
 
     this.layoutOptions = this.creatLayoutOptions()
-    this.layoutOptionsController = new AbortController()
     this.layoutOptions.addEventListener('change', this.onSelectOption, {
-      signal: this.layoutOptionsController.signal,
+      signal: this.abortController.signal,
     })
 
     this.container.appendChild(this.layoutOptions)
@@ -116,7 +117,7 @@ export class HeroImageView extends BlockView<Trackable<FigureElementNode>> {
       'keydown',
       handleEnterKey(handleToggle),
       {
-        signal: this.layoutOptionsController.signal,
+        signal: this.abortController.signal,
       }
     )
 
@@ -151,7 +152,7 @@ export class HeroImageView extends BlockView<Trackable<FigureElementNode>> {
 
     toggleBtn.onclick = handleToggle
     toggleBtn.addEventListener('keydown', handleEnterKey(handleToggle), {
-      signal: this.layoutOptionsController.signal,
+      signal: this.abortController.signal,
     })
 
     panel.appendChild(label)
@@ -204,7 +205,7 @@ export class HeroImageView extends BlockView<Trackable<FigureElementNode>> {
   }
 
   destroy() {
-    this.layoutOptionsController?.abort()
+    this.abortController?.abort()
     super.destroy()
   }
 }
