@@ -165,7 +165,6 @@ export const groupFiles = (
         weblinks.push({
           node: node as SupplementNode,
           pos,
-          url: href,
         })
       } else {
         supplements.push({

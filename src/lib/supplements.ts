@@ -20,26 +20,13 @@ import {
   schema,
   SupplementNode,
 } from '@manuscripts/transform'
-import { skipTracking } from '@manuscripts/track-changes-plugin'
-import { findChildren, findParentNodeClosestToPos } from 'prosemirror-utils'
+import { findParentNodeClosestToPos } from 'prosemirror-utils'
 
 import { allowedHref } from './url'
 
 export type NodeWeblink = {
   node: SupplementNode
   pos: number
-  url: string
-}
-
-export const isValidWeblinkUrl = (url: string): boolean => allowedHref(url)
-
-export const getSupplementCaptionTitle = (node: SupplementNode): string => {
-  const captionTitle = findChildren(
-    node,
-    (child) => child.type === schema.nodes.caption_title
-  )[0]
-
-  return captionTitle?.node.textContent.trim() ?? ''
 }
 
 export const getSupplementDisplayLabel = (
@@ -71,7 +58,7 @@ export const performDeleteSupplement = (
     from,
     to
   )
-  view.dispatch(skipTracking(view.state.tr.delete(deleteFrom, deleteTo)))
+  view.dispatch(view.state.tr.delete(deleteFrom, deleteTo))
   return true
 }
 
