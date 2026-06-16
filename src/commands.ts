@@ -534,7 +534,7 @@ export const insertSupplementWeblink = (
   const { pos } = upsertSupplementsSection(tr, supplement)
   tr.setSelection(NodeSelection.create(tr.doc, pos))
   view.focus()
-  view.dispatch(skipTracking(tr.scrollIntoView()))
+  view.dispatch(tr.scrollIntoView())
 
   return true
 }
