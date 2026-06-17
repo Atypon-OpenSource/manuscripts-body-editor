@@ -161,6 +161,7 @@ export class HeroImageView extends BlockView<Trackable<FigureElementNode>> {
   }
 
   createLayoutOptions() {
+    const can = this.props.getCapabilities()
     const optionsGroup = document.createElement('div')
     optionsGroup.className = 'layout-options-group'
 
@@ -173,6 +174,7 @@ export class HeroImageView extends BlockView<Trackable<FigureElementNode>> {
       input.type = 'radio'
       input.name = 'layout-option'
       input.value = attr
+      input.disabled = !can.editMetadata
       input.checked = attr === this.node.attrs.type
 
       const inputLabel = document.createElement('span')
