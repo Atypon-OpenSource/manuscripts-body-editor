@@ -555,7 +555,7 @@ export const updateSupplementWeblink = (
     href: url,
     title: title,
     })
-  view.dispatch(skipTracking(tr))
+  view.dispatch(tr)
   return true
 }
 

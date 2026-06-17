@@ -20,7 +20,7 @@ import {
   schema,
   SupplementNode,
 } from '@manuscripts/transform'
-import { findParentNodeClosestToPos } from 'prosemirror-utils'
+import { findChildrenByType, findParentNodeClosestToPos } from 'prosemirror-utils'
 
 import { allowedHref } from './url'
 
@@ -78,9 +78,15 @@ export const deleteSupplementAtPos = (
   }
 
   const { node: supplementsNode, pos: supplementsPos } = supplementsNodeWithPos
-  const lastSupplement = supplementsNode.childCount === 2
+  //const lastSupplement = supplementsNode.childCount === 2
 
-  if (lastSupplement) {
+  const supplements = findChildrenByType(
+    supplementsNode,
+    schema.nodes.supplement
+  )
+  const isDeletingLastSupplement = supplements.length === 1
+
+  if (isDeletingLastSupplement) {
     return {
       from: supplementsPos,
       to: supplementsPos + supplementsNode.nodeSize,
