@@ -401,10 +401,6 @@ ProseMirror .block-embed .position-menu {
   margin-left: 52px;
 }
 
-.ProseMirror .box-element > .caption-title {
-  margin-right: 52px;
-}
-
 .ProseMirror
   .box-element
   .block-section_title

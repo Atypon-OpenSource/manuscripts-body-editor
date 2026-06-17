@@ -40,8 +40,7 @@ export const AuthorsPanel: React.FC<AuthorsPanelProps> = ({
 
   return (
     <GenericPanel
-      title="Authors"
-      createLabel="Add New Author"
+      createLabel="New Author"
       onCreate={openAuthorsModal}
       createDataCy="add-authors-link"
       emptyDataCy="authors-panel-empty"
@@ -51,7 +50,7 @@ export const AuthorsPanel: React.FC<AuthorsPanelProps> = ({
         <>
           There are no authors attributed yet!
           <br />
-          Click &lsquo;Add New Author&rsquo;
+          Click &lsquo;+ New Author&rsquo;
         </>
       }
     >

@@ -119,7 +119,7 @@ export function createSubViewAsync<T extends Trackable<ManuscriptNode>>(
   getPos: () => number,
   view: ManuscriptEditorView,
   classNames: string[] = []
-) {
+): Promise<HTMLDivElement> {
   const container = document.createElement('div')
   const Wrapped = createView<T>(
     props,
@@ -133,15 +133,13 @@ export function createSubViewAsync<T extends Trackable<ManuscriptNode>>(
   )
 
   const root = createRoot(container)
-  const res = new Promise<HTMLDivElement>((resolve) => {
-    queueMicrotask(() => {
-      flushSync(() => {
-        root.render(<Wrapped />)
-      })
-      resolve(container)
+
+  return new Promise<HTMLDivElement>((resolve) => {
+    flushSync(() => {
+      root.render(<Wrapped />)
     })
+    resolve(container)
   })
-  return res
 }
 
 export default createSubView
