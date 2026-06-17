@@ -71,7 +71,7 @@ const ReferenceButton = withNavigableListItem(styled.div`
     fill: #c9c9c9;
   }
 
-  :hover {
+  &:hover {
     background: ${(props) => props.theme.colors.background.info};
   }
 
