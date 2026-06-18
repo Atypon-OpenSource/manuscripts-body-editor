@@ -78,7 +78,6 @@ export const deleteSupplementAtPos = (
   }
 
   const { node: supplementsNode, pos: supplementsPos } = supplementsNodeWithPos
-  //const lastSupplement = supplementsNode.childCount === 2
 
   const supplements = findChildrenByType(
     supplementsNode,
