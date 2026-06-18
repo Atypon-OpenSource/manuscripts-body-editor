@@ -23,10 +23,15 @@ import {
 
 import { EditorProps } from '../configs/ManuscriptsEditor'
 import { imageDefaultIcon, imageLeftIcon, imageRightIcon } from '../icons'
-import { figurePositions } from '../views/image_element'
 import ReactSubView from '../views/ReactSubView'
 import { handleEnterKey } from './navigation-utils'
 import { updateNodeAttrs } from './view'
+
+export enum HorizontalPositions {
+  left = 'half-left',
+  right = 'half-right',
+  default = '',
+}
 
 export interface PopperMenuPositionOption {
   label: string
@@ -53,24 +58,24 @@ export const createPositionOptions = <T extends ManuscriptNode>(
   return [
     {
       title: 'Left',
-      action: createAction(figurePositions.left),
+      action: createAction(HorizontalPositions.left),
       IconComponent: imageLeftIcon,
       iconName: 'ImageLeft',
-      selected: currentPosition === figurePositions.left,
+      selected: currentPosition === HorizontalPositions.left,
     },
     {
       title: 'Center',
-      action: createAction(figurePositions.default),
+      action: createAction(HorizontalPositions.default),
       IconComponent: imageDefaultIcon,
       iconName: 'ImageDefault',
       selected: !currentPosition,
     },
     {
       title: 'Right',
-      action: createAction(figurePositions.right),
+      action: createAction(HorizontalPositions.right),
       IconComponent: imageRightIcon,
       iconName: 'ImageRight',
-      selected: currentPosition === figurePositions.right,
+      selected: currentPosition === HorizontalPositions.right,
     },
   ]
 }
@@ -135,10 +140,10 @@ export const setElementPositionAlignment = (
   position: string
 ): void => {
   switch (position) {
-    case figurePositions.left:
+    case HorizontalPositions.left:
       element.setAttribute('data-alignment', 'left')
       break
-    case figurePositions.right:
+    case HorizontalPositions.right:
       element.setAttribute('data-alignment', 'right')
       break
     default:
@@ -161,10 +166,10 @@ export const createPositionMenuWrapper = (
 
   let icon
   switch (currentPosition) {
-    case figurePositions.left:
+    case HorizontalPositions.left:
       icon = imageLeftIcon
       break
-    case figurePositions.right:
+    case HorizontalPositions.right:
       icon = imageRightIcon
       break
     default:
@@ -181,4 +186,44 @@ export const createPositionMenuWrapper = (
   }
   positionMenuWrapper.appendChild(positionMenuButton)
   return positionMenuWrapper
+}
+
+export const getHorizontalPositionOptions = (
+  current: string,
+  onPick: (newPos: HorizontalPositions) => void,
+  destroy: () => void
+) => {
+  const componentProps = {
+    actions: [
+      {
+        label: 'Left',
+        action: () => {
+          destroy()
+          onPick(HorizontalPositions.left)
+        },
+        icon: 'ImageLeft',
+        selected: current === HorizontalPositions.left,
+      },
+      {
+        label: 'Default',
+        action: () => {
+          destroy()
+          onPick(HorizontalPositions.default)
+        },
+        icon: 'ImageDefault',
+        selected: !current,
+      },
+      {
+        label: 'Right',
+        action: () => {
+          destroy()
+          onPick(HorizontalPositions.right)
+        },
+        icon: 'ImageRight',
+        selected: current === HorizontalPositions.right,
+      },
+    ],
+  }
+
+  return componentProps
 }

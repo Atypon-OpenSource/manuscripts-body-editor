@@ -24,17 +24,15 @@ import {
   MediaType,
 } from '../lib/media'
 import { handleEnterKey } from '../lib/navigation-utils'
-import { createPositionMenuWrapper } from '../lib/position-menu'
+import {
+  createPositionMenuWrapper,
+  getHorizontalPositionOptions,
+  HorizontalPositions,
+} from '../lib/position-menu'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
-
-export enum figurePositions {
-  left = 'half-left',
-  right = 'half-right',
-  default = '',
-}
 
 export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
   public container: HTMLElement
@@ -102,7 +100,8 @@ export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
       }
 
       const firstFigure = this.getFirstFigure()
-      this.figurePosition = firstFigure?.attrs.type || figurePositions.default
+      this.figurePosition =
+        firstFigure?.attrs.type || HorizontalPositions.default
 
       this.positionMenuWrapper = createPositionMenuWrapper(
         this.figurePosition,
@@ -174,39 +173,11 @@ export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
 
     this.props.popper.destroy()
 
-    const options = [
-      {
-        label: 'Left',
-        action: () => {
-          this.props.popper.destroy()
-          this.updateAllFiguresPosition(figurePositions.left)
-        },
-        icon: 'ImageLeft',
-        selected: this.figurePosition === figurePositions.left,
-      },
-      {
-        label: 'Default',
-        action: () => {
-          this.props.popper.destroy()
-          this.updateAllFiguresPosition(figurePositions.default)
-        },
-        icon: 'ImageDefault',
-        selected: !this.figurePosition,
-      },
-      {
-        label: 'Right',
-        action: () => {
-          this.props.popper.destroy()
-          this.updateAllFiguresPosition(figurePositions.right)
-        },
-        icon: 'ImageRight',
-        selected: this.figurePosition === figurePositions.right,
-      },
-    ]
-
-    const componentProps = {
-      actions: options,
-    }
+    const componentProps = getHorizontalPositionOptions(
+      this.figurePosition,
+      this.updateAllFiguresPosition.bind(this),
+      this.props.popper.destroy
+    )
 
     this.props.popper.show(
       this.positionMenuWrapper,
