@@ -18,23 +18,20 @@ import { BoxElementNode } from '@manuscripts/transform'
 
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-import {
-  createPositionMenuWrapper,
-  getHorizontalPositionOptions,
-  HorizontalPositions,
-} from '../lib/position-menu'
-import ReactSubView from './ReactSubView'
-import { ContextMenu } from '@manuscripts/style-guide'
+import { HorizontalPositionMenu } from '../lib/position-menu'
 
 export class BoxElementView extends BlockView<BoxElementNode> {
   public elementType = 'div'
-  private positionMenuWrapper: HTMLDivElement
+  container: HTMLDivElement
 
   public createElement = () => {
     this.contentDOM = document.createElement(this.elementType)
     this.contentDOM.className = 'block box-element'
     this.contentDOM.setAttribute('id', this.node.attrs.id)
-    this.dom.appendChild(this.contentDOM)
+    this.container = document.createElement('div')
+    this.container.classList.add('container')
+    this.container.appendChild(this.contentDOM)
+    this.dom.appendChild(this.container)
   }
 
   public updateContents() {
@@ -46,52 +43,23 @@ export class BoxElementView extends BlockView<BoxElementNode> {
     this.addPositionMenu()
   }
 
-  private posMenuSelector = 'position-menu'
+  private positionMenu: HorizontalPositionMenu
 
   protected addPositionMenu() {
-    if (this.props.getCapabilities()?.editArticle) {
-      // Remove existing position menu if it exists
-      const existingMenu = this.dom.querySelector('.' + this.posMenuSelector)
-      if (existingMenu) {
-        existingMenu.remove()
-      }
-
-      this.positionMenuWrapper = createPositionMenuWrapper(
-        this.node.attrs.type || HorizontalPositions.default,
-        this.showPositionMenu,
-        this.props
+    if (!this.positionMenu) {
+      this.positionMenu = new HorizontalPositionMenu(
+        this,
+        this.updateHorizontalPosition,
+        this.container
       )
-      this.dom.prepend(this.positionMenuWrapper)
     }
+    this.positionMenu.create()
   }
 
   private updateHorizontalPosition(horizontalPosition: string) {
     const tr = this.view.state.tr
     tr.setNodeAttribute(this.getPos(), 'type', horizontalPosition)
     this.view.dispatch(tr)
-  }
-
-  private showPositionMenu = () => {
-    this.props.popper.destroy()
-    const componentProps = getHorizontalPositionOptions(
-      this.node.attrs.type,
-      this.updateHorizontalPosition.bind(this),
-      this.props.popper.destroy
-    )
-    this.props.popper.show(
-      this.positionMenuWrapper,
-      ReactSubView(
-        this.props,
-        ContextMenu,
-        componentProps,
-        this.node,
-        this.getPos,
-        this.view,
-        ['context-menu', this.posMenuSelector]
-      ),
-      'left',
-      false
-    )
   }
 }
 

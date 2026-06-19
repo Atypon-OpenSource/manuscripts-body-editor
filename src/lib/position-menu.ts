@@ -26,6 +26,7 @@ import { imageDefaultIcon, imageLeftIcon, imageRightIcon } from '../icons'
 import ReactSubView from '../views/ReactSubView'
 import { handleEnterKey } from './navigation-utils'
 import { updateNodeAttrs } from './view'
+import BlockView from '../views/block_view'
 
 export enum HorizontalPositions {
   left = 'half-left',
@@ -226,4 +227,78 @@ export const getHorizontalPositionOptions = (
   }
 
   return componentProps
+}
+
+export class HorizontalPositionMenu {
+  private parent: BlockView<ManuscriptNode>
+
+  posMenuSelector = 'position-menu'
+  onChange: (newPos: HorizontalPositions) => void
+  positionMenuWrapper: HTMLDivElement
+  location: HTMLElement
+  positionSource: ManuscriptNode
+
+  constructor(
+    parent: BlockView<ManuscriptNode>,
+    onChange: (newPos: HorizontalPositions) => void,
+    location?: HTMLElement,
+    positionSource?: ManuscriptNode // if different from parent as in figure element case
+  ) {
+    const preSource = positionSource || parent.node
+    if (typeof preSource.attrs.type === 'undefined') {
+      console.warn("This node doesn't support horizontal alignment")
+      return
+    }
+    this.positionSource = preSource
+    this.location = location || parent.dom
+    this.onChange = onChange.bind(parent)
+    this.parent = parent
+    this.create()
+  }
+
+  showPositionMenu() {
+    const p = this.parent
+    p.props.popper.destroy()
+
+    const componentProps = getHorizontalPositionOptions(
+      this.positionSource.attrs.type,
+      this.onChange,
+      p.props.popper.destroy
+    )
+    p.props.popper.show(
+      this.positionMenuWrapper,
+      ReactSubView(
+        p.props,
+        ContextMenu,
+        componentProps,
+        p.node,
+        p.getPos,
+        p.view,
+        ['context-menu', this.posMenuSelector]
+      ),
+      'left',
+      false
+    )
+  }
+
+  create() {
+    console.log(this)
+    const p = this.parent
+    if (p.props.getCapabilities()?.editArticle) {
+      // Remove existing position menu if it exists
+      const existingMenu = this.location.querySelector(
+        '.' + this.posMenuSelector
+      )
+      if (existingMenu) {
+        existingMenu.remove()
+      }
+
+      this.positionMenuWrapper = createPositionMenuWrapper(
+        this.positionSource.attrs.type || HorizontalPositions.default,
+        this.showPositionMenu.bind(this),
+        p.props
+      )
+      this.location.prepend(this.positionMenuWrapper)
+    }
+  }
 }

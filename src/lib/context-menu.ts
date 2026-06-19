@@ -247,29 +247,34 @@ export class ContextMenu {
     const $pos = this.resolvePos()
     const isBox = isBoxElementSectionTitle($pos, this.node)
     const type = isBox ? schema.nodes.box_element : this.node.type
+    const positionableTypes = [
+      schema.nodes.figure_element,
+      schema.nodes.image_element,
+      schema.nodes.box_element,
+      schema.nodes.pullquote_element,
+      schema.nodes.table_element,
+    ]
 
-    if (
-      type === schema.nodes.figure_element ||
-      type === schema.nodes.image_element
-    ) {
+    if (positionableTypes.includes(type)) {
+      let attrType = this.node.attrs.type
       const figure = getMatchingChild(
         this.node,
         (node) => node.type === schema.nodes.figure
       )
 
       if (figure) {
-        const attrType = figure.attrs.type
-        const submenuOptions = createPositionOptions(
-          schema.nodes.figure,
-          figure,
-          attrType,
-          this.view,
-          () => popper.destroy()
-        )
-        const submenuLabel = 'Position'
-        const submenu = this.createSubmenu(submenuLabel, submenuOptions)
-        menu.appendChild(submenu)
+        attrType = figure.attrs.type
       }
+      const submenuOptions = createPositionOptions(
+        schema.nodes.figure,
+        figure || this.node,
+        attrType,
+        this.view,
+        () => popper.destroy()
+      )
+      const submenuLabel = 'Position'
+      const submenu = this.createSubmenu(submenuLabel, submenuOptions)
+      menu.appendChild(submenu)
     }
 
     if (type === schema.nodes.list) {
