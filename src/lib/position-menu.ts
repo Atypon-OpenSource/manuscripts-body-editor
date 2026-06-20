@@ -195,46 +195,6 @@ export const createPositionMenuWrapper = (
   return positionMenuWrapper
 }
 
-export const getHorizontalPositionOptions = (
-  current: string,
-  onPick: (newPos: HorizontalPositions) => void,
-  destroy: () => void
-) => {
-  const componentProps = {
-    actions: [
-      {
-        label: 'Left',
-        action: () => {
-          destroy()
-          onPick(HorizontalPositions.left)
-        },
-        icon: 'ImageLeft',
-        selected: current === HorizontalPositions.left,
-      },
-      {
-        label: 'Default',
-        action: () => {
-          destroy()
-          onPick(HorizontalPositions.default)
-        },
-        icon: 'ImageDefault',
-        selected: !current,
-      },
-      {
-        label: 'Right',
-        action: () => {
-          destroy()
-          onPick(HorizontalPositions.right)
-        },
-        icon: 'ImageRight',
-        selected: current === HorizontalPositions.right,
-      },
-    ],
-  }
-
-  return componentProps
-}
-
 export class HorizontalPositionMenu {
   private parent: BlockView<ManuscriptNode>
 
@@ -242,13 +202,13 @@ export class HorizontalPositionMenu {
   onChange: (newPos: HorizontalPositions) => void
   positionMenuWrapper: HTMLDivElement
   location: HTMLElement
-  getPositionSource?: () => ManuscriptNode
+  getPositionSource?: () => ManuscriptNode | null
 
   constructor(
     parent: BlockView<ManuscriptNode>,
     onChange: (newPos: HorizontalPositions) => void,
     location?: HTMLElement,
-    getPositionSource?: () => ManuscriptNode // if different from parent as in figure element case
+    getPositionSource?: () => ManuscriptNode | null // if different from parent as in figure element case
   ) {
     const preSource = getPositionSource?.() || parent.node
     if (typeof preSource.attrs.type === 'undefined') {
@@ -262,6 +222,46 @@ export class HorizontalPositionMenu {
     this.create()
   }
 
+  getHorizontalPositionOptions(
+    current: string,
+    onPick: (newPos: HorizontalPositions) => void,
+    destroy: () => void
+  ) {
+    const componentProps = {
+      actions: [
+        {
+          label: 'Left',
+          action: () => {
+            destroy()
+            onPick(HorizontalPositions.left)
+          },
+          icon: 'ImageLeft',
+          selected: current === HorizontalPositions.left,
+        },
+        {
+          label: 'Default',
+          action: () => {
+            destroy()
+            onPick(HorizontalPositions.default)
+          },
+          icon: 'ImageDefault',
+          selected: !current,
+        },
+        {
+          label: 'Right',
+          action: () => {
+            destroy()
+            onPick(HorizontalPositions.right)
+          },
+          icon: 'ImageRight',
+          selected: current === HorizontalPositions.right,
+        },
+      ],
+    }
+
+    return componentProps
+  }
+
   showPositionMenu() {
     const p = this.parent
     p.props.popper.destroy()
@@ -270,10 +270,10 @@ export class HorizontalPositionMenu {
       ? this.getPositionSource()
       : this.parent.node
 
-    const componentProps = getHorizontalPositionOptions(
-      posSource.attrs.type,
+    const componentProps = this.getHorizontalPositionOptions(
+      posSource?.attrs.type || HorizontalPositions.default,
       this.onChange,
-      p.props.popper.destroy
+      p.props.popper.destroy.bind(p.props.popper)
     )
     p.props.popper.show(
       this.positionMenuWrapper,
@@ -310,7 +310,7 @@ export class HorizontalPositionMenu {
         : this.parent.node
 
       this.positionMenuWrapper = createPositionMenuWrapper(
-        posSource.attrs.type || HorizontalPositions.default,
+        posSource?.attrs.type || HorizontalPositions.default,
         this.showPositionMenu.bind(this),
         p.props
       )
