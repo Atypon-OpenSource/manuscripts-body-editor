@@ -36,6 +36,7 @@ export class BoxElementView extends BlockView<BoxElementNode> {
 
   public updateContents() {
     super.updateContents()
+    console.log('BOX UPDATE CONTENT CALLED')
     this.addTools()
   }
 
@@ -53,7 +54,7 @@ export class BoxElementView extends BlockView<BoxElementNode> {
         this.container
       )
     }
-    this.positionMenu.create()
+    this.positionMenu.create(true)
   }
 
   private updateHorizontalPosition(horizontalPosition: string) {

@@ -23,7 +23,7 @@ import {
 
 import { EditorProps } from '../configs/ManuscriptsEditor'
 import { imageDefaultIcon, imageLeftIcon, imageRightIcon } from '../icons'
-import ReactSubView from '../views/ReactSubView'
+import { createSubViewAsync } from '../views/ReactSubView'
 import { handleEnterKey } from './navigation-utils'
 import { updateNodeAttrs } from './view'
 import BlockView from '../views/block_view'
@@ -214,11 +214,12 @@ export class HorizontalPositionMenu {
 
   showPositionMenu() {
     const p = this.parent
-    p.props.popper.destroy.call(p.props.popper)
-    // if (this.menuOpen) {
-    //   this.menuOpen = false
-    //   return
-    // }
+
+    if (this.menuOpen) {
+      p.props.popper.destroy.call(p.props.popper)
+      this.menuOpen = false
+      return
+    }
 
     const posSource = this.getPositionSource
       ? this.getPositionSource()
@@ -229,24 +230,25 @@ export class HorizontalPositionMenu {
       this.onChange,
       p.props.popper.destroy.bind(p.props.popper)
     )
-    this.menuOpen = true
-    p.props.popper.show(
-      this.positionMenuWrapper,
-      ReactSubView(
-        p.props,
-        ContextMenu,
-        componentProps,
-        p.node,
-        p.getPos,
-        p.view,
-        ['context-menu', this.posMenuSelector]
-      ),
-      'left',
-      false
-    )
+    createSubViewAsync(
+      p.props,
+      ContextMenu,
+      componentProps,
+      p.node,
+      p.getPos,
+      p.view,
+      ['context-menu', this.posMenuSelector]
+    ).then((content) => {
+      this.menuOpen = true
+      p.props.popper.show(this.positionMenuWrapper, content, 'left', false)
+    })
   }
 
-  create() {
+  create(debug = false) {
+    if (debug) {
+      console.log('called CREATE MENU')
+    }
+
     if (!this.parent) {
       return
     }
@@ -255,9 +257,7 @@ export class HorizontalPositionMenu {
       // Remove existing position menu if it exists
       let existingMenu = this.location.querySelector('.' + this.posMenuSelector)
       if (existingMenu) {
-        // disable popper
         existingMenu.remove()
-
         existingMenu = null
       }
 
