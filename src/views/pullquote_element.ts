@@ -102,6 +102,11 @@ export class PullquoteElementView extends BlockView<PullquoteElementNode> {
     return undefined
   }
 
+  public updateContents() {
+    super.updateContents()
+    this.addTools()
+  }
+
   public destroy = () => {
     // Clean up event listener
     this.dom.removeEventListener('click', this.handleClick)

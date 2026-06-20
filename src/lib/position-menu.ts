@@ -44,6 +44,7 @@ export interface PopperMenuPositionOption {
 export class HorizontalPositionMenu {
   private parent: BlockView<ManuscriptNode>
 
+  menuOpen: boolean = false
   posMenuSelector = 'position-menu'
   onChange: (newPos: HorizontalPositions) => void
   positionMenuWrapper: HTMLDivElement
@@ -65,7 +66,6 @@ export class HorizontalPositionMenu {
     this.location = location || parent.dom
     this.onChange = onChange.bind(parent)
     this.parent = parent
-    this.create()
   }
 
   static createPositionOptions<T extends ManuscriptNode>(
@@ -135,14 +135,10 @@ export class HorizontalPositionMenu {
     }))
   }
 
-  createPositionMenuWrapper(
-    currentPosition: string,
-    onClick: () => void,
-    props: EditorProps
-  ) {
+  createPositionMenuWrapper(currentPosition: string, props: EditorProps) {
     const can = props.getCapabilities()
     const positionMenuWrapper = document.createElement('div')
-    positionMenuWrapper.classList.add('position-menu')
+    positionMenuWrapper.classList.add(this.posMenuSelector)
 
     const positionMenuButton = document.createElement('div')
     positionMenuButton.classList.add('position-menu-button')
@@ -162,6 +158,7 @@ export class HorizontalPositionMenu {
     if (icon) {
       positionMenuButton.innerHTML = icon
     }
+    const onClick = this.showPositionMenu.bind(this)
     if (can.editArticle) {
       positionMenuButton.tabIndex = 0
       positionMenuButton.addEventListener('click', onClick)
@@ -182,6 +179,8 @@ export class HorizontalPositionMenu {
           label: 'Left',
           action: () => {
             destroy()
+            console.log(this)
+            this.menuOpen = false
             onPick(HorizontalPositions.left)
           },
           icon: 'ImageLeft',
@@ -191,6 +190,7 @@ export class HorizontalPositionMenu {
           label: 'Default',
           action: () => {
             destroy()
+            this.menuOpen = false
             onPick(HorizontalPositions.default)
           },
           icon: 'ImageDefault',
@@ -200,6 +200,7 @@ export class HorizontalPositionMenu {
           label: 'Right',
           action: () => {
             destroy()
+            this.menuOpen = false
             onPick(HorizontalPositions.right)
           },
           icon: 'ImageRight',
@@ -213,7 +214,11 @@ export class HorizontalPositionMenu {
 
   showPositionMenu() {
     const p = this.parent
-    p.props.popper.destroy()
+    p.props.popper.destroy.call(p.props.popper)
+    // if (this.menuOpen) {
+    //   this.menuOpen = false
+    //   return
+    // }
 
     const posSource = this.getPositionSource
       ? this.getPositionSource()
@@ -224,6 +229,7 @@ export class HorizontalPositionMenu {
       this.onChange,
       p.props.popper.destroy.bind(p.props.popper)
     )
+    this.menuOpen = true
     p.props.popper.show(
       this.positionMenuWrapper,
       ReactSubView(
@@ -247,11 +253,12 @@ export class HorizontalPositionMenu {
     const p = this.parent
     if (p.props.getCapabilities()?.editArticle) {
       // Remove existing position menu if it exists
-      const existingMenu = this.location.querySelector(
-        '.' + this.posMenuSelector
-      )
+      let existingMenu = this.location.querySelector('.' + this.posMenuSelector)
       if (existingMenu) {
+        // disable popper
         existingMenu.remove()
+
+        existingMenu = null
       }
 
       const posSource = this.getPositionSource
@@ -260,10 +267,13 @@ export class HorizontalPositionMenu {
 
       this.positionMenuWrapper = this.createPositionMenuWrapper(
         posSource?.attrs.type || HorizontalPositions.default,
-        this.showPositionMenu.bind(this),
         p.props
       )
       this.location.prepend(this.positionMenuWrapper)
+
+      if (this.menuOpen) {
+        this.showPositionMenu()
+      }
     }
   }
 }
