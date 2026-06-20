@@ -22,12 +22,18 @@ import { HorizontalPositionMenu } from '../lib/position-menu'
 
 export class TableElementView extends BlockView<TableElementNode> {
   public elementType = 'figure'
+  container: HTMLDivElement
+  private positionMenu: HorizontalPositionMenu
 
   public createElement = () => {
     this.contentDOM = document.createElement('figure')
     this.contentDOM.classList.add('block')
     this.contentDOM.setAttribute('id', this.node.attrs.id)
-    this.dom.appendChild(this.contentDOM)
+
+    this.container = document.createElement('div')
+    this.container.classList.add('container')
+    this.container.appendChild(this.contentDOM)
+    this.dom.appendChild(this.container)
   }
 
   public updateContents() {
@@ -39,8 +45,6 @@ export class TableElementView extends BlockView<TableElementNode> {
     this.addPositionMenu()
   }
 
-  private positionMenu: HorizontalPositionMenu
-
   protected addPositionMenu() {
     if (!this.positionMenu) {
       this.positionMenu = new HorizontalPositionMenu(
@@ -50,6 +54,12 @@ export class TableElementView extends BlockView<TableElementNode> {
       )
     }
     this.positionMenu.create()
+  }
+
+  private updateHorizontalPosition(horizontalPosition: string) {
+    const tr = this.view.state.tr
+    tr.setNodeAttribute(this.getPos(), 'type', horizontalPosition)
+    this.view.dispatch(tr)
   }
 }
 

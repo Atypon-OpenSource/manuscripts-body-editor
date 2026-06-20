@@ -24,10 +24,13 @@ import { setCommentSelection } from '../plugins/comments'
 import BlockView from './block_view'
 import { createNodeOrElementView } from './creators'
 import ReactSubView from './ReactSubView'
+import { HorizontalPositionMenu } from '../lib/position-menu'
 
 export class PullquoteElementView extends BlockView<PullquoteElementNode> {
   public elementType = 'aside'
   contextMenu: HTMLElement
+  container: HTMLDivElement
+  private positionMenu: HorizontalPositionMenu
 
   public ignoreMutation = () => true
   public stopEvent = () => true
@@ -51,7 +54,10 @@ export class PullquoteElementView extends BlockView<PullquoteElementNode> {
     this.contentDOM.className = 'block'
     this.contentDOM.classList.add('pullquote')
 
-    this.dom.appendChild(this.contentDOM)
+    this.container = document.createElement('div')
+    this.container.classList.add('container')
+    this.container.appendChild(this.contentDOM)
+    this.dom.appendChild(this.container)
 
     // Add click event listener to handle comment marker clicks
     this.dom.addEventListener('click', this.handleClick)
@@ -100,6 +106,27 @@ export class PullquoteElementView extends BlockView<PullquoteElementNode> {
     // Clean up event listener
     this.dom.removeEventListener('click', this.handleClick)
     super.destroy()
+  }
+
+  protected addTools() {
+    this.addPositionMenu()
+  }
+
+  protected addPositionMenu() {
+    if (!this.positionMenu) {
+      this.positionMenu = new HorizontalPositionMenu(
+        this,
+        this.updateHorizontalPosition,
+        this.container
+      )
+    }
+    this.positionMenu.create()
+  }
+
+  private updateHorizontalPosition(horizontalPosition: string) {
+    const tr = this.view.state.tr
+    tr.setNodeAttribute(this.getPos(), 'type', horizontalPosition)
+    this.view.dispatch(tr)
   }
 }
 
