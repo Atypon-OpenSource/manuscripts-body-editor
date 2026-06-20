@@ -158,7 +158,7 @@ export class HorizontalPositionMenu {
     if (icon) {
       positionMenuButton.innerHTML = icon
     }
-    const onClick = this.showPositionMenu.bind(this)
+    const onClick = () => this.showPositionMenu()
     if (can.editArticle) {
       positionMenuButton.tabIndex = 0
       positionMenuButton.addEventListener('click', onClick)
@@ -212,13 +212,16 @@ export class HorizontalPositionMenu {
     return componentProps
   }
 
-  showPositionMenu() {
+  showPositionMenu(force = false) {
     const p = this.parent
 
     if (this.menuOpen) {
       p.props.popper.destroy.call(p.props.popper)
       this.menuOpen = false
-      return
+      if (!force) {
+        // when showing menu again on rerender - destroy but then recreate in contrast to just close if menu is open when on click
+        return
+      }
     }
 
     const posSource = this.getPositionSource
@@ -272,7 +275,7 @@ export class HorizontalPositionMenu {
       this.location.prepend(this.positionMenuWrapper)
 
       if (this.menuOpen) {
-        this.showPositionMenu()
+        this.showPositionMenu(true)
       }
     }
   }
