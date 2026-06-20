@@ -50,6 +50,12 @@ export const createPositionOptions = <T extends ManuscriptNode>(
 ) => {
   const createAction = (position: string) => () => {
     onComplete?.()
+    console.log(node)
+    console.log(nodeType)
+    console.log({
+      ...node.attrs,
+      type: position,
+    })
     updateNodeAttrs(view, nodeType, {
       ...node.attrs,
       type: position,
@@ -236,20 +242,20 @@ export class HorizontalPositionMenu {
   onChange: (newPos: HorizontalPositions) => void
   positionMenuWrapper: HTMLDivElement
   location: HTMLElement
-  positionSource: ManuscriptNode
+  getPositionSource?: () => ManuscriptNode
 
   constructor(
     parent: BlockView<ManuscriptNode>,
     onChange: (newPos: HorizontalPositions) => void,
     location?: HTMLElement,
-    positionSource?: ManuscriptNode // if different from parent as in figure element case
+    getPositionSource?: () => ManuscriptNode // if different from parent as in figure element case
   ) {
-    const preSource = positionSource || parent.node
+    const preSource = getPositionSource?.() || parent.node
     if (typeof preSource.attrs.type === 'undefined') {
-      console.warn("This node doesn't support horizontal alignment")
+      console.error("This node doesn't support horizontal alignment")
       return
     }
-    this.positionSource = preSource
+    this.getPositionSource = getPositionSource
     this.location = location || parent.dom
     this.onChange = onChange.bind(parent)
     this.parent = parent
@@ -260,8 +266,12 @@ export class HorizontalPositionMenu {
     const p = this.parent
     p.props.popper.destroy()
 
+    const posSource = this.getPositionSource
+      ? this.getPositionSource()
+      : this.parent.node
+
     const componentProps = getHorizontalPositionOptions(
-      this.positionSource.attrs.type,
+      posSource.attrs.type,
       this.onChange,
       p.props.popper.destroy
     )
@@ -282,7 +292,9 @@ export class HorizontalPositionMenu {
   }
 
   create() {
-    console.log(this)
+    if (!this.parent) {
+      return
+    }
     const p = this.parent
     if (p.props.getCapabilities()?.editArticle) {
       // Remove existing position menu if it exists
@@ -293,8 +305,12 @@ export class HorizontalPositionMenu {
         existingMenu.remove()
       }
 
+      const posSource = this.getPositionSource
+        ? this.getPositionSource()
+        : this.parent.node
+
       this.positionMenuWrapper = createPositionMenuWrapper(
-        this.positionSource.attrs.type || HorizontalPositions.default,
+        posSource.attrs.type || HorizontalPositions.default,
         this.showPositionMenu.bind(this),
         p.props
       )

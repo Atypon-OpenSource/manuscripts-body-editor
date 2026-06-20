@@ -59,9 +59,18 @@ const readonlyTypes = [
   schema.nodes.footnotes_section,
 ]
 
-const isBoxElementSectionTitle = ($pos: ResolvedPos, node: ManuscriptNode) =>
-  isSectionTitleNode(node) &&
-  $pos.node($pos.depth - 1).type === schema.nodes.box_element
+const getBoxElementOfSectionTitle = (
+  $pos: ResolvedPos,
+  node: ManuscriptNode
+) => {
+  if (isSectionTitleNode(node)) {
+    const parent = $pos.node($pos.depth - 1)
+    if (parent.type === schema.nodes.box_element) {
+      return parent
+    }
+  }
+  return null
+}
 
 export const sectionLevel = (depth: number) => {
   switch (depth) {
@@ -245,8 +254,10 @@ export class ContextMenu {
     menu.className = 'menu'
 
     const $pos = this.resolvePos()
-    const isBox = isBoxElementSectionTitle($pos, this.node)
-    const type = isBox ? schema.nodes.box_element : this.node.type
+    const boxParent = getBoxElementOfSectionTitle($pos, this.node)
+    const type = boxParent ? schema.nodes.box_element : this.node.type
+
+    // const type = this.node.type
     const positionableTypes = [
       schema.nodes.figure_element,
       schema.nodes.image_element,
@@ -255,20 +266,26 @@ export class ContextMenu {
       schema.nodes.table_element,
     ]
 
+    let nodeBase = this.node
+
     if (positionableTypes.includes(type)) {
-      let attrType = this.node.attrs.type
       const figure = getMatchingChild(
         this.node,
         (node) => node.type === schema.nodes.figure
       )
 
       if (figure) {
-        attrType = figure.attrs.type
+        nodeBase = figure
       }
+
+      if (boxParent) {
+        nodeBase = boxParent
+      }
+
       const submenuOptions = createPositionOptions(
-        schema.nodes.figure,
-        figure || this.node,
-        attrType,
+        schema.nodes[nodeBase.type.name],
+        nodeBase,
+        nodeBase.attrs.type,
         this.view,
         () => popper.destroy()
       )
