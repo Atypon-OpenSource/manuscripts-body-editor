@@ -42,7 +42,7 @@ import {
   insertInlineTableFootnote,
 } from '../commands'
 import { PopperManager } from './popper'
-import { createPositionOptions } from './position-menu'
+import { HorizontalPositionMenu } from './position-menu'
 import { templateAllows } from './template'
 import {
   getMatchingChild,
@@ -282,7 +282,7 @@ export class ContextMenu {
         nodeBase = boxParent
       }
 
-      const submenuOptions = createPositionOptions(
+      const submenuOptions = HorizontalPositionMenu.createPositionOptions(
         schema.nodes[nodeBase.type.name],
         nodeBase,
         nodeBase.attrs.type,
