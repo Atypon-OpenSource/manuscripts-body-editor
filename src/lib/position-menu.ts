@@ -77,12 +77,6 @@ export class HorizontalPositionMenu {
   ) {
     const createAction = (position: string) => () => {
       onComplete?.()
-      console.log(node)
-      console.log(nodeType)
-      console.log({
-        ...node.attrs,
-        type: position,
-      })
       updateNodeAttrs(view, nodeType, {
         ...node.attrs,
         type: position,
@@ -191,7 +185,6 @@ export class HorizontalPositionMenu {
           label: 'Left',
           action: () => {
             destroy()
-            console.log(this)
             this.menuOpen = false
             onPick(HorizontalPositions.left)
           },

@@ -257,7 +257,6 @@ export class ContextMenu {
     const boxParent = getBoxElementOfSectionTitle($pos, this.node)
     const type = boxParent ? schema.nodes.box_element : this.node.type
 
-    // const type = this.node.type
     const positionableTypes = [
       schema.nodes.figure_element,
       schema.nodes.image_element,
