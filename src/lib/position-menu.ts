@@ -215,13 +215,11 @@ export class HorizontalPositionMenu {
   showPositionMenu(force = false) {
     const p = this.parent
 
-    if (this.menuOpen) {
-      p.props.popper.destroy.call(p.props.popper)
+    if (this.menuOpen && !force) {
+      // Toggle off on click
+      p.props.popper.destroy()
       this.menuOpen = false
-      if (!force) {
-        // when showing menu again on rerender - destroy but then recreate in contrast to just close if menu is open when on click
-        return
-      }
+      return
     }
 
     const posSource = this.getPositionSource
@@ -242,8 +240,13 @@ export class HorizontalPositionMenu {
       p.view,
       ['context-menu', this.posMenuSelector]
     ).then((content) => {
+      if (this.menuOpen && p.props.popper.isActive()) {
+        // Popper already open — just replace content to avoid losing anchor
+        p.props.popper.replaceContent(content)
+      } else {
+        p.props.popper.show(this.positionMenuWrapper, content, 'left', false)
+      }
       this.menuOpen = true
-      p.props.popper.show(this.positionMenuWrapper, content, 'left', false)
     })
   }
 
@@ -257,11 +260,12 @@ export class HorizontalPositionMenu {
     }
     const p = this.parent
     if (p.props.getCapabilities()?.editArticle) {
-      // Remove existing position menu if it exists
-      let existingMenu = this.location.querySelector('.' + this.posMenuSelector)
-      if (existingMenu) {
-        existingMenu.remove()
-        existingMenu = null
+      // If wrapper already exists in the DOM, keep it stable
+      if (
+        this.positionMenuWrapper &&
+        this.location.contains(this.positionMenuWrapper)
+      ) {
+        return
       }
 
       const posSource = this.getPositionSource
@@ -273,10 +277,6 @@ export class HorizontalPositionMenu {
         p.props
       )
       this.location.prepend(this.positionMenuWrapper)
-
-      if (this.menuOpen) {
-        this.showPositionMenu(true)
-      }
     }
   }
 }

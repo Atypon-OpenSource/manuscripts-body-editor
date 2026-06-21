@@ -146,6 +146,18 @@ export class PopperManager {
     }
   }
 
+  public replaceContent(newContent: HTMLElement) {
+    if (this.container && this.activePopper) {
+      const arrow = this.container.querySelector('.popper-arrow')
+      this.container.innerHTML = ''
+      if (arrow) {
+        this.container.appendChild(arrow)
+      }
+      this.container.appendChild(newContent)
+      this.activePopper.update()
+    }
+  }
+
   public isActive = () => !!this.activePopper
 
   private focusInput(container: HTMLDivElement, autoFocus = true) {
