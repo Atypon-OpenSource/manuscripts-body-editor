@@ -32,6 +32,7 @@ import {
 } from 'prosemirror-model'
 import { EditorState, Selection } from 'prosemirror-state'
 import {
+  ContentNodeWithPos,
   findChildrenByType,
   findParentNode,
   findParentNodeOfTypeClosestToPos,
@@ -88,15 +89,15 @@ export const getChildOfType = (
 ): boolean =>
   !!getMatchingChild(parent, (node) => node.type.name === nodeType.name, deep)
 
-export const findParentNodeWithId = findParentNode((node) => 'id' in node.attrs)
+export const findParentNodeWithId: (selection: Selection) => ContentNodeWithPos | undefined = findParentNode((node) => 'id' in node.attrs)
 
-export const findParentNodeWithIdValue = findParentNode((node) => node.attrs.id)
+export const findParentNodeWithIdValue: (selection: Selection) => ContentNodeWithPos | undefined = findParentNode((node) => node.attrs.id)
 
-export const findParentSection = findParentNode((node) =>
+export const findParentSection: (selection: Selection) => ContentNodeWithPos | undefined = findParentNode((node) =>
   isSectionNodeType(node.type)
 )
 
-export const findParentElement = (selection: Selection, validIds?: string[]) =>
+export const findParentElement = (selection: Selection, validIds?: string[]): ContentNodeWithPos | undefined =>
   findParentNode((node) => {
     // if validIds was passed and this element is not in it, then keep looking
     if (validIds && !validIds.includes(node.attrs.id)) {
