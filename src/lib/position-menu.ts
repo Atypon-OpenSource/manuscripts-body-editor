@@ -164,8 +164,20 @@ export class HorizontalPositionMenu {
       positionMenuButton.addEventListener('click', onClick)
       positionMenuButton.addEventListener('keydown', handleEnterKey(onClick))
     }
-    positionMenuWrapper.appendChild(positionMenuButton)
-    return positionMenuWrapper
+
+    if (this.positionMenuWrapper) {
+      const button = this.positionMenuWrapper.querySelector(
+        '.position-menu-button'
+      )
+      if (button) {
+        this.positionMenuWrapper.removeChild(button)
+        this.positionMenuWrapper.appendChild(positionMenuButton)
+      }
+    } else {
+      positionMenuWrapper.appendChild(positionMenuButton)
+      this.positionMenuWrapper = positionMenuWrapper
+      this.location.prepend(this.positionMenuWrapper)
+    }
   }
 
   getHorizontalPositionOptions(
@@ -241,7 +253,6 @@ export class HorizontalPositionMenu {
       ['context-menu', this.posMenuSelector]
     ).then((content) => {
       if (this.menuOpen && p.props.popper.isActive()) {
-        // Popper already open — just replace content to avoid losing anchor
         p.props.popper.replaceContent(content)
       } else {
         p.props.popper.show(this.positionMenuWrapper, content, 'left', false)
@@ -250,33 +261,20 @@ export class HorizontalPositionMenu {
     })
   }
 
-  create(debug = false) {
-    if (debug) {
-      console.log('called CREATE MENU')
-    }
-
+  create() {
     if (!this.parent) {
       return
     }
     const p = this.parent
     if (p.props.getCapabilities()?.editArticle) {
-      // If wrapper already exists in the DOM, keep it stable
-      if (
-        this.positionMenuWrapper &&
-        this.location.contains(this.positionMenuWrapper)
-      ) {
-        return
-      }
-
       const posSource = this.getPositionSource
         ? this.getPositionSource()
         : this.parent.node
 
-      this.positionMenuWrapper = this.createPositionMenuWrapper(
+      this.createPositionMenuWrapper(
         posSource?.attrs.type || HorizontalPositions.default,
         p.props
       )
-      this.location.prepend(this.positionMenuWrapper)
     }
   }
 }
