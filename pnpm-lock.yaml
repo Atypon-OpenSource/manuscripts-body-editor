@@ -39,13 +39,8 @@ importers:
         specifier: 2.4.0
         version: 2.4.0
       '@manuscripts/transform':
-<<<<<<< HEAD
         specifier: 4.3.52-LEAN-5625.1
         version: 4.3.52-LEAN-5625.1(prosemirror-state@1.4.3)
-=======
-        specifier: 4.4.0
-        version: 4.4.0(prosemirror-state@1.4.3)
->>>>>>> 267ee7da08524086eaeeb4015fcdaad9233b7677
       '@popperjs/core':
         specifier: 2.11.8
         version: 2.11.8
@@ -883,13 +878,8 @@ packages:
     resolution: {integrity: sha512-I+KDqXvKRtmRWcqxtjEVLK7GR55pSzwFCoIouZ4wE2d72MXg0l3yUYXL/73FdUE2xwIzVneW65Q3RjHlvL8Ekg==}
     engines: {node: '>=22'}
 
-<<<<<<< HEAD
   '@manuscripts/transform@4.3.52-LEAN-5625.1':
     resolution: {integrity: sha512-JlgmuRLmU0xfEc88Zz3mXnEy3Gbt+J3b4748zz0vlbehOhJPjKxH/4Zv9TuGf1Sd8LDxXl+3L6ONWwAZUYpChg==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/transform/-/@manuscripts/transform-4.3.52-LEAN-5625.1.tgz}
-=======
-  '@manuscripts/transform@4.4.0':
-    resolution: {integrity: sha512-gOF/ullYHBkgtYDtVc0S85hF6goKAbzqyN5+eaABRsBASYACsNesmbPVFFKN/8wyPFJcxFHPs4qaNANWKXvwzA==}
->>>>>>> 267ee7da08524086eaeeb4015fcdaad9233b7677
     engines: {node: '>=22'}
 
   '@napi-rs/wasm-runtime@1.1.5':
@@ -969,13 +959,8 @@ packages:
   '@react-dnd/shallowequal@4.0.2':
     resolution: {integrity: sha512-/RVXdLvJxLg4QKvMoM5WlwNR9ViO9z8B/qPcc+C0Sa/teJY7QG7kJ441DwzOjMYEY7GmU4dj5EcGHIkKZiQZCA==}
 
-<<<<<<< HEAD
-  '@react-types/shared@3.36.0':
-    resolution: {integrity: sha512-DkP/H0C2YjjS7gZWKNqOmU8a16qHPjQNdzMwmTq9SzplM6Iw0kVMTZ0OIoe6FOgGqa+FwMsE2QbPjh/n3g/jXQ==}
-=======
   '@react-types/shared@3.35.0':
     resolution: {integrity: sha512-iNWvuzEwANttpQpdlu8nPBtdHb0mcCMj1ZTH//iRB5E/14IAnyRlR25rxH7pNLyzHINsPGEKnWvpwDMCT6vziQ==}
->>>>>>> 267ee7da08524086eaeeb4015fcdaad9233b7677
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
 
@@ -3257,6 +3242,9 @@ packages:
   lodash.merge@4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
 
+  lodash@4.17.21:
+    resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
+
   lodash@4.18.1:
     resolution: {integrity: sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q==}
 
@@ -3872,13 +3860,8 @@ packages:
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
 
-<<<<<<< HEAD
-  react-aria@3.50.0:
-    resolution: {integrity: sha512-S0Os6QZk33fzUAKu1QLT9afoUaCBt1ZNdoiq0n2YMVgKIdNIQS8zxiZ8O9hYE6QyDkHKjD6q39LQZ+qaSAIgjw==}
-=======
   react-aria@3.49.0:
     resolution: {integrity: sha512-4+oK9FwJQWYhyA5zLfj/feOGY0zZbkE1muoF4gyxMroHVypjcYaRSTlJwvxph2zIlxt757KX6xIK2wJ5Aw1Kog==}
->>>>>>> 267ee7da08524086eaeeb4015fcdaad9233b7677
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
       react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -3954,13 +3937,8 @@ packages:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
-<<<<<<< HEAD
-  react-stately@3.48.0:
-    resolution: {integrity: sha512-ImicSAG+lTotAe5izcs1fz49Zk48w7pDusqYg04WaPhCoej8BJ24soMu3iLXIrsi273s4P1gZrYGrqReMfgEEA==}
-=======
   react-stately@3.47.0:
     resolution: {integrity: sha512-H3ar+SOWP920EbVg7qWfP3fZjZiwhlEJAEJQqjt+w8oKijCwFgr0+R4941PIHscOXRNRvEOjvWilitImC0DdBg==}
->>>>>>> 267ee7da08524086eaeeb4015fcdaad9233b7677
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
 
@@ -4114,8 +4092,8 @@ packages:
     resolution: {integrity: sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==}
     hasBin: true
 
-  semver@7.7.4:
-    resolution: {integrity: sha512-vFKC2IEtQnVhpT78h1Yp8wzwrf8CM+MzKMHGJZfBtzhZNycRFnXsHk6E5TxIkkMsgNS7mdX3AGB7x2QM2di4lA==}
+  semver@7.7.2:
+    resolution: {integrity: sha512-RF0Fw+rO5AMf9MAyaRXI4AV0Ulj5lMHqVxxdSgiVbixSCXoEmmX/jk0CuJw4+3SqroYO9VoUh+HcuJivvtJemA==}
     engines: {node: '>=10'}
     hasBin: true
 
@@ -4559,6 +4537,11 @@ packages:
     resolution: {integrity: sha512-Qo+uWgilfSmAhXCMav1uYFynlQO7fMFiMVZsQqZRMIXp0O7rR7qjkj+cPvBHLgBqi960QCoo/PH2/6ZtVqKvrg==}
     hasBin: true
 
+  uuid@9.0.1:
+    resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
+    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+    hasBin: true
+
   v8-to-istanbul@9.3.0:
     resolution: {integrity: sha512-kiGUalWN+rgBJ/1OHZsBtU4rXZOfj/7rKQxULKlIzwzQSvMJUUNgPwJEEh7gU6xEVxC0ahoOBvN2YI8GH6FNgA==}
     engines: {node: '>=10.12.0'}
@@ -4675,6 +4658,10 @@ packages:
   w3c-keyname@2.2.8:
     resolution: {integrity: sha512-dpojBhNsCNN7T82Tm7k26A6G9ML3NkhDsnw9n/eoxSRlVBB4CEtIQ/KTCLI2Fwf3ataSXRhYFkQi3SlnFwPvPQ==}
 
+  w3c-xmlserializer@4.0.0:
+    resolution: {integrity: sha512-d+BFHzbiCx6zGfz0HyQ6Rg69w9k19nviJspaj4yNscGjrHu94sVP+aRm75yEbCh+r2/yR+7q6hux9LVtbuTGBw==}
+    engines: {node: '>=14'}
+
   w3c-xmlserializer@5.0.0:
     resolution: {integrity: sha512-o8qghlI8NZHU1lLPrpi2+Uq7abh4GGPpYANlalzWxyWteJOCsr/P+oPBA49TOLu5FTZO4d3F9MnWJfiMo4BkmA==}
     engines: {node: '>=18'}
@@ -4786,6 +4773,10 @@ packages:
         optional: true
       utf-8-validate:
         optional: true
+
+  xml-name-validator@4.0.0:
+    resolution: {integrity: sha512-ICP2e+jsHvAj2E2lIHxa5tjXRlKDJo4IdvPvCXbXQGdzSfmSpNVyIKMvoZHjDY9DP0zV17iI85o90vRFXNccRw==}
+    engines: {node: '>=12'}
 
   xml-name-validator@5.0.0:
     resolution: {integrity: sha512-EvGK8EJ3DhaHfbRlETOWAS5pO9MZITeauHKJyb8wyajUfQUenkIg2MvLDTZ4T/TgIcm3HU0TFBgWWboAZ30UHg==}
@@ -5319,15 +5310,6 @@ snapshots:
 
   '@headlessui/react@2.2.10(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
     dependencies:
-<<<<<<< HEAD
-      '@floating-ui/react': 0.26.28(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      '@react-aria/focus': 3.22.1(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      '@react-aria/interactions': 3.28.1(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      '@tanstack/react-virtual': 3.14.3(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      react: 19.2.0
-      react-dom: 19.2.0(react@19.2.0)
-      use-sync-external-store: 1.6.0(react@19.2.0)
-=======
       '@floating-ui/react': 0.26.28(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@react-aria/focus': 3.22.1(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@react-aria/interactions': 3.28.1(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -5335,7 +5317,6 @@ snapshots:
       react: 19.2.6
       react-dom: 19.2.6(react@19.2.6)
       use-sync-external-store: 1.6.0(react@19.2.6)
->>>>>>> 267ee7da08524086eaeeb4015fcdaad9233b7677
 
   '@humanfs/core@0.19.2':
     dependencies:
@@ -5657,21 +5638,17 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-<<<<<<< HEAD
   '@manuscripts/transform@4.3.52-LEAN-5625.1(prosemirror-state@1.4.3)':
-=======
-  '@manuscripts/transform@4.4.0(prosemirror-state@1.4.3)':
->>>>>>> 267ee7da08524086eaeeb4015fcdaad9233b7677
     dependencies:
       citeproc: 2.4.63
       jszip: 3.10.1
-      lodash: 4.18.1
+      lodash: 4.17.21
       prosemirror-model: 1.25.0
       prosemirror-tables: 1.7.1
       prosemirror-utils: 1.2.2(prosemirror-model@1.25.0)(prosemirror-state@1.4.3)
-      semver: 7.7.4
-      uuid: 14.0.0
-      w3c-xmlserializer: 5.0.0
+      semver: 7.7.2
+      uuid: 9.0.1
+      w3c-xmlserializer: 4.0.0
     transitivePeerDependencies:
       - prosemirror-state
 
@@ -5755,22 +5732,6 @@ snapshots:
 
   '@popperjs/core@2.11.8': {}
 
-<<<<<<< HEAD
-  '@react-aria/focus@3.22.1(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
-    dependencies:
-      '@swc/helpers': 0.5.23
-      react: 19.2.0
-      react-aria: 3.50.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      react-dom: 19.2.0(react@19.2.0)
-
-  '@react-aria/interactions@3.28.1(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
-    dependencies:
-      '@react-types/shared': 3.36.0(react@19.2.0)
-      '@swc/helpers': 0.5.23
-      react: 19.2.0
-      react-aria: 3.50.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      react-dom: 19.2.0(react@19.2.0)
-=======
   '@react-aria/focus@3.22.1(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
     dependencies:
       '@swc/helpers': 0.5.23
@@ -5785,7 +5746,6 @@ snapshots:
       react: 19.2.6
       react-aria: 3.49.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       react-dom: 19.2.6(react@19.2.6)
->>>>>>> 267ee7da08524086eaeeb4015fcdaad9233b7677
 
   '@react-dnd/asap@5.0.2': {}
 
@@ -5793,11 +5753,7 @@ snapshots:
 
   '@react-dnd/shallowequal@4.0.2': {}
 
-<<<<<<< HEAD
-  '@react-types/shared@3.36.0(react@19.2.0)':
-=======
   '@react-types/shared@3.35.0(react@19.2.6)':
->>>>>>> 267ee7da08524086eaeeb4015fcdaad9233b7677
     dependencies:
       react: 19.2.6
 
@@ -5949,19 +5905,11 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-<<<<<<< HEAD
-  '@tanstack/react-virtual@3.14.3(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
-    dependencies:
-      '@tanstack/virtual-core': 3.17.1
-      react: 19.2.0
-      react-dom: 19.2.0(react@19.2.0)
-=======
   '@tanstack/react-virtual@3.14.3(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
     dependencies:
       '@tanstack/virtual-core': 3.17.1
       react: 19.2.6
       react-dom: 19.2.6(react@19.2.6)
->>>>>>> 267ee7da08524086eaeeb4015fcdaad9233b7677
 
   '@tanstack/virtual-core@3.17.1': {}
 
@@ -8540,6 +8488,8 @@ snapshots:
 
   lodash.merge@4.6.2: {}
 
+  lodash@4.17.21: {}
+
   lodash@4.18.1: {}
 
   longest-streak@3.1.0: {}
@@ -9359,25 +9309,11 @@ snapshots:
 
   queue-microtask@1.2.3: {}
 
-<<<<<<< HEAD
-  react-aria@3.50.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
-=======
   react-aria@3.49.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
->>>>>>> 267ee7da08524086eaeeb4015fcdaad9233b7677
     dependencies:
       '@internationalized/date': 3.12.2
       '@internationalized/number': 3.6.7
       '@internationalized/string': 3.2.9
-<<<<<<< HEAD
-      '@react-types/shared': 3.36.0(react@19.2.0)
-      '@swc/helpers': 0.5.23
-      aria-hidden: 1.2.6
-      clsx: 2.1.1
-      react: 19.2.0
-      react-dom: 19.2.0(react@19.2.0)
-      react-stately: 3.48.0(react@19.2.0)
-      use-sync-external-store: 1.6.0(react@19.2.0)
-=======
       '@react-types/shared': 3.35.0(react@19.2.6)
       '@swc/helpers': 0.5.23
       aria-hidden: 1.2.6
@@ -9386,7 +9322,6 @@ snapshots:
       react-dom: 19.2.6(react@19.2.6)
       react-stately: 3.47.0(react@19.2.6)
       use-sync-external-store: 1.6.0(react@19.2.6)
->>>>>>> 267ee7da08524086eaeeb4015fcdaad9233b7677
 
   react-dnd-html5-backend@16.0.1:
     dependencies:
@@ -9475,26 +9410,15 @@ snapshots:
       - '@types/react'
       - supports-color
 
-<<<<<<< HEAD
-  react-stately@3.48.0(react@19.2.0):
-=======
   react-stately@3.47.0(react@19.2.6):
->>>>>>> 267ee7da08524086eaeeb4015fcdaad9233b7677
     dependencies:
       '@internationalized/date': 3.12.2
       '@internationalized/number': 3.6.7
       '@internationalized/string': 3.2.9
-<<<<<<< HEAD
-      '@react-types/shared': 3.36.0(react@19.2.0)
-      '@swc/helpers': 0.5.23
-      react: 19.2.0
-      use-sync-external-store: 1.6.0(react@19.2.0)
-=======
       '@react-types/shared': 3.35.0(react@19.2.6)
       '@swc/helpers': 0.5.23
       react: 19.2.6
       use-sync-external-store: 1.6.0(react@19.2.6)
->>>>>>> 267ee7da08524086eaeeb4015fcdaad9233b7677
 
   react-tooltip@6.0.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
     dependencies:
@@ -9691,7 +9615,7 @@ snapshots:
 
   semver@6.3.1: {}
 
-  semver@7.7.4: {}
+  semver@7.7.2: {}
 
   semver@7.8.4: {}
 
@@ -10231,6 +10155,8 @@ snapshots:
 
   uuid@14.0.0: {}
 
+  uuid@9.0.1: {}
+
   v8-to-istanbul@9.3.0:
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
@@ -10319,6 +10245,10 @@ snapshots:
       - msw
 
   w3c-keyname@2.2.8: {}
+
+  w3c-xmlserializer@4.0.0:
+    dependencies:
+      xml-name-validator: 4.0.0
 
   w3c-xmlserializer@5.0.0:
     dependencies:
@@ -10442,6 +10372,8 @@ snapshots:
       signal-exit: 4.1.0
 
   ws@8.21.0: {}
+
+  xml-name-validator@4.0.0: {}
 
   xml-name-validator@5.0.0: {}
 
