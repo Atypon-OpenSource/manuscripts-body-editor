@@ -55,6 +55,7 @@ import {
 import { openInsertTableDialog } from './components/toolbar/InsertTableDialog'
 import { ListMenuItem } from './components/toolbar/ListMenuItem'
 import { openInsertSpecialCharacterDialog } from './components/views/InsertSpecialCharacter'
+import { openKeyboardShortcuts } from './components/keyboard-shortcuts-modal/KeyboardShortcutsModal'
 import {
   deleteClosestParentElement,
   findClosestParentElementNodeName,
@@ -671,5 +672,23 @@ export const getEditorMenus = (
     ],
   }
 
-  return [edit, insert, metadata, format]
+  const help: MenuSpec = {
+    id: 'help',
+    label: 'Help',
+    isEnabled: true,
+    submenu: [
+      {
+        id: 'help-keyboard-shortcuts',
+        label: 'Keyboard shortcuts',
+        isEnabled: true,
+        shortcut: {
+          mac: 'CommandOrControl+Shift+/',
+          pc: 'CommandOrControl+Shift+/',
+        },
+        run: () => openKeyboardShortcuts(view),
+      },
+    ],
+  }
+
+  return [edit, insert, metadata, format, help]
 }
