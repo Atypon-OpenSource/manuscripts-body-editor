@@ -33,14 +33,14 @@ importers:
         specifier: 1.1.2
         version: 1.1.2
       '@manuscripts/style-guide':
-        specifier: 3.6.0
-        version: 3.6.0(@babel/core@7.29.7)(@types/hoist-non-react-statics@3.3.7(@types/react@19.2.17))(@types/node@20.17.46)(@types/react@19.2.17)(react-is@19.2.6)
+        specifier: 3.6.2
+        version: 3.6.2(@babel/core@7.29.7)(@types/hoist-non-react-statics@3.3.7(@types/react@19.2.17))(@types/node@20.17.46)(@types/react@19.2.17)(react-is@19.2.6)
       '@manuscripts/track-changes-plugin':
         specifier: 2.4.0
         version: 2.4.0
       '@manuscripts/transform':
-        specifier: 4.3.52-LEAN-5625.1
-        version: 4.3.52-LEAN-5625.1(prosemirror-state@1.4.3)
+        specifier: 4.4.1
+        version: 4.4.1(prosemirror-state@1.4.3)
       '@popperjs/core':
         specifier: 2.11.8
         version: 2.11.8
@@ -870,16 +870,16 @@ packages:
       eslint-plugin-simple-import-sort: '>= 8'
       typescript: '*'
 
-  '@manuscripts/style-guide@3.6.0':
-    resolution: {integrity: sha512-gmYFbo9mxht+PMWK456SeFJRuxHe8zUXqiMmevcR8mdbLg2DLd7j8RC7r3TBG/d41hXQUN0c6SZc6jbRs6Mwog==}
+  '@manuscripts/style-guide@3.6.2':
+    resolution: {integrity: sha512-GToop7xBjIkgGMigH2rp/xyleP4Is8Pa3W3eDe6D04RrJ6KGFdf/gEDa0hMIo4/Ezeb/665AkKznXMXRNVNeLw==}
     engines: {node: '>=22'}
 
   '@manuscripts/track-changes-plugin@2.4.0':
     resolution: {integrity: sha512-I+KDqXvKRtmRWcqxtjEVLK7GR55pSzwFCoIouZ4wE2d72MXg0l3yUYXL/73FdUE2xwIzVneW65Q3RjHlvL8Ekg==}
     engines: {node: '>=22'}
 
-  '@manuscripts/transform@4.3.52-LEAN-5625.1':
-    resolution: {integrity: sha512-JlgmuRLmU0xfEc88Zz3mXnEy3Gbt+J3b4748zz0vlbehOhJPjKxH/4Zv9TuGf1Sd8LDxXl+3L6ONWwAZUYpChg==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/transform/-/@manuscripts/transform-4.3.52-LEAN-5625.1.tgz}
+  '@manuscripts/transform@4.4.1':
+    resolution: {integrity: sha512-sV4ANIF14N3UYKmKhrrrCH6qPatx7Qg+U1ZPjzkcJHEn385HIATL37hNLobha2y5OGwcrTIX6c+W6g5mrpgrLA==}
     engines: {node: '>=22'}
 
   '@napi-rs/wasm-runtime@1.1.5':
@@ -5600,7 +5600,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@manuscripts/style-guide@3.6.0(@babel/core@7.29.7)(@types/hoist-non-react-statics@3.3.7(@types/react@19.2.17))(@types/node@20.17.46)(@types/react@19.2.17)(react-is@19.2.6)':
+  '@manuscripts/style-guide@3.6.2(@babel/core@7.29.7)(@types/hoist-non-react-statics@3.3.7(@types/react@19.2.17))(@types/node@20.17.46)(@types/react@19.2.17)(react-is@19.2.6)':
     dependencies:
       '@headlessui/react': 2.2.10(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       formik: 2.4.9(@types/react@19.2.17)(react@19.2.6)
@@ -5638,7 +5638,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@manuscripts/transform@4.3.52-LEAN-5625.1(prosemirror-state@1.4.3)':
+  '@manuscripts/transform@4.4.1(prosemirror-state@1.4.3)':
     dependencies:
       citeproc: 2.4.63
       jszip: 3.10.1
