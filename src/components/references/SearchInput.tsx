@@ -21,9 +21,7 @@ import styled from 'styled-components'
 const SearchContainer = styled.div`
   align-items: center;
   display: flex;
-  flex: 1 0 auto;
   position: relative;
-  margin: 12px;
 `
 
 const SearchIconContainer = styled.span`
@@ -48,12 +46,6 @@ const SearchTextField = styled(TextField)`
   &:focus {
     background-color: ${(props) => props.theme.colors.background.fifth};
   }
-`
-
-export const SearchWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  padding: ${(props) => props.theme.grid.unit * 3}px;
 `
 
 export const SearchInput: React.FC<InputHTMLAttributes<HTMLInputElement>> = (
