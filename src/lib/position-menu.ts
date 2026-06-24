@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
+import { ContextMenu } from '@manuscripts/style-guide'
 import {
   ManuscriptEditorView,
   ManuscriptNode,
@@ -23,10 +23,16 @@ import {
 
 import { EditorProps } from '../configs/ManuscriptsEditor'
 import { imageDefaultIcon, imageLeftIcon, imageRightIcon } from '../icons'
-import { figurePositions } from '../views/image_element'
-import ReactSubView from '../views/ReactSubView'
+import { createSubViewAsync } from '../views/ReactSubView'
 import { handleEnterKey } from './navigation-utils'
 import { updateNodeAttrs } from './view'
+import BlockView from '../views/block_view'
+
+export enum HorizontalPositions {
+  left = 'half-left',
+  right = 'half-right',
+  default = '',
+}
 
 export interface PopperMenuPositionOption {
   label: string
@@ -35,150 +41,233 @@ export interface PopperMenuPositionOption {
   selected: boolean
 }
 
-export const createPositionOptions = <T extends ManuscriptNode>(
-  nodeType: ManuscriptNodeType,
-  node: T,
-  currentPosition: string,
-  view: ManuscriptEditorView,
-  onComplete?: () => void
-) => {
-  const createAction = (position: string) => () => {
-    onComplete?.()
-    updateNodeAttrs(view, nodeType, {
-      ...node.attrs,
-      type: position,
+export class HorizontalPositionMenu {
+  private parent: BlockView<ManuscriptNode>
+
+  menuOpen: boolean = false
+  posMenuSelector = 'position-menu'
+  onChange: (newPos: HorizontalPositions) => void
+  positionMenuWrapper: HTMLDivElement
+  location: HTMLElement
+  getPositionSource?: () => ManuscriptNode | null
+
+  constructor(
+    parent: BlockView<ManuscriptNode>,
+    onChange: (newPos: HorizontalPositions) => void,
+    location?: HTMLElement,
+    getPositionSource?: () => ManuscriptNode | null // if different from parent as in figure element case
+  ) {
+    const preSource = getPositionSource?.() || parent.node
+    if (typeof preSource.attrs.type === 'undefined') {
+      console.error("This node doesn't support horizontal alignment")
+      return
+    }
+    this.getPositionSource = getPositionSource
+    this.location = location || parent.dom
+    this.onChange = onChange.bind(parent)
+    this.parent = parent
+  }
+
+  static createPositionOptions<T extends ManuscriptNode>(
+    nodeType: ManuscriptNodeType,
+    node: T,
+    currentPosition: string,
+    view: ManuscriptEditorView,
+    onComplete?: () => void
+  ) {
+    const createAction = (position: string) => () => {
+      onComplete?.()
+      updateNodeAttrs(view, nodeType, {
+        ...node.attrs,
+        type: position,
+      })
+    }
+
+    return [
+      {
+        title: 'Left',
+        action: createAction(HorizontalPositions.left),
+        IconComponent: imageLeftIcon,
+        iconName: 'ImageLeft',
+        selected: currentPosition === HorizontalPositions.left,
+      },
+      {
+        title: 'Center',
+        action: createAction(HorizontalPositions.default),
+        IconComponent: imageDefaultIcon,
+        iconName: 'ImageDefault',
+        selected: !currentPosition,
+      },
+      {
+        title: 'Right',
+        action: createAction(HorizontalPositions.right),
+        IconComponent: imageRightIcon,
+        iconName: 'ImageRight',
+        selected: currentPosition === HorizontalPositions.right,
+      },
+    ]
+  }
+
+  createPopperMenuPositionOptions<T extends ManuscriptNode>(
+    nodeType: ManuscriptNodeType,
+    node: T,
+    currentPosition: string,
+    view: ManuscriptEditorView,
+    onComplete?: () => void
+  ): PopperMenuPositionOption[] {
+    return HorizontalPositionMenu.createPositionOptions(
+      nodeType,
+      node,
+      currentPosition,
+      view,
+      onComplete
+    ).map((option) => ({
+      label: option.title,
+      action: option.action,
+      icon: option.iconName,
+      selected: option.selected,
+    }))
+  }
+
+  createPositionMenuWrapper(currentPosition: string, props: EditorProps) {
+    const can = props.getCapabilities()
+    const positionMenuWrapper = document.createElement('div')
+    positionMenuWrapper.classList.add(this.posMenuSelector)
+
+    const positionMenuButton = document.createElement('div')
+    positionMenuButton.classList.add('position-menu-button')
+
+    let icon
+    switch (currentPosition) {
+      case HorizontalPositions.left:
+        icon = imageLeftIcon
+        break
+      case HorizontalPositions.right:
+        icon = imageRightIcon
+        break
+      default:
+        icon = imageDefaultIcon
+        break
+    }
+    if (icon) {
+      positionMenuButton.innerHTML = icon
+    }
+    const onClick = () => this.showPositionMenu()
+    if (can.editArticle) {
+      positionMenuButton.tabIndex = 0
+      positionMenuButton.addEventListener('click', onClick)
+      positionMenuButton.addEventListener('keydown', handleEnterKey(onClick))
+    }
+
+    if (this.positionMenuWrapper) {
+      const button = this.positionMenuWrapper.querySelector(
+        '.position-menu-button'
+      )
+      if (button) {
+        this.positionMenuWrapper.removeChild(button)
+        this.positionMenuWrapper.appendChild(positionMenuButton)
+      }
+    } else {
+      positionMenuWrapper.appendChild(positionMenuButton)
+      this.positionMenuWrapper = positionMenuWrapper
+      this.location.prepend(this.positionMenuWrapper)
+    }
+  }
+
+  getHorizontalPositionOptions(
+    current: string,
+    onPick: (newPos: HorizontalPositions) => void,
+    destroy: () => void
+  ) {
+    const componentProps = {
+      actions: [
+        {
+          label: 'Left',
+          action: () => {
+            destroy()
+            this.menuOpen = false
+            onPick(HorizontalPositions.left)
+          },
+          icon: 'ImageLeft',
+          selected: current === HorizontalPositions.left,
+        },
+        {
+          label: 'Default',
+          action: () => {
+            destroy()
+            this.menuOpen = false
+            onPick(HorizontalPositions.default)
+          },
+          icon: 'ImageDefault',
+          selected: !current,
+        },
+        {
+          label: 'Right',
+          action: () => {
+            destroy()
+            this.menuOpen = false
+            onPick(HorizontalPositions.right)
+          },
+          icon: 'ImageRight',
+          selected: current === HorizontalPositions.right,
+        },
+      ],
+    }
+
+    return componentProps
+  }
+
+  showPositionMenu(force = false) {
+    const p = this.parent
+
+    if (this.menuOpen && !force) {
+      // Toggle off on click
+      p.props.popper.destroy()
+      this.menuOpen = false
+      return
+    }
+
+    const posSource = this.getPositionSource
+      ? this.getPositionSource()
+      : this.parent.node
+
+    const componentProps = this.getHorizontalPositionOptions(
+      posSource?.attrs.type || HorizontalPositions.default,
+      this.onChange,
+      p.props.popper.destroy.bind(p.props.popper)
+    )
+    createSubViewAsync(
+      p.props,
+      ContextMenu,
+      componentProps,
+      p.node,
+      p.getPos,
+      p.view,
+      ['context-menu', this.posMenuSelector]
+    ).then((content) => {
+      if (this.menuOpen && p.props.popper.isActive()) {
+        p.props.popper.replaceContent(content)
+      } else {
+        p.props.popper.show(this.positionMenuWrapper, content, 'left', false)
+      }
+      this.menuOpen = true
     })
   }
 
-  return [
-    {
-      title: 'Left',
-      action: createAction(figurePositions.left),
-      IconComponent: imageLeftIcon,
-      iconName: 'ImageLeft',
-      selected: currentPosition === figurePositions.left,
-    },
-    {
-      title: 'Center',
-      action: createAction(figurePositions.default),
-      IconComponent: imageDefaultIcon,
-      iconName: 'ImageDefault',
-      selected: !currentPosition,
-    },
-    {
-      title: 'Right',
-      action: createAction(figurePositions.right),
-      IconComponent: imageRightIcon,
-      iconName: 'ImageRight',
-      selected: currentPosition === figurePositions.right,
-    },
-  ]
-}
+  create() {
+    if (!this.parent) {
+      return
+    }
+    const p = this.parent
+    if (p.props.getCapabilities()?.editArticle) {
+      const posSource = this.getPositionSource
+        ? this.getPositionSource()
+        : this.parent.node
 
-export const createPopperMenuPositionOptions = <T extends ManuscriptNode>(
-  nodeType: ManuscriptNodeType,
-  node: T,
-  currentPosition: string,
-  view: ManuscriptEditorView,
-  onComplete?: () => void
-): PopperMenuPositionOption[] => {
-  return createPositionOptions(
-    nodeType,
-    node,
-    currentPosition,
-    view,
-    onComplete
-  ).map((option) => ({
-    label: option.title,
-    action: option.action,
-    icon: option.iconName,
-    selected: option.selected,
-  }))
-}
-
-export const showPositionMenu = <T extends ManuscriptNode>(
-  nodeType: ManuscriptNodeType,
-  node: T,
-  currentPosition: string,
-  positionMenuWrapper: HTMLElement,
-  view: ManuscriptEditorView,
-  getPos: () => number,
-  props: EditorProps
-) => {
-  props.popper.destroy()
-
-  const options = createPopperMenuPositionOptions(
-    nodeType,
-    node,
-    currentPosition,
-    view,
-    () => props.popper.destroy()
-  )
-
-  const componentProps: ContextMenuProps = {
-    actions: options,
+      this.createPositionMenuWrapper(
+        posSource?.attrs.type || HorizontalPositions.default,
+        p.props
+      )
+    }
   }
-
-  props.popper.show(
-    positionMenuWrapper,
-    ReactSubView(props, ContextMenu, componentProps, node, getPos, view, [
-      'context-menu',
-      'position-menu',
-    ]),
-    'left',
-    false
-  )
-}
-
-export const setElementPositionAlignment = (
-  element: HTMLElement,
-  position: string
-): void => {
-  switch (position) {
-    case figurePositions.left:
-      element.setAttribute('data-alignment', 'left')
-      break
-    case figurePositions.right:
-      element.setAttribute('data-alignment', 'right')
-      break
-    default:
-      element.removeAttribute('data-alignment')
-      break
-  }
-}
-
-export const createPositionMenuWrapper = (
-  currentPosition: string,
-  onClick: () => void,
-  props: EditorProps
-): HTMLDivElement => {
-  const can = props.getCapabilities()
-  const positionMenuWrapper = document.createElement('div')
-  positionMenuWrapper.classList.add('position-menu')
-
-  const positionMenuButton = document.createElement('div')
-  positionMenuButton.classList.add('position-menu-button')
-
-  let icon
-  switch (currentPosition) {
-    case figurePositions.left:
-      icon = imageLeftIcon
-      break
-    case figurePositions.right:
-      icon = imageRightIcon
-      break
-    default:
-      icon = imageDefaultIcon
-      break
-  }
-  if (icon) {
-    positionMenuButton.innerHTML = icon
-  }
-  if (can.editArticle) {
-    positionMenuButton.tabIndex = 0
-    positionMenuButton.addEventListener('click', onClick)
-    positionMenuButton.addEventListener('keydown', handleEnterKey(onClick))
-  }
-  positionMenuWrapper.appendChild(positionMenuButton)
-  return positionMenuWrapper
 }

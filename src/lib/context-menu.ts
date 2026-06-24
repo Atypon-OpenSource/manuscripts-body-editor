@@ -42,7 +42,7 @@ import {
   insertInlineTableFootnote,
 } from '../commands'
 import { PopperManager } from './popper'
-import { createPositionOptions } from './position-menu'
+import { HorizontalPositionMenu } from './position-menu'
 import { templateAllows } from './template'
 import {
   getMatchingChild,
@@ -59,9 +59,18 @@ const readonlyTypes = [
   schema.nodes.footnotes_section,
 ]
 
-const isBoxElementSectionTitle = ($pos: ResolvedPos, node: ManuscriptNode) =>
-  isSectionTitleNode(node) &&
-  $pos.node($pos.depth - 1).type === schema.nodes.box_element
+const getBoxElementOfSectionTitle = (
+  $pos: ResolvedPos,
+  node: ManuscriptNode
+) => {
+  if (isSectionTitleNode(node)) {
+    const parent = $pos.node($pos.depth - 1)
+    if (parent.type === schema.nodes.box_element) {
+      return parent
+    }
+  }
+  return null
+}
 
 export const sectionLevel = (depth: number) => {
   switch (depth) {
@@ -245,31 +254,43 @@ export class ContextMenu {
     menu.className = 'menu'
 
     const $pos = this.resolvePos()
-    const isBox = isBoxElementSectionTitle($pos, this.node)
-    const type = isBox ? schema.nodes.box_element : this.node.type
+    const boxParent = getBoxElementOfSectionTitle($pos, this.node)
+    const type = boxParent ? schema.nodes.box_element : this.node.type
 
-    if (
-      type === schema.nodes.figure_element ||
-      type === schema.nodes.image_element
-    ) {
+    const positionableTypes = [
+      schema.nodes.figure_element,
+      schema.nodes.image_element,
+      schema.nodes.box_element,
+      schema.nodes.pullquote_element,
+      schema.nodes.table_element,
+    ]
+
+    let nodeBase = this.node
+
+    if (positionableTypes.includes(type)) {
       const figure = getMatchingChild(
         this.node,
         (node) => node.type === schema.nodes.figure
       )
 
       if (figure) {
-        const attrType = figure.attrs.type
-        const submenuOptions = createPositionOptions(
-          schema.nodes.figure,
-          figure,
-          attrType,
-          this.view,
-          () => popper.destroy()
-        )
-        const submenuLabel = 'Position'
-        const submenu = this.createSubmenu(submenuLabel, submenuOptions)
-        menu.appendChild(submenu)
+        nodeBase = figure
       }
+
+      if (boxParent) {
+        nodeBase = boxParent
+      }
+
+      const submenuOptions = HorizontalPositionMenu.createPositionOptions(
+        schema.nodes[nodeBase.type.name],
+        nodeBase,
+        nodeBase.attrs.type,
+        this.view,
+        () => popper.destroy()
+      )
+      const submenuLabel = 'Position'
+      const submenu = this.createSubmenu(submenuLabel, submenuOptions)
+      menu.appendChild(submenu)
     }
 
     if (type === schema.nodes.list) {

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { ContextMenu } from '@manuscripts/style-guide'
 import { FigureNode, ImageElementNode, schema } from '@manuscripts/transform'
 
 import { deleteIcon, linkIcon } from '../icons'
@@ -24,24 +23,16 @@ import {
   MediaType,
 } from '../lib/media'
 import { handleEnterKey } from '../lib/navigation-utils'
-import { createPositionMenuWrapper } from '../lib/position-menu'
+import { HorizontalPositionMenu } from '../lib/position-menu'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-import ReactSubView from './ReactSubView'
-
-export enum figurePositions {
-  left = 'half-left',
-  right = 'half-right',
-  default = '',
-}
 
 export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
   public container: HTMLElement
   public subcontainer: HTMLElement
   public extLinkEditorContainer: HTMLDivElement
-  private positionMenuWrapper: HTMLDivElement
-  private figurePosition: string
+  private positionMenu: HorizontalPositionMenu
   private isEditingExtLink = false
 
   public ignoreMutation = () => true
@@ -93,33 +84,12 @@ export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
     this.addPositionMenu()
   }
 
-  protected addPositionMenu() {
-    if (this.props.getCapabilities()?.editArticle) {
-      // Remove existing position menu if it exists
-      const existingMenu = this.container.querySelector('.position-menu')
-      if (existingMenu) {
-        existingMenu.remove()
-      }
-
-      const firstFigure = this.getFirstFigure()
-      this.figurePosition = firstFigure?.attrs.type || figurePositions.default
-
-      this.positionMenuWrapper = createPositionMenuWrapper(
-        this.figurePosition,
-        this.showPositionMenu,
-        this.props
-      )
-
-      this.container.prepend(this.positionMenuWrapper)
-    }
-  }
-
   /**
    * Gets the first figure node from the element.
    * Optimized for image_element (direct access) vs figure_element (loop through all).
    * @returns The first figure node or null if no figure exists
    */
-  private getFirstFigure(): FigureNode | null {
+  private getFirstFigure() {
     // Optimize for image_element which only has one figure
     if (this.node.type === schema.nodes.image_element) {
       // Direct access to the single figure in image_element
@@ -166,62 +136,16 @@ export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
     return figures
   }
 
-  private showPositionMenu = () => {
-    const firstFigure = this.getFirstFigure()
-    if (!firstFigure) {
-      return
+  protected addPositionMenu() {
+    if (!this.positionMenu) {
+      this.positionMenu = new HorizontalPositionMenu(
+        this,
+        this.updateAllFiguresPosition.bind(this),
+        this.container,
+        () => this.getFirstFigure()
+      )
     }
-
-    this.props.popper.destroy()
-
-    const options = [
-      {
-        label: 'Left',
-        action: () => {
-          this.props.popper.destroy()
-          this.updateAllFiguresPosition(figurePositions.left)
-        },
-        icon: 'ImageLeft',
-        selected: this.figurePosition === figurePositions.left,
-      },
-      {
-        label: 'Default',
-        action: () => {
-          this.props.popper.destroy()
-          this.updateAllFiguresPosition(figurePositions.default)
-        },
-        icon: 'ImageDefault',
-        selected: !this.figurePosition,
-      },
-      {
-        label: 'Right',
-        action: () => {
-          this.props.popper.destroy()
-          this.updateAllFiguresPosition(figurePositions.right)
-        },
-        icon: 'ImageRight',
-        selected: this.figurePosition === figurePositions.right,
-      },
-    ]
-
-    const componentProps = {
-      actions: options,
-    }
-
-    this.props.popper.show(
-      this.positionMenuWrapper,
-      ReactSubView(
-        this.props,
-        ContextMenu,
-        componentProps,
-        this.node,
-        this.getPos,
-        this.view,
-        ['context-menu', 'position-menu']
-      ),
-      'left',
-      false
-    )
+    this.positionMenu.create()
   }
 
   /**
@@ -241,7 +165,6 @@ export class ImageElementView extends BlockView<Trackable<ImageElementNode>> {
     })
 
     this.view.dispatch(tr)
-    this.figurePosition = position
   }
 
   // external link editor
