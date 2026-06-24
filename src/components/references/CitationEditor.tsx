@@ -38,7 +38,7 @@ import { BibliographyItemSource } from './BibliographyItemSource'
 import { CitedItem, CitedItems } from './CitationViewer'
 import { ImportBibliographyModal } from './ImportBibliographyModal'
 import { ReferenceLine } from './ReferenceLine'
-import { ReferenceSearch } from './ReferenceSearch'
+import { InsertCitationModal } from './InsertCitationModal'
 import { ReferencesModal } from './ReferencesModal'
 
 const Container = withFocusTrap(styled.div``)
@@ -178,10 +178,6 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
     setEditingForm({ show: true, item: item })
   }
 
-  const handleImport = () => {
-    setSearching(false)
-    setImporting(true)
-  }
   const handleSaveImport = (data: BibliographyItemAttrs[]) => {
     data.forEach((item) => {
       const newItem = { ...item }
@@ -219,11 +215,10 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
   }
   if (searching) {
     return (
-      <ReferenceSearch
+      <InsertCitationModal
         sources={sources}
         items={items}
         onAdd={handleAdd}
-        onImport={handleImport}
         onCite={(items) => {
           setSearching(false)
           handleCite(items)
@@ -234,12 +229,11 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
   }
   if (!rids.length) {
     return (
-      <ReferenceSearch
+      <InsertCitationModal
         query={query}
         sources={sources}
         items={items}
         onAdd={handleAdd}
-        onImport={handleImport}
         onCite={handleCite}
         onCancel={onCancel}
       />
