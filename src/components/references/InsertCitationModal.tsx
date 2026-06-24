@@ -80,7 +80,6 @@ export const InsertCitationModal: React.FC<{
   sources: BibliographyItemSource[]
   items: BibliographyItemAttrs[]
   onAdd: () => void
-  onImport: () => void
   onCite: (items: BibliographyItemAttrs[]) => void
   onCancel: () => void
 }> = ({ query: initialQuery, sources, items, onAdd, onCite, onCancel }) => {
@@ -166,7 +165,7 @@ export const InsertCitationModal: React.FC<{
                 Add new
               </InsertCitationButton>
               <ButtonGroup>
-                <TertiaryButton onClick={onCancel}>Cancel</TertiaryButton>
+                <TertiaryButton onClick={handleClose}>Cancel</TertiaryButton>
                 <PrimaryButton
                   onClick={handleClick}
                   disabled={selections.size === 0}

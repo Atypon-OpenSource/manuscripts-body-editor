@@ -178,10 +178,6 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
     setEditingForm({ show: true, item: item })
   }
 
-  const handleImport = () => {
-    setSearching(false)
-    setImporting(true)
-  }
   const handleSaveImport = (data: BibliographyItemAttrs[]) => {
     data.forEach((item) => {
       const newItem = { ...item }
@@ -223,7 +219,6 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
         sources={sources}
         items={items}
         onAdd={handleAdd}
-        onImport={handleImport}
         onCite={(items) => {
           setSearching(false)
           handleCite(items)
@@ -239,7 +234,6 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
         sources={sources}
         items={items}
         onAdd={handleAdd}
-        onImport={handleImport}
         onCite={handleCite}
         onCancel={onCancel}
       />
