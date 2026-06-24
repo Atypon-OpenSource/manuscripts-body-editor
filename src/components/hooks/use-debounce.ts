@@ -36,7 +36,7 @@ export default function useDebounced<Input, Output>(
   fn: (arg: Input) => Promise<Output>,
   delay: number
 ): (arg: Input) => Promise<Output> {
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   return useCallback(
     (arg: Input) => {
