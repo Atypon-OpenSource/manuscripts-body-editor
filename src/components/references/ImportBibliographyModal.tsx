@@ -97,7 +97,7 @@ export const ImportBibliographyModal: React.FC<
         <ModalHeader>
           <CloseButton onClick={onCancel} data-cy="modal-close-button" />
         </ModalHeader>
-        <ModalCardBody width={640}>
+        <ModalCardBody $width={640}>
           <ModalTitle>Import Bibliography</ModalTitle>
           <p>
             <SpanWithExample
