@@ -188,9 +188,20 @@ export const handlePaste = (
 
   const text = clipboardData?.getData('text/plain')
   if (text && allowedHref(text)) {
-    const link = schema.nodes.link.create({ href: text }, schema.text(text))
-    dispatch(tr.insert(selection.from, Fragment.from(link)).scrollIntoView())
-    return true
+    const $from = selection.$from
+    const canInsertLink = $from.parent.canReplaceWith(
+      $from.index(),
+      $from.index(),
+      schema.nodes.link
+    )
+    if (canInsertLink) {
+      const link = schema.nodes.link.create(
+        { href: text },
+        schema.text(text)
+      )
+      dispatch(tr.insert(selection.from, Fragment.from(link)).scrollIntoView())
+      return true
+    }
   }
 
   // TODO:: all the cases below should be removed when figuring out issue of open slice sides from track-changes plugin
