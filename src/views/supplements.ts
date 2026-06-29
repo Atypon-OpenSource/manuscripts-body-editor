@@ -32,6 +32,7 @@ export class SupplementsView extends BlockView<Trackable<SupplementsNode>> {
     this.toggleButton = document.createElement('button')
     this.toggleButton.classList.add('supplements-toggle-btn', 'button-reset')
     this.toggleButton.innerHTML = arrowUp
+    
     const handleToggle = () => {
       this.collapsed = !this.collapsed
       this.toggleContent()
