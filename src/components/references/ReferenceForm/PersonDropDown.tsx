@@ -49,13 +49,13 @@ export const PersonDropDown = (props: PersonDropDownProps) => {
         <ToggleButton
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          isOpen={isOpen}
+          $isOpen={isOpen}
         >
           <DropdownIndicator />
           {title}
         </ToggleButton>
         <RemoveButton
-          size={13}
+          $size={13}
           type="button"
           aria-label="Delete this editor"
           onClick={() => remove(index)}

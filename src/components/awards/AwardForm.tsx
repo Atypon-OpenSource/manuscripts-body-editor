@@ -221,7 +221,7 @@ export const AwardForm = ({
 }
 // TODO:: All that react-select component and styles should be in style-guide with a standard select component
 
-const SearchIconContainer = styled.span<{ isFocused: boolean }>`
+const SearchIconContainer = styled.span<{ $isFocused: boolean }>`
   display: flex;
   align-items: center;
   padding-left: ${(props) => props.theme.grid.unit * 4}px;
@@ -229,22 +229,22 @@ const SearchIconContainer = styled.span<{ isFocused: boolean }>`
 
   path {
     stroke: ${(props) =>
-      props.isFocused
+      props.$isFocused
         ? props.theme.colors.brand.medium
         : props.theme.colors.text.primary};
   }
 `
 
-const OptionWrapper = styled.div<{ focused?: boolean; selected?: boolean }>`
+const OptionWrapper = styled.div<{ $focused?: boolean; $selected?: boolean }>`
   padding-left: ${(props) => props.theme.grid.unit * 4}px;
   padding-top: ${(props) => props.theme.grid.unit * 2}px;
   padding-bottom: ${(props) => props.theme.grid.unit * 2}px;
 
   background-color: ${(props) => {
-    if (props.selected) {
+    if (props.$selected) {
       return props.theme.colors.background.selected
     }
-    if (props.focused) {
+    if (props.$focused) {
       return props.theme.colors.background.fifth
     }
     return 'transparent'
@@ -266,8 +266,8 @@ const Option: React.FC<OptionProps<FunderOption, false>> = ({
     <OptionWrapper
       {...innerProps}
       ref={innerRef}
-      focused={isFocused}
-      selected={isSelected}
+      $focused={isFocused}
+      $selected={isSelected}
     >
       {data.label}
     </OptionWrapper>
@@ -277,7 +277,7 @@ const Option: React.FC<OptionProps<FunderOption, false>> = ({
 const Control = ({ children, ...props }: ControlProps<FunderOption, false>) => {
   return (
     <components.Control {...props}>
-      <SearchIconContainer isFocused={props.isFocused}>
+      <SearchIconContainer $isFocused={props.isFocused}>
         <SearchIcon />
       </SearchIconContainer>
       {children}

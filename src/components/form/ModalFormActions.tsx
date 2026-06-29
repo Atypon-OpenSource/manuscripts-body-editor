@@ -84,5 +84,5 @@ export const ModalFormActions: React.FC<ModalFormActionsProps> = ({
 }
 
 const StylePrimaryButton = styled(PrimaryButton)`
-  min-width: 145px;
+  min-width: 90px;
 `

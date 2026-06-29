@@ -165,7 +165,7 @@ export const LinkForm: React.FC<LinkFormProps> = ({
             name={'href'}
             value={href}
             autoComplete={'off'}
-            error={!!errors.href}
+            $error={!!errors.href}
             onChange={handleHrefChange}
           />
 
@@ -180,7 +180,7 @@ export const LinkForm: React.FC<LinkFormProps> = ({
             name={'text'}
             value={text}
             autoComplete={'off'}
-            error={!!errors.text}
+            $error={!!errors.text}
             onChange={handleTextChange}
           />
           {errors.text && <InputErrorText>{errors.text}</InputErrorText>}
