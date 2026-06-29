@@ -33,14 +33,14 @@ importers:
         specifier: 1.1.2
         version: 1.1.2
       '@manuscripts/style-guide':
-        specifier: 3.6.3
-        version: 3.6.3(@babel/core@7.29.7)(@types/hoist-non-react-statics@3.3.7(@types/react@19.2.17))(@types/node@20.17.46)(@types/react@19.2.17)(react-is@19.2.6)
+        specifier: 3.6.4-LEAN-5683.0
+        version: 3.6.4-LEAN-5683.0(@babel/core@7.29.7)(@types/hoist-non-react-statics@3.3.7(@types/react@19.2.17))(@types/node@20.17.46)(@types/react@19.2.17)(react-is@19.2.6)
       '@manuscripts/track-changes-plugin':
         specifier: 2.4.0
         version: 2.4.0
       '@manuscripts/transform':
-        specifier: 4.4.3
-        version: 4.4.3(prosemirror-state@1.4.3)
+        specifier: 4.4.4-LEAN-5683.0
+        version: 4.4.4-LEAN-5683.0(prosemirror-state@1.4.3)
       '@popperjs/core':
         specifier: 2.11.8
         version: 2.11.8
@@ -870,16 +870,16 @@ packages:
       eslint-plugin-simple-import-sort: '>= 8'
       typescript: '*'
 
-  '@manuscripts/style-guide@3.6.3':
-    resolution: {integrity: sha512-MAjYQK7+G5XjYgqNAD/ViJNN2N9NIFIV1jvQMjuqCWv8+e2fsfyUYwkoKkAIvsBWCOsdumQXQ8wU7WxLbzoINw==}
+  '@manuscripts/style-guide@3.6.4-LEAN-5683.0':
+    resolution: {integrity: sha512-qKIExrP0mRts8H6jmfvxPwn6gunWkGfszgfIDNJDOwtdZ076/cGh1x7tXJS3wYnM/7u68q5XUJP/UdKDaLblsA==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/style-guide/-/@manuscripts/style-guide-3.6.4-LEAN-5683.0.tgz}
     engines: {node: '>=22'}
 
   '@manuscripts/track-changes-plugin@2.4.0':
     resolution: {integrity: sha512-I+KDqXvKRtmRWcqxtjEVLK7GR55pSzwFCoIouZ4wE2d72MXg0l3yUYXL/73FdUE2xwIzVneW65Q3RjHlvL8Ekg==}
     engines: {node: '>=22'}
 
-  '@manuscripts/transform@4.4.3':
-    resolution: {integrity: sha512-GOCjmnClTbC7l5Aq54sQsoyWBvRJ5t6pRHsRH4i4wXczEvjx6oEjikwe06WZNAYrVlRpbGCGKUoTwIDuwaf2eA==}
+  '@manuscripts/transform@4.4.4-LEAN-5683.0':
+    resolution: {integrity: sha512-il5SocI9pm72X7MzJmCZxPummf1QYy8gqC0uuLEuhGI51a615tHUo0tZ+X1izX8NMgTZ6wVaeOPr926dj7LJiw==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/transform/-/@manuscripts/transform-4.4.4-LEAN-5683.0.tgz}
     engines: {node: '>=22'}
 
   '@napi-rs/wasm-runtime@1.1.5':
@@ -5584,7 +5584,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@manuscripts/style-guide@3.6.3(@babel/core@7.29.7)(@types/hoist-non-react-statics@3.3.7(@types/react@19.2.17))(@types/node@20.17.46)(@types/react@19.2.17)(react-is@19.2.6)':
+  '@manuscripts/style-guide@3.6.4-LEAN-5683.0(@babel/core@7.29.7)(@types/hoist-non-react-statics@3.3.7(@types/react@19.2.17))(@types/node@20.17.46)(@types/react@19.2.17)(react-is@19.2.6)':
     dependencies:
       '@headlessui/react': 2.2.10(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       formik: 2.4.9(@types/react@19.2.17)(react@19.2.6)
@@ -5622,7 +5622,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@manuscripts/transform@4.4.3(prosemirror-state@1.4.3)':
+  '@manuscripts/transform@4.4.4-LEAN-5683.0(prosemirror-state@1.4.3)':
     dependencies:
       citeproc: 2.4.63
       jszip: 3.10.1
