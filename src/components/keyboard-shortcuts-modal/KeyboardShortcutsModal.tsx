@@ -86,14 +86,11 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
                 </StyledModalSidebarTitle>
               </StyledModalSidebarHeader>
               <StyledSidebarContent>
-                <ShortcutTabs
-                  selectedIndex={tabIndex}
-                  onChange={setTabIndex}
-                >
+                <ShortcutTabs selectedIndex={tabIndex} onChange={setTabIndex}>
                   <ModalTabsWrapper>
                     <ModalTabs tabLabels={TAB_LABELS} />
                   </ModalTabsWrapper>
-                  
+
                   <InspectorTabPanels>
                     {EDITOR_KEYBOARD_SHORTCUT_TABS.map((tab) => (
                       <ShortcutTabPanel key={tab.id}>
@@ -139,7 +136,8 @@ const ShortcutTabs = styled(InspectorTabs)`
 `
 
 const ModalTabsWrapper = styled('div')`
-  margin: 0 ${(props) => props.theme.grid.unit * 8}px ${(props) => props.theme.grid.unit * 3}px;
+  margin: 0 ${(props) => props.theme.grid.unit * 8}px
+    ${(props) => props.theme.grid.unit * 3}px;
 `
 
 const ShortcutTabPanel = styled(InspectorTabPanel).attrs({
@@ -198,7 +196,8 @@ const Section = styled.section`
 `
 
 const SectionTitle = styled.h3`
-  margin: 0 ${(props) => props.theme.grid.unit * 8}px ${(props) => props.theme.grid.unit * 2}px;
+  margin: 0 ${(props) => props.theme.grid.unit * 8}px
+    ${(props) => props.theme.grid.unit * 2}px;
   font-size: ${(props) => props.theme.font.size.large};
   font-weight: ${(props) => props.theme.font.weight.normal};
   line-height: ${(props) => props.theme.font.lineHeight.large};
