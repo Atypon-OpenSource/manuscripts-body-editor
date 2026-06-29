@@ -29,6 +29,12 @@ import { clear } from '@manuscripts/track-changes-plugin'
 export const objectsKey = new PluginKey<Map<string, Target>>('objects')
 
 /**
+ * Node types listed here will still be counted and available for cross-references
+ * via buildTargets, but will NOT receive an element-label decoration in the editor.
+ */
+const excludedFromLabelDecoration = new Set([schema.nodes.supplement])
+
+/**
  * This plugin sets the labels for cross-references, and adds the label as a decoration to cross-referenceable elements.
  */
 export default () => {
@@ -60,7 +66,7 @@ export default () => {
             if (id) {
               const target = targets.get(id)
 
-              if (target) {
+              if (target && !excludedFromLabelDecoration.has(node.type)) {
                 const caption = findChildren(
                   node,
                   (node) =>
@@ -115,11 +121,7 @@ export default () => {
  * Returns the position for a widget decoration when there is no caption.
  * Falls back to the end of the node.
  */
-const getDecorationPos = (
-  target: Target,
-  doc: ManuscriptNode,
-  pos: number
-) => {
+const getDecorationPos = (target: Target, doc: ManuscriptNode, pos: number) => {
   const $pos = doc.resolve(pos + 1)
   return $pos.end()
 }

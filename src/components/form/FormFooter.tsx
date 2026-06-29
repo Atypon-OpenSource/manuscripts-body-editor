@@ -37,14 +37,16 @@ const StyledIconTextButton = styled(IconTextButton)`
 const FormFooter = ({
   onCancel,
   primaryAction,
+  cancelLabel = 'Close',
 }: {
   onCancel: () => void
   primaryAction?: React.ReactNode
+  cancelLabel?: string
 }) => {
   return (
     <Footer>
       <StyledIconTextButton color="secondary" onClick={onCancel}>
-        Close
+        {cancelLabel}
       </StyledIconTextButton>
       {primaryAction}
     </Footer>

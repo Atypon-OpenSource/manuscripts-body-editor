@@ -71,10 +71,13 @@ export class CrossReferenceEditableView extends CrossReferenceView {
     const excludedTypes = [schema.nodes.image_element.name]
 
     const targets = objectsKey.getState(this.view.state) as Map<string, Target>
+    const fileMap = new Map(this.props.getFiles().map((f) => [f.id, f.name]))
 
-    return Array.from(targets.values()).filter(
-      (t) => !excludedTypes.includes(t.type)
-    )
+    return Array.from(targets.values())
+      .filter((t) => !excludedTypes.includes(t.type))
+      .map((t) =>
+        t.href ? { ...t, label: fileMap.get(t.href) ?? '', caption: '' } : t
+      )
   }
 
   public handleCancel = () => {
@@ -82,6 +85,9 @@ export class CrossReferenceEditableView extends CrossReferenceView {
       const { state } = this.view
 
       const pos = this.getPos()
+      if (pos === undefined) {
+        return
+      }
       const tr = state.tr.delete(pos, pos + this.node.nodeSize)
       tr.setSelection(TextSelection.create(tr.doc, pos))
       skipTracking(tr)
