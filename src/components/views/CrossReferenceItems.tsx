@@ -68,6 +68,7 @@ const Label = styled.span`
   overflow: hidden;
   word-break: break-all;
   overflow-wrap: break-word;
+  min-width: fit-content;
 `
 
 const Caption = styled.span`
@@ -164,6 +165,14 @@ const trimmedCaption = (caption: string, limit: number): string => {
   return caption.replace(captionSearch, '$1…')
 }
 
+const getTargetIcon = (target: Target): React.ReactNode => {
+  if (target.type === schema.nodes.supplement.name) {
+    return getFileIcon(target.label ?? '') ?? <FileUnknownIcon />
+  }
+
+  return nodeTypeIcon(schema.nodes[target.type])
+}
+
 const GROUP_LABELS: Record<string, string> = {
   figure_element: 'Figures',
   table_element: 'Tables',
@@ -241,7 +250,10 @@ export const CrossReferenceItems: React.FC<Props> = ({
                   title={GROUP_LABELS[type]}
                   icon={ArrowDownIcon}
                 >
-                  {group.map((target) => (
+                  {group.map((target) => {
+                    const icon = getTargetIcon(target)
+
+                    return (
                     <CrossReferenceItem
                       key={target.id}
                       className={
@@ -250,13 +262,7 @@ export const CrossReferenceItems: React.FC<Props> = ({
                       onClick={() => setSelectedItem(target.id)}
                     >
                       <DefaultLabelWrapper>
-                        <ItemIcon>
-                          {target.type === schema.nodes.supplement.name
-                            ? (getFileIcon(target.label ?? '') ?? (
-                                <FileUnknownIcon />
-                              ))
-                            : nodeTypeIcon(schema.nodes[target.type])}
-                        </ItemIcon>
+                        {icon ? <ItemIcon>{icon}</ItemIcon> : null}
                         <Label>
                           {target.label}
                           {target.caption && `:`}
@@ -264,7 +270,8 @@ export const CrossReferenceItems: React.FC<Props> = ({
                         <Caption>{trimmedCaption(target.caption, 200)}</Caption>
                       </DefaultLabelWrapper>
                     </CrossReferenceItem>
-                  ))}
+                    )
+                  })}
                 </GroupExpandableSection>
               ))
             ) : (
@@ -287,7 +294,10 @@ export const CrossReferenceItems: React.FC<Props> = ({
                   handleSelect(
                     selectedItem,
                     customLabel ||
-                      (selectedTarget?.href ? selectedTarget.label : '')
+                      (selectedTarget?.type === schema.nodes.supplement.name &&
+                      selectedTarget.href
+                        ? selectedTarget.label
+                        : '')
                   )
                 }
               }}

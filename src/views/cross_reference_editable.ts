@@ -76,7 +76,9 @@ export class CrossReferenceEditableView extends CrossReferenceView {
     return Array.from(targets.values())
       .filter((t) => !excludedTypes.includes(t.type))
       .map((t) =>
-        t.href ? { ...t, label: fileMap.get(t.href) ?? '', caption: '' } : t
+        t.type === schema.nodes.supplement.name && t.href
+          ? { ...t, label: fileMap.get(t.href) ?? '', caption: '' }
+          : t
       )
   }
 
