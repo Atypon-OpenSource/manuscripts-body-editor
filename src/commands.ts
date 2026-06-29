@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-import { isDeleted, skipTracking, skipSelect } from '@manuscripts/track-changes-plugin'
+import {
+  isDeleted,
+  skipTracking,
+  skipSelect,
+} from '@manuscripts/track-changes-plugin'
 import {
   AttachmentNode,
   AwardNode,
