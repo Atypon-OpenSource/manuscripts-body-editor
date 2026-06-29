@@ -153,7 +153,7 @@ export const ReferenceForm: React.FC<{
                   <LinkIcon />
                 </IconButton>
                 <DeleteButton
-                  defaultColor
+                  $defaultColor
                   disabled={!showDelete}
                   data-tooltip-content="Unable to delete because the item is used in the document"
                   data-tooltip-hidden={showDelete}
@@ -236,9 +236,9 @@ export const ReferenceForm: React.FC<{
                   name={'author'}
                   render={({ push, remove }) => (
                     <FormRow
-                      direction="row"
-                      justify="space-between"
-                      align="center"
+                      $direction="row"
+                      $justify="space-between"
+                      $align="center"
                     >
                       <Label>Authors</Label>
 

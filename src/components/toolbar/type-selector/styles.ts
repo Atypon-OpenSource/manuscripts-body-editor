@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import Select, { CSSObjectWithLabel } from 'react-select'
+import Select, { CSSObjectWithLabel, GroupBase, Props } from 'react-select'
 import styled from 'styled-components'
 
 import { Option } from './TypeSelector'
 
-export const StyledSelect = styled(Select<Option, false>)`
+const TypeSelect: React.ComponentType<Props<Option, false, GroupBase<Option>>> = Select
+
+export const StyledSelect = styled(TypeSelect)`
   .type-selector__control:hover {
     border-color: ${(props) => props.theme.colors.border.secondary};
   }
