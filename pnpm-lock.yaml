@@ -39,8 +39,8 @@ importers:
         specifier: 2.4.0
         version: 2.4.0
       '@manuscripts/transform':
-        specifier: 4.4.4
-        version: 4.4.4(prosemirror-state@1.4.3)
+        specifier: 4.4.5
+        version: 4.4.5(prosemirror-state@1.4.3)
       '@popperjs/core':
         specifier: 2.11.8
         version: 2.11.8
@@ -878,8 +878,8 @@ packages:
     resolution: {integrity: sha512-I+KDqXvKRtmRWcqxtjEVLK7GR55pSzwFCoIouZ4wE2d72MXg0l3yUYXL/73FdUE2xwIzVneW65Q3RjHlvL8Ekg==}
     engines: {node: '>=22'}
 
-  '@manuscripts/transform@4.4.4':
-    resolution: {integrity: sha512-S56MMOiYRAy/z1J5vbpJfHmVqtrym/IcCXWLlIqJ5TtvzDCuiHvaXU1YA5+ah/2gHSYdkcY8exHK14ninDB6fw==}
+  '@manuscripts/transform@4.4.5':
+    resolution: {integrity: sha512-qVMM+AnWRJqfMeBDjkx4TB4+sBC2eQw/AtRPCwKpO2VkWeDhM+mhd5mVGLDhybwawkoiT3DG+KiNG7DgZ8vJ0w==}
     engines: {node: '>=22'}
 
   '@napi-rs/wasm-runtime@1.1.5':
@@ -5622,7 +5622,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@manuscripts/transform@4.4.4(prosemirror-state@1.4.3)':
+  '@manuscripts/transform@4.4.5(prosemirror-state@1.4.3)':
     dependencies:
       citeproc: 2.4.63
       jszip: 3.10.1
