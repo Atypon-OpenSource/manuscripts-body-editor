@@ -82,7 +82,7 @@ export const AwardModal: React.FC<AwardModalProps> = ({
         <ModalHeader>
           <CloseButton onClick={handleClose} data-cy="modal-close-button" />
         </ModalHeader>
-        <ModalCardBody width={480}>
+        <ModalCardBody $width={480}>
           <ModalTitle>Add Funder information</ModalTitle>
           <AwardForm
             values={normalizedValues}

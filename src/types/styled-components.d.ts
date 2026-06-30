@@ -19,5 +19,5 @@ import 'styled-components'
 import { Theme } from '@manuscripts/style-guide'
 
 declare module 'styled-components' {
-  export type DefaultTheme = Theme
+  export interface DefaultTheme extends Theme {}
 }

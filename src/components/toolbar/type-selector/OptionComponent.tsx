@@ -21,14 +21,14 @@ import styled from 'styled-components'
 import { optionName, titleCase } from '../helpers'
 import { Option } from './TypeSelector'
 
-const OptionContainer = styled.div<{ isFocused?: boolean }>`
+const OptionContainer = styled.div<{ $isFocused?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
   font-size: 14px;
   cursor: pointer;
   padding: 8px;
-  background: ${(props) => (props.isFocused ? '#f2fbfc' : 'transparent')};
+  background: ${(props) => (props.$isFocused ? '#f2fbfc' : 'transparent')};
 
   &:hover {
     background: ${(props) => props.theme.colors.background.fifth};
@@ -44,7 +44,7 @@ export const OptionComponent: React.FC<OptionProps<Option, false>> = ({
   innerRef,
 }) => {
   return (
-    <OptionContainer {...innerProps} isFocused={isFocused} ref={innerRef}>
+    <OptionContainer {...innerProps} $isFocused={isFocused} ref={innerRef}>
       <OptionLabel>{titleCase(optionName(data.nodeType))}</OptionLabel>
       {data.isSelected && (
         <TickIconWrapper>
