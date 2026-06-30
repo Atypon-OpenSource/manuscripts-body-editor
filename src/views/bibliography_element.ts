@@ -44,6 +44,7 @@ import {
   addTrackChangesAttributes,
   addTrackChangesClassNames,
 } from '@manuscripts/track-changes-plugin'
+import { addIcon } from '../icons'
 
 export class BibliographyElementBlockView extends BlockView<
   Trackable<BibliographyElementNode>
@@ -62,7 +63,7 @@ export class BibliographyElementBlockView extends BlockView<
     const componentProps: ReferencesEditorProps = {
       items: Array.from(bib.bibliographyItems.values()),
       citationCounts: bib.citationCounts,
-      item: bib.bibliographyItems.get(id),
+      item: id ? bib.bibliographyItems.get(id) : undefined,
       onSave: this.handleSave,
       onDelete: this.handleDelete,
     }
@@ -202,6 +203,8 @@ export class BibliographyElementBlockView extends BlockView<
 
     const [meta, bibliography] = bib.engine.makeBibliography()
 
+    this.createInlineModalButton()
+
     for (let i = 0; i < bibliography.length; i++) {
       const id = meta.entry_ids[i][0]
       const fragment = bibliography[i]
@@ -259,6 +262,18 @@ export class BibliographyElementBlockView extends BlockView<
       this.container.appendChild(wrapper)
     }
     this.updateSelections()
+  }
+
+  createInlineModalButton() {
+    const $span = document.createElement('span')
+    $span.tabIndex = 0
+    $span.className = 'add-new-reference add-trans-abstract'
+    $span.title = 'Add New Reference'
+    $span.innerHTML = `${addIcon} <span class="add-new-reference-text">Add new reference</span>`
+    $span.addEventListener('click', (e) => {
+      this.showPopper()
+    })
+    this.dom.appendChild($span)
   }
 
   public createElement = () => {
