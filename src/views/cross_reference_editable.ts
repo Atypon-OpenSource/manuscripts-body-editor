@@ -73,13 +73,20 @@ export class CrossReferenceEditableView extends CrossReferenceView {
     const targets = objectsKey.getState(this.view.state) as Map<string, Target>
     const fileMap = new Map(this.props.getFiles().map((f) => [f.id, f.name]))
 
-    return Array.from(targets.values())
-      .filter((t) => !excludedTypes.includes(t.type))
-      .map((t) =>
-        t.type === schema.nodes.supplement.name && t.href
-          ? { ...t, label: fileMap.get(t.href) ?? '', caption: '' }
-          : t
-      )
+    return Array.from(targets.values()).reduce<Target[]>((acc, t) => {
+      if (excludedTypes.includes(t.type)) {
+        return acc
+      }
+      // Supplement targets reference uploaded files via href; the file name is
+      // used as the label and caption is not applicable, so both are overridden
+      // with values derived from the file map rather than the node's own attrs.
+      if (t.type === schema.nodes.supplement.name && t.href) {
+        acc.push({ ...t, label: fileMap.get(t.href) ?? '', caption: '' })
+      } else {
+        acc.push(t)
+      }
+      return acc
+    }, [])
   }
 
   public handleCancel = () => {
