@@ -1052,7 +1052,7 @@ figure.block:has(.equation.selected-suggestion) {
   .ProseMirror
   [data-track-op='set_attrs']
   .block:not(.trans-abstract):not(.trans-graphical-abstract),
-.tracking-visible .block:has(figure[data-track-op='set_attrs']),
+.tracking-visible .block:has(figure[data-track-op='set_attrs']):not(.headshot-grid-container),
 .tracking-visible figure.block:has(.equation.set_attrs),
 .tracking-visible
   .ProseMirror
@@ -1761,6 +1761,174 @@ th:hover > .table-context-menu-button,
 .hero-image-container .position-menu {
   display: none !important;
 }
+
+/* Headshot Grid Container */
+
+.ProseMirror .block-headshot_grid > .block {
+  display: grid;
+  gap: 16px;
+  margin: 0 12px;
+  padding: 8px 10px 16px 10px;
+  border-radius: 4px;
+  border: 1px solid #F2F2F2;
+}
+
+.ProseMirror .headshot-grid-block {
+  display: grid;
+  gap: 16px;
+}
+
+.ProseMirror .headshot-grid-container .headshot-grid-block .headshot-element {
+  border-radius: 4px;
+  border: 1px solid #E2E2E2 !important;
+  background: #FFF;
+  position: relative;
+}
+
+
+/* Headshot Element Block */
+
+.ProseMirror .headshot-element-block {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto 1fr;
+  column-gap: 16px;
+  row-gap: 8px;
+  padding: 16px 24px;
+}
+
+.ProseMirror .headshot-element-block figure {
+  grid-row: 1 / span 2;
+  margin: 0;
+}
+
+/* Headshot Image */
+
+.ProseMirror .headshot-figure {
+  width: 84px;
+  height: 84px;
+  position: relative;
+}
+
+.ProseMirror .headshot-figure .figure-image {
+  border-radius: 8px;
+}
+
+.ProseMirror .headshot-element-block .figure.placeholder {
+  min-width: 84px;
+  min-height: 84px;
+  padding: 0;
+  border-radius: 8px;
+  background: #f2f2f2;
+  white-space: pre-line;
+}
+
+/* Headshot Captions */
+
+.ProseMirror .headshot-element-block .caption-title,
+.ProseMirror .headshot-element-block .caption-description {
+  text-align: start;
+  font-size: 12px;
+  font-style: normal;
+  line-height: 16px;
+}
+
+.ProseMirror .headshot-element-block .caption-title {
+  font-weight: 700;
+  padding-top: 6px;
+}
+
+.ProseMirror .headshot-element-block .caption-description,
+.ProseMirror .headshot-element-block .caption-title .placeholder-text {
+  font-weight: 400;
+}
+
+.ProseMirror .headshot-element-block .caption-title .placeholder-text::before {
+  content: 'Name...';
+  color: #c9c9c9;
+}
+
+.ProseMirror .headshot-element-block .caption-description .placeholder-text::before {
+  content: 'Summary...';
+  color: #c9c9c9;
+}
+
+/* Add Headshot Button */
+
+.ProseMirror .add-headshot-element-button {
+  border-radius: 4px;
+  border: 1px dashed #E2E2E2;
+  background: #FAFAFA;
+  padding: 8px 24px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.ProseMirror .add-headshot-element-text {
+  color: #353535;
+  text-align: center;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 16px;
+}
+
+.ProseMirror .add-headshot-element-button svg rect {
+  fill: #6e6e6e;
+}
+
+/* Headshot Remove Buttons */
+
+.ProseMirror .headshot-element .headshot-remove-button {
+  background: #ffffff;
+  padding: 4px;
+  margin: 8px;
+  cursor: pointer;
+  border: 1px solid #e2e2e2;
+  border-radius: 50%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  right: 0;
+  visibility: hidden;
+  z-index: 10;
+}
+
+.ProseMirror .headshot-figure .headshot-remove-button {
+  margin: 0;
+  top: -6%;
+  right: -4%;
+}
+
+.ProseMirror .headshot-element .headshot-remove-button svg {
+  width: 12px;
+  height: 12px;
+  transform: rotate(45deg);
+}
+
+.ProseMirror .headshot-figure .headshot-remove-button svg {
+  width: 8px;
+  height: 8px;
+}
+
+.ProseMirror .headshot-element:hover .block > .headshot-remove-button,
+.ProseMirror .headshot-figure:hover .headshot-remove-button,
+.ProseMirror .headshot-element:focus-within .headshot-remove-button {
+  visibility: visible;
+}
+
+.ProseMirror .headshot-element:focus-visible,
+.ProseMirror .add-headshot-element-button:focus-visible,
+.ProseMirror .headshot-remove-button:focus-visible {
+  outline: 3px solid var(--focus-outline-color);
+}
+
 .toggle-btn {
   cursor: pointer;
 }

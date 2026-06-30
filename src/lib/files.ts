@@ -69,6 +69,7 @@ const figureTypes = [
   schema.nodes.figure_element,
   schema.nodes.image_element,
   schema.nodes.hero_image,
+  schema.nodes.headshot_grid,
   schema.nodes.embed,
 ]
 
@@ -119,7 +120,12 @@ export const groupFiles = (
         })
       }
     } else {
-      for (const figure of findChildrenByType(node, schema.nodes.figure)) {
+      const descend = node.type === schema.nodes.headshot_grid
+      const figureNodeType =
+        node.type === schema.nodes.headshot_grid
+          ? schema.nodes.headshot_image
+          : schema.nodes.figure
+      for (const figure of findChildrenByType(node, figureNodeType, descend)) {
         if (isHidden(figure.node)) {
           continue
         }
