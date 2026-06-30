@@ -124,7 +124,7 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
                 <TextField
                   id="institution"
                   {...props.field}
-                  error={showInstitutionError}
+                  $error={showInstitutionError}
                 />
                 {showInstitutionError && (
                   <InputErrorText>

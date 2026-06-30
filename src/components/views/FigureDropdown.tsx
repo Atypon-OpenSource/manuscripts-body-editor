@@ -204,9 +204,9 @@ export const FigureOptions: React.FC<WrappedProps> = ({
       </OptionsButton>
       {isOpen && (
         <OptionsDropdownList
-          direction={'right'}
-          width={128}
-          top={5}
+          $direction={'right'}
+          $width={128}
+          $top={5}
           ref={dropdownRef}
         >
           {showReplace && isEmbedMode && (
@@ -319,9 +319,9 @@ const NestedDropdown: React.FC<{
       </NestedListButton>
       {isOpen && (
         <NestedListDropdownList
-          direction={'right'}
-          moveLeft={moveLeft}
-          width={192}
+          $direction={'right'}
+          $moveLeft={moveLeft}
+          $width={192}
           ref={nestedListRef}
           onClick={(e) => {
             toggleOpen()
@@ -376,8 +376,8 @@ const ListItemButton = styled(IconTextButton)`
   justify-content: space-between;
   align-items: center;
 
-  :hover,
-  :focus-visible {
+  &:hover,
+  &:focus-visible {
     background: #f2fbfc;
   }
 
@@ -407,9 +407,9 @@ const NestedListButton = styled(ListItemButton)`
   }
 `
 
-const NestedListDropdownList = styled(DropdownList)<{ moveLeft?: boolean }>`
+const NestedListDropdownList = styled(DropdownList)<{ $moveLeft?: boolean }>`
   top: 0;
-  ${(props) => (props.moveLeft && 'right: 30%;') || 'left: 100%;'}
+  ${(props) => (props.$moveLeft && 'right: 30%;') || 'left: 100%;'}
 `
 
 const UploadButton = styled(IconTextButton)`
