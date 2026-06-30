@@ -81,7 +81,7 @@ export class HeadshotGridView extends BlockView<HeadshotGridNode> {
 
     const headshotElementNode =
       schema.nodes.headshot_element.createAndFill() as HeadshotElementNode
-    const insertPos = this.getPos() + this.node.nodeSize - 1
+    const insertPos = this.getPos() + 1
     tr.insert(insertPos, headshotElementNode)
     this.view.focus()
     tr.setSelection(TextSelection.create(tr.doc, insertPos))
