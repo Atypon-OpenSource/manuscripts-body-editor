@@ -43,16 +43,16 @@ const Container = styled.div`
   align-items: center;
   padding-bottom: 16px;
 `
-const OptionWrapper = styled.div<{ focused?: boolean; selected?: boolean }>`
+const OptionWrapper = styled.div<{ $focused?: boolean; $selected?: boolean }>`
   padding-left: ${(props) => props.theme.grid.unit * 4}px;
   padding-top: ${(props) => props.theme.grid.unit * 2}px;
   padding-bottom: ${(props) => props.theme.grid.unit * 2}px;
 
   background-color: ${(props) => {
-    if (props.selected) {
+    if (props.$selected) {
       return props.theme.colors.background.selected
     }
-    if (props.focused) {
+    if (props.$focused) {
       return props.theme.colors.background.fifth
     }
     return 'transparent'
@@ -103,8 +103,8 @@ export const InsertTableDialog: React.FC<InsertTableDialogProps> = ({
       <OptionWrapper
         {...innerProps}
         ref={innerRef}
-        focused={isFocused}
-        selected={isSelected}
+        $focused={isFocused}
+        $selected={isSelected}
       >
         {data.label}
       </OptionWrapper>

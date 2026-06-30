@@ -392,7 +392,7 @@ export const DraggableTree: React.FC<DraggableTreeProps> = ({
     <Outline ref={ref} className={classNames}>
       {!isTop && node.type.name != 'manuscript' && (
         <OutlineItem
-          depth={isHeroImage || isSupplements || isMainDocument ? 1 : depth}
+          $depth={isHeroImage || isSupplements || isMainDocument ? 1 : depth}
           onContextMenu={handleContextMenu}
           onKeyDown={handleKeyDown}
           tabIndex={-1}
