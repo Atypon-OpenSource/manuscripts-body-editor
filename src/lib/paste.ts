@@ -209,15 +209,14 @@ export const handlePaste = (
       schema.nodes.link
     )
     if (canInsertLink) {
-      const link = schema.nodes.link.create(
-        { href },
-        schema.text(text || href)
-      )
+      const link = schema.nodes.link.create({ href }, schema.text(text || href))
       dispatch(tr.insert(selection.from, Fragment.from(link)).scrollIntoView())
       return true
     }
     if (text) {
-      dispatch(tr.insertText(text, selection.from, selection.to).scrollIntoView())
+      dispatch(
+        tr.insertText(text, selection.from, selection.to).scrollIntoView()
+      )
       return true
     }
   }
