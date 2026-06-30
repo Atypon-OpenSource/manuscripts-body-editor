@@ -54,9 +54,9 @@ const CitedItemActions = styled.div`
 `
 
 const ActionButton = styled(IconButton).attrs({
-  size: 24,
+  $size: 24,
 })`
-  :disabled {
+  &:disabled {
     background-color: transparent !important;
     border-color: transparent !important;
     color: rgb(255, 255, 255);
@@ -65,8 +65,8 @@ const ActionButton = styled(IconButton).attrs({
       fill: ${(props) => props.theme.colors.background.tertiary} !important;
     }
   }
-  :not(:disabled):focus,
-  :not(:disabled):hover {
+  &:not(:disabled):focus,
+  &:not(:disabled):hover {
     path,
     g {
       fill: ${(props) => props.theme.colors.brand.medium} !important;
