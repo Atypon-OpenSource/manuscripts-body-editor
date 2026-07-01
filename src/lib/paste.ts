@@ -185,12 +185,40 @@ export const handlePaste = (
   tr.setMeta('paste', true)
 
   const clipboardData = event.clipboardData
+  const text = clipboardData?.getData('text/plain')?.trim()
+  let href = text && allowedHref(text) ? text : null
+  if (!href) {
+    const html = clipboardData?.getData('text/html')
+    const fromHtml = html
+      ? new DOMParser()
+          .parseFromString(html, 'text/html')
+          .querySelector('a[href]')
+          ?.getAttribute('href')
+          ?.trim()
+      : null
+    if (fromHtml && allowedHref(fromHtml)) {
+      href = fromHtml
+    }
+  }
 
-  const text = clipboardData?.getData('text/plain')
-  if (text && allowedHref(text)) {
-    const link = schema.nodes.link.create({ href: text }, schema.text(text))
-    dispatch(tr.insert(selection.from, Fragment.from(link)).scrollIntoView())
-    return true
+  if (href && selection instanceof TextSelection) {
+    const $from = selection.$from
+    const canInsertLink = $from.parent.canReplaceWith(
+      $from.index(),
+      $from.index(),
+      schema.nodes.link
+    )
+    if (canInsertLink) {
+      const link = schema.nodes.link.create({ href }, schema.text(text || href))
+      dispatch(tr.insert(selection.from, Fragment.from(link)).scrollIntoView())
+      return true
+    }
+    if (text) {
+      dispatch(
+        tr.insertText(text, selection.from, selection.to).scrollIntoView()
+      )
+      return true
+    }
   }
 
   // TODO:: all the cases below should be removed when figuring out issue of open slice sides from track-changes plugin
