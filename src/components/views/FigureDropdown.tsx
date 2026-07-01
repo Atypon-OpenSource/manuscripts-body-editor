@@ -184,6 +184,17 @@ export const FigureOptions: React.FC<WrappedProps> = ({
 
   useDropdownKeyboardNav(isOpen, dropdownRef, toggleOpen)
 
+  const hasAnyActions =
+    !!showDownload ||
+    !!showUpload ||
+    !!showDetach ||
+    !!showReplace ||
+    showDelete()
+
+  if (!hasAnyActions) {
+    return null
+  }
+
   const isEmbedMode = !!onReplaceEmbed
 
   const groupFiles = memoGroupFiles()
