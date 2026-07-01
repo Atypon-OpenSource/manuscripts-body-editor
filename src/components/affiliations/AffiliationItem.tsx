@@ -139,7 +139,7 @@ export const AffiliationItem: React.FC<AffiliationContainerProps> = ({
       )}
       {isSelected && (
         <RemoveButton
-          size={13}
+          $size={13}
           onClick={() => onDelete()}
           data-tooltip-content="Delete"
         >
