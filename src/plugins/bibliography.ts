@@ -148,7 +148,6 @@ const buildBibliographyPluginState = (
         uncitedIds.push(id)
       }
     })
-    console.log(uncitedIds)
     //create new citations since citeproc modifies the ones passed
     const citationTexts = engine.rebuildProcessorState(
       nodes.map(([node]) => buildCiteprocCitation(node.attrs)),
@@ -201,18 +200,6 @@ export const buildDecorations = (state: PluginState, doc: ManuscriptNode) => {
   if (hasMissingItems) {
     doc.descendants((node, pos) => {
       if (isBibliographyElementNode(node)) {
-        // node.descendants((bNode, bPos) => {
-        //   if (bNode.type === schema.nodes.section_title) {
-        //     const $span = document.createElement('span')
-        //     $span.tabIndex = 0
-        //     $span.className = 'add-trans-abstract'
-        //     $span.title = 'Add translation'
-        //     $span.innerHTML = `${addIcon} <span class="add-trans-abstract-text">Add new reference</span>`
-        //     decorations.push(Decoration.widget(pos + bPos + 1, (view) => {
-
-        //     }))
-        //   }
-        // })
         decorations.push(
           Decoration.node(pos, pos + node.nodeSize, {
             missing: 'true',
