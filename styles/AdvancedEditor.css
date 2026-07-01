@@ -1913,6 +1913,24 @@ th:hover > .table-context-menu-button,
   fill: #6e6e6e !important;
 }
 
+.tracking-visible .ProseMirror .bib-item.inserted .uncited-reference-marker,
+.tracking-visible .ProseMirror .deleted.bib-item .uncited-reference-marker {
+  text-decoration: none !important;
+}
+.ProseMirror .uncited-reference-marker {
+  padding: 1px 6px 0 6px;
+  border-radius: 4px;
+  left: calc(100% + 5px);
+  position: absolute;
+  top: 0;
+  color: #353535;
+  line-height: 13px;
+  background-color: #f7b314;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.ProseMirror .add-new-reference-text,
 .ProseMirror .add-trans-abstract-text {
   font-size: 14px;
   color: #353535;

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import {
+  AddIcon,
   Category,
   CitationCountIcon,
   CloseButton,
@@ -250,8 +251,7 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
               <ModalSidebarTitle>References</ModalSidebarTitle>
             </ModalSidebarHeader>
             <ReferencesSidebarContent ref={ref}>
-              <button
-                type="button"
+              <NewReferenceButton
                 onClick={() => {
                   setIsNew(true)
                   setSelection({
@@ -259,12 +259,16 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
                     type: 'article-journal',
                   })
                 }}
+                className={isNew ? 'selected' : ''}
                 disabled={isNew}
               >
-                New Reference
-              </button>
+                <AddIcon />
+                <span>New Reference</span>
+              </NewReferenceButton>
               <ReferencesInnerWrapper>
-                <h3>Existing References</h3>
+                <ExistingReferencesHeading>
+                  Existing References
+                </ExistingReferencesHeading>
                 {items.slice(startIndex, endIndex + 1).map((item) => (
                   <ReferenceButton
                     key={item.id}
@@ -274,7 +278,7 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
                     ref={isSelected(item) ? selectionRef : null}
                   >
                     <IconContainer>
-                      <CitationCountIcon />
+                      <CitationCountIconStyled />
                       {(citationCounts.get(item.id) || 0) > 0 ? (
                         <CitationCount data-tooltip-content="Number of times used in the document">
                           {citationCounts.get(item.id)}
@@ -283,7 +287,10 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
                         <CitationCount className="unused">0</CitationCount>
                       )}
                     </IconContainer>
-                    <ReferenceLine item={item} />
+                    <ReferenceLine
+                      showUncited={!citationCounts.get(item.id)}
+                      item={item}
+                    />
                   </ReferenceButton>
                 ))}
               </ReferencesInnerWrapper>
@@ -328,6 +335,8 @@ const ReferencesInnerWrapper = withListNavigation(styled.div`
   padding: 12px 0;
 `)
 
+const CitationCountIconStyled = styled(CitationCountIcon)``
+
 const ReferenceButton = withNavigableListItem(styled.div`
   cursor: pointer;
   display: flex;
@@ -336,7 +345,7 @@ const ReferenceButton = withNavigableListItem(styled.div`
   border-top: 1px solid transparent;
   border-bottom: 1px solid transparent;
 
-  path {
+  ${CitationCountIconStyled} path {
     fill: #c9c9c9;
   }
 
@@ -378,4 +387,18 @@ const CitationCount = styled.div`
   &.unused {
     background-color: #fe8f1f;
   }
+`
+
+const NewReferenceButton = styled(ReferenceButton)`
+  svg {
+    margin-right: 8px;
+  }
+`
+const ExistingReferencesHeading = styled.h3`
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  padding: 8px 0 20px;
+  margin: 0;
+  color: #6e6e6e;
 `
