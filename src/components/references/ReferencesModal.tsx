@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import {
+  AddIcon,
   Category,
   CitationCountIcon,
   CloseButton,
@@ -31,7 +32,11 @@ import {
   withListNavigation,
   withNavigableListItem,
 } from '@manuscripts/style-guide'
-import { BibliographyItemAttrs } from '@manuscripts/transform'
+import {
+  BibliographyItemAttrs,
+  generateNodeID,
+  schema,
+} from '@manuscripts/transform'
 import { isEqual } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
@@ -41,75 +46,6 @@ import {
   ReferenceFormActions,
 } from './ReferenceForm/ReferenceForm'
 import { ReferenceLine } from './ReferenceLine'
-
-const ReferencesModalContainer = styled(ModalContainer)`
-  min-width: 960px;
-`
-
-const ReferencesSidebar = styled(ModalSidebar)`
-  width: 70%;
-`
-
-const ReferencesSidebarContent = styled(SidebarContent)`
-  overflow-y: auto;
-`
-
-const ReferencesInnerWrapper = withListNavigation(styled.div`
-  width: 100%;
-  padding: 12px 0;
-`)
-
-const ReferenceButton = withNavigableListItem(styled.div`
-  cursor: pointer;
-  display: flex;
-  justify-content: flex-start;
-  padding: ${(props) => props.theme.grid.unit * 4}px 0;
-  border-top: 1px solid transparent;
-  border-bottom: 1px solid transparent;
-
-  path {
-    fill: #c9c9c9;
-  }
-
-  &:hover {
-    background: ${(props) => props.theme.colors.background.info};
-  }
-
-  &.selected {
-    background: ${(props) => props.theme.colors.background.info};
-    border-top-color: #bce7f6;
-    border-bottom-color: #bce7f6;
-  }
-
-  .tooltip {
-    max-width: ${(props) => props.theme.grid.unit * 25}px;
-    padding: ${(props) => props.theme.grid.unit * 2}px;
-    border-radius: 6px;
-  }
-`)
-
-const IconContainer = styled.div`
-  padding-right: ${(props) => props.theme.grid.unit * 5}px;
-  position: relative;
-`
-
-const CitationCount = styled.div`
-  border-radius: 50%;
-  width: 12px;
-  height: 12px;
-  position: absolute;
-  color: #ffffff;
-  background-color: #bce7f6;
-  text-align: center;
-  vertical-align: top;
-  top: 0;
-  left: 16px;
-  font-size: 9px;
-
-  &.unused {
-    background-color: #fe8f1f;
-  }
-`
 
 const selectionTopOffset = 10 // to be able to place the selected item in the middle and allow for some scroll at the top
 const pageSize = 12
@@ -170,6 +106,7 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
   const valuesRef = useRef<BibliographyItemAttrs>(undefined)
 
   const [selection, setSelection] = useState<BibliographyItemAttrs>()
+  const [isNew, setIsNew] = useState<boolean>(false)
   const selectionRef = useRef<HTMLDivElement>(null)
   const isSelected = (item: BibliographyItemAttrs) => {
     return item.id === selection?.id
@@ -177,7 +114,15 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
   const selectionIndex = items.findIndex(isSelected)
 
   useEffect(() => {
-    setSelection(item)
+    if (item) {
+      setSelection(item)
+    } else {
+      setIsNew(true)
+      setSelection({
+        id: generateNodeID(schema.nodes.bibliography_item),
+        type: 'article-journal',
+      })
+    }
   }, [item])
 
   useEffect(() => {
@@ -249,6 +194,7 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
 
     onSave(item)
     setSelection(item)
+    setIsNew(false)
     setConfirm(false)
   }
 
@@ -266,6 +212,7 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
       setConfirm(true)
       return
     }
+    setIsNew(false)
     setSelection(item)
   }
 
@@ -304,7 +251,24 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
               <ModalSidebarTitle>References</ModalSidebarTitle>
             </ModalSidebarHeader>
             <ReferencesSidebarContent ref={ref}>
+              <NewReferenceButton
+                onClick={() => {
+                  setIsNew(true)
+                  setSelection({
+                    id: generateNodeID(schema.nodes.bibliography_item),
+                    type: 'article-journal',
+                  })
+                }}
+                className={isNew ? 'selected' : ''}
+                disabled={isNew}
+              >
+                <AddIcon />
+                <span>New Reference</span>
+              </NewReferenceButton>
               <ReferencesInnerWrapper>
+                <ExistingReferencesHeading>
+                  Existing References
+                </ExistingReferencesHeading>
                 {items.slice(startIndex, endIndex + 1).map((item) => (
                   <ReferenceButton
                     key={item.id}
@@ -314,7 +278,7 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
                     ref={isSelected(item) ? selectionRef : null}
                   >
                     <IconContainer>
-                      <CitationCountIcon />
+                      <CitationCountIconStyled />
                       {(citationCounts.get(item.id) || 0) > 0 ? (
                         <CitationCount data-tooltip-content="Number of times used in the document">
                           {citationCounts.get(item.id)}
@@ -323,7 +287,10 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
                         <CitationCount className="unused">0</CitationCount>
                       )}
                     </IconContainer>
-                    <ReferenceLine item={item} />
+                    <ReferenceLine
+                      showUncited={!citationCounts.get(item.id)}
+                      item={item}
+                    />
                   </ReferenceButton>
                 ))}
               </ReferencesInnerWrapper>
@@ -350,3 +317,88 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
     </StyledModal>
   )
 }
+
+const ReferencesModalContainer = styled(ModalContainer)`
+  min-width: 960px;
+`
+
+const ReferencesSidebar = styled(ModalSidebar)`
+  width: 70%;
+`
+
+const ReferencesSidebarContent = styled(SidebarContent)`
+  overflow-y: auto;
+`
+
+const ReferencesInnerWrapper = withListNavigation(styled.div`
+  width: 100%;
+  padding: 12px 0;
+`)
+
+const CitationCountIconStyled = styled(CitationCountIcon)``
+
+const ReferenceButton = withNavigableListItem(styled.div`
+  cursor: pointer;
+  display: flex;
+  justify-content: flex-start;
+  padding: ${(props) => props.theme.grid.unit * 4}px 0;
+  border-top: 1px solid transparent;
+  border-bottom: 1px solid transparent;
+
+  ${CitationCountIconStyled} path {
+    fill: #c9c9c9;
+  }
+
+  &:hover {
+    background: ${(props) => props.theme.colors.background.info};
+  }
+
+  &.selected {
+    background: ${(props) => props.theme.colors.background.info};
+    border-top-color: #bce7f6;
+    border-bottom-color: #bce7f6;
+  }
+
+  .tooltip {
+    max-width: ${(props) => props.theme.grid.unit * 25}px;
+    padding: ${(props) => props.theme.grid.unit * 2}px;
+    border-radius: 6px;
+  }
+`)
+
+const IconContainer = styled.div`
+  padding-right: ${(props) => props.theme.grid.unit * 5}px;
+  position: relative;
+`
+
+const CitationCount = styled.div`
+  border-radius: 50%;
+  width: 12px;
+  height: 12px;
+  position: absolute;
+  color: #ffffff;
+  background-color: #bce7f6;
+  text-align: center;
+  vertical-align: top;
+  top: 0;
+  left: 16px;
+  font-size: 9px;
+
+  &.unused {
+    background-color: #fe8f1f;
+  }
+`
+
+const NewReferenceButton = styled(ReferenceButton)`
+  svg {
+    margin-right: 8px;
+  }
+`
+const ExistingReferencesHeading = styled.h3`
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  padding: 8px 0 20px;
+  margin: 0;
+  color: #6e6e6e;
+`

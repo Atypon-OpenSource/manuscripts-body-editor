@@ -19,6 +19,7 @@ import {
   BibliographyElementNode,
   BibliographyItemAttrs,
   BibliographyItemNode,
+  isCitationNode,
   schema,
 } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
@@ -33,7 +34,10 @@ import { findNodeByID } from '../lib/doc'
 import { sanitize } from '../lib/dompurify'
 
 import { deleteNode, findChildByID, updateNodeAttrs } from '../lib/view'
-import { getBibliographyPluginState } from '../plugins/bibliography'
+import {
+  getBibliographyPluginState,
+  PluginState,
+} from '../plugins/bibliography'
 import { commentsKey, setCommentSelection } from '../plugins/comments'
 import { selectedSuggestionKey } from '../plugins/selected-suggestion'
 import { Trackable } from '../types'
@@ -44,6 +48,7 @@ import {
   addTrackChangesAttributes,
   addTrackChangesClassNames,
 } from '@manuscripts/track-changes-plugin'
+import { addIcon } from '../icons'
 
 export class BibliographyElementBlockView extends BlockView<
   Trackable<BibliographyElementNode>
@@ -53,7 +58,7 @@ export class BibliographyElementBlockView extends BlockView<
   private contextMenu: HTMLDivElement
   private version: string
 
-  public showPopper(id: string) {
+  public showPopper(id?: string) {
     const bib = getBibliographyPluginState(this.view.state)
     if (!bib) {
       return
@@ -62,7 +67,7 @@ export class BibliographyElementBlockView extends BlockView<
     const componentProps: ReferencesEditorProps = {
       items: Array.from(bib.bibliographyItems.values()),
       citationCounts: bib.citationCounts,
-      item: bib.bibliographyItems.get(id),
+      item: id ? bib.bibliographyItems.get(id) : undefined,
       onSave: this.handleSave,
       onDelete: this.handleDelete,
     }
@@ -188,7 +193,20 @@ export class BibliographyElementBlockView extends BlockView<
     }
     this.version = bib.version
 
+    this.renderBibs(bib)
+    this.createInlineModalButton()
+    this.updateSelections()
+  }
+
+  renderBibs(bib: PluginState) {
     const nodes: Map<string, BibliographyItemNode> = new Map()
+    const rids: string[] = []
+
+    this.view.state.doc.descendants((node) => {
+      if (isCitationNode(node)) {
+        rids.push(...node.attrs.rids)
+      }
+    })
 
     this.node.descendants((node) => {
       const id = node.attrs.id
@@ -240,6 +258,14 @@ export class BibliographyElementBlockView extends BlockView<
       const comment = createCommentMarker('div', id)
       element.prepend(comment)
 
+      if (!rids.includes(id)) {
+        // node is uncited if not reffed anywhere
+        const uncitedMarker = document.createElement('span')
+        uncitedMarker.innerHTML = 'UNCITED'
+        uncitedMarker.classList.add('uncited-reference-marker')
+        element.prepend(uncitedMarker)
+      }
+
       addTrackChangesAttributes(node.attrs, element)
       addTrackChangesClassNames(node.attrs, element)
 
@@ -258,7 +284,20 @@ export class BibliographyElementBlockView extends BlockView<
     } else {
       this.container.appendChild(wrapper)
     }
-    this.updateSelections()
+  }
+
+  isUncited(id: string) {}
+
+  createInlineModalButton() {
+    const $span = document.createElement('span')
+    $span.tabIndex = 0
+    $span.className = 'add-new-reference add-trans-abstract'
+    $span.title = 'Add New Reference'
+    $span.innerHTML = `${addIcon} <span class="add-new-reference-text">Add new reference</span>`
+    $span.addEventListener('click', (e) => {
+      this.showPopper()
+    })
+    this.dom.appendChild($span)
   }
 
   public createElement = () => {
@@ -270,7 +309,20 @@ export class BibliographyElementBlockView extends BlockView<
   }
 
   private handleSave = (attrs: BibliographyItemAttrs) => {
-    updateNodeAttrs(this.view, schema.nodes.bibliography_item, attrs)
+    let found = false
+    this.node.descendants((node, pos) => {
+      if (node.attrs.id == attrs.id) {
+        found = true
+      }
+    })
+
+    if (!found) {
+      const newBibItem = schema.nodes.bibliography_item.create(attrs)
+      const tr = this.view.state.tr
+      this.view.dispatch(tr.insert(this.getPos() + 1, newBibItem))
+    } else {
+      updateNodeAttrs(this.view, schema.nodes.bibliography_item, attrs)
+    }
   }
 
   private handleDelete = (item: BibliographyItemAttrs) => {
