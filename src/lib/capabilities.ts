@@ -49,7 +49,6 @@ export enum Actions {
   // proceed = 'proceed',
   updateAttachment = 'update-attachment',
   updateDueDate = 'update-due-date',
-  updateSubmissionMetadata = 'update-submission-metadata',
   addNote = 'add-note',
   setMainManuscript = 'set-main-manuscript',
   editWithoutTracking = 'edit-without-tracking',
