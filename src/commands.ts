@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { isDeleted, skipTracking } from '@manuscripts/track-changes-plugin'
+import { isDeleted, skipTracking, skipSelect } from '@manuscripts/track-changes-plugin'
 import {
   AttachmentNode,
   AwardNode,
@@ -493,7 +493,8 @@ export const insertTable = (
 
 export const insertSupplement = (
   file: FileAttachment,
-  view: ManuscriptEditorView
+  view: ManuscriptEditorView,
+  setSelection = true
 ) => {
   const supplement = schema.nodes.supplement.createAndFill(
     {
@@ -503,12 +504,16 @@ export const insertSupplement = (
     createAndFillCaption()
   ) as SupplementNode
 
-  const tr = view.state.tr
+  let tr = view.state.tr
   const { pos } = upsertSupplementsSection(tr, supplement)
-  tr.setSelection(NodeSelection.create(tr.doc, pos))
+
+  if (setSelection) {
+    tr.setSelection(NodeSelection.create(tr.doc, pos))
+  } else {
+    tr = skipSelect(tr)
+  }
   view.focus()
   view.dispatch(tr.scrollIntoView())
-
   return true
 }
 

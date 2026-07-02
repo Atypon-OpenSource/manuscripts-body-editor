@@ -124,7 +124,7 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
                 <TextField
                   id="institution"
                   {...props.field}
-                  error={showInstitutionError}
+                  $error={showInstitutionError}
                 />
                 {showInstitutionError && (
                   <InputErrorText>
@@ -145,7 +145,7 @@ export const AffiliationForm: React.FC<AffiliationFormProps> = ({
                 >
                   Department
                 </UnsavedLabel>
-                <TextField id="department" {...props.field} as="textarea" />
+                <TextField id="department" {...props.field} />
               </>
             )}
           </Field>

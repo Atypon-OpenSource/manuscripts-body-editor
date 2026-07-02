@@ -28,7 +28,7 @@ export const OutlineItemIcon = styled.span`
 `
 
 export const OutlineItem = styled.div<{
-  depth: number
+  $depth: number
 }>`
   align-items: center;
   color: ${(props) => props.theme.colors.text.primary};
@@ -36,7 +36,7 @@ export const OutlineItem = styled.div<{
   cursor: pointer;
   display: flex;
   font-size: ${(props) =>
-    props.depth === 0
+    props.$depth === 0
       ? props.theme.font.size.large
       : props.theme.font.size.medium};
   line-height: 30px;
@@ -44,7 +44,7 @@ export const OutlineItem = styled.div<{
   margin-right: -${(props) => props.theme.grid.unit * 5}px;
   overflow-x: hidden;
   padding-right: ${(props) => props.theme.grid.unit * 5}px;
-  padding-left: ${(props) => 20 + props.depth * 20}px;
+  padding-left: ${(props) => 20 + props.$depth * 20}px;
   white-space: nowrap;
 
   &:hover {

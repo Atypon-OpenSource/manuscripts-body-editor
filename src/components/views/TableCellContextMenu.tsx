@@ -217,10 +217,10 @@ const ActionButton = styled(IconTextButton)`
   padding: 8px 16px;
   justify-content: flex-start;
 
-  :hover {
+  &:hover {
     background: #f2fbfc;
   }
-  :disabled {
+  &:disabled {
     color: #353535;
     background-color: #ffffff;
     opacity: 0.4;
