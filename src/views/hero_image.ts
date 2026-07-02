@@ -16,15 +16,53 @@
 
 import { FigureElementNode } from '@manuscripts/transform'
 
-import { arrowUp } from '../icons'
+import {
+  arrowUp,
+  leadingHalfLeftIcon,
+  leadingHeroImageIcon,
+  leadingLargeFloatIcon,
+  leadingSmallFloatIcon,
+  leadingWallpaperIcon,
+} from '../icons'
 import { handleEnterKey } from '../lib/navigation-utils'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
 
+const LAYOUT_OPTIONS_CONFIG = [
+  {
+    label: 'Hero Image',
+    icon: leadingHeroImageIcon,
+    attr: 'leading',
+  },
+  {
+    label: 'Float Image - Small',
+    icon: leadingSmallFloatIcon,
+    attr: 'leading-small-float',
+  },
+  {
+    label: 'Float Image - Large',
+    icon: leadingLargeFloatIcon,
+    attr: 'leading-large-float',
+  },
+  {
+    label: 'Wallpaper Image',
+    icon: leadingWallpaperIcon,
+    attr: 'leading-wallpaper',
+  },
+  {
+    label: 'Half Image',
+    icon: leadingHalfLeftIcon,
+    attr: 'leading-half-left',
+  },
+]
+
 export class HeroImageView extends BlockView<Trackable<FigureElementNode>> {
   private container: HTMLElement
+  private layoutOptions: HTMLElement
+  private abortController: AbortController
   private collapsed = false
+  private layoutPanelCollapsed = false
 
   public ignoreMutation = () => true
 
@@ -33,7 +71,17 @@ export class HeroImageView extends BlockView<Trackable<FigureElementNode>> {
     this.container.classList.add('block', 'hero-image-container')
     this.dom.appendChild(this.container)
 
+    this.abortController = new AbortController()
+
     this.container.appendChild(this.createPanel())
+    this.container.appendChild(this.createLayoutPanel())
+
+    this.layoutOptions = this.createLayoutOptions()
+    this.layoutOptions.addEventListener('change', this.onSelectOption, {
+      signal: this.abortController.signal,
+    })
+
+    this.container.appendChild(this.layoutOptions)
 
     this.contentDOM = document.createElement('figure')
     this.contentDOM.classList.add('figure-block', 'hero-image-figure')
@@ -65,11 +113,102 @@ export class HeroImageView extends BlockView<Trackable<FigureElementNode>> {
     }
 
     heroImageToggleBtn.onclick = handleToggle
-    heroImageToggleBtn.addEventListener('keydown', handleEnterKey(handleToggle))
+    heroImageToggleBtn.addEventListener(
+      'keydown',
+      handleEnterKey(handleToggle),
+      {
+        signal: this.abortController.signal,
+      }
+    )
 
     panel.appendChild(label)
     panel.appendChild(heroImageToggleBtn)
     return panel
+  }
+
+  createLayoutPanel() {
+    const panel = document.createElement('div')
+    panel.classList.add('panel-header', 'layout-header')
+
+    const label = document.createElement('span')
+    label.textContent = 'Layout'
+    label.contentEditable = 'false'
+
+    const toggleBtn = document.createElement('button')
+    toggleBtn.classList.add('toggle-btn', 'button-reset')
+
+    toggleBtn.innerHTML = arrowUp
+    toggleBtn.classList.toggle('collapsed', this.layoutPanelCollapsed)
+
+    const handleToggle = () => {
+      this.layoutPanelCollapsed = !this.layoutPanelCollapsed
+      if (this.layoutOptions) {
+        this.layoutOptions.style.display = this.layoutPanelCollapsed
+          ? 'none'
+          : ''
+      }
+      toggleBtn.classList.toggle('collapsed', this.layoutPanelCollapsed)
+    }
+
+    toggleBtn.onclick = handleToggle
+    toggleBtn.addEventListener('keydown', handleEnterKey(handleToggle), {
+      signal: this.abortController.signal,
+    })
+
+    panel.appendChild(label)
+    panel.appendChild(toggleBtn)
+    return panel
+  }
+
+  createLayoutOptions() {
+    const can = this.props.getCapabilities()
+    const optionsGroup = document.createElement('div')
+    optionsGroup.className = 'layout-options-group'
+
+    LAYOUT_OPTIONS_CONFIG.forEach(({ label, icon, attr }) => {
+      const image = document.createElement('span')
+      image.className = 'layout-option-image'
+      image.innerHTML = icon
+
+      const input = document.createElement('input')
+      input.type = 'radio'
+      input.name = 'layout-option'
+      input.value = attr
+      input.disabled = !can.editMetadata
+      input.checked = attr === this.node.attrs.type
+
+      const inputLabel = document.createElement('span')
+      inputLabel.className = 'layout-option-label'
+      inputLabel.textContent = label
+
+      const wrapper = document.createElement('span')
+      wrapper.className = 'layout-option-label-wrapper'
+      wrapper.append(input, inputLabel)
+
+      const container = document.createElement('div')
+      container.className = 'layout-option'
+      container.append(image, wrapper)
+      optionsGroup.appendChild(container)
+    })
+    optionsGroup.contentEditable = 'false'
+    return optionsGroup
+  }
+
+  private onSelectOption = (e: Event) => {
+    const target = e.target as HTMLInputElement
+    if (target && target.type === 'radio' && target.name === 'layout-option') {
+      const { state, dispatch } = this.view
+      const tr = state.tr.setNodeMarkup(this.getPos(), undefined, {
+        ...this.node.attrs,
+        type: target.value,
+      })
+      dispatch(tr)
+    }
+  }
+
+  destroy() {
+    this.abortController?.abort()
+    super.destroy()
   }
 }
 

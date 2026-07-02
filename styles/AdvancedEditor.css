@@ -1753,6 +1753,59 @@ th:hover > .table-context-menu-button,
   border-bottom: 1px solid #c9c9c9;
 }
 
+.ProseMirror .layout-header {
+  font-size: 18px;
+  font-weight: 400;
+  padding: 4px 8px;
+  padding-right: 5px;
+  margin: 8px;
+  background: unset;
+  border: none;
+}
+
+.ProseMirror .layout-options-group {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px 0;
+  margin: 0 8px;
+  border-bottom: 1px solid #e2e2e2;
+}
+
+.ProseMirror .layout-option-image {
+  width: 120px;
+  height: 114px;
+  margin-bottom: 8px;
+  border-radius: 5px 5px 9px 9px;
+  border: 1px solid #e2e2e2;
+  background: #fafafa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ProseMirror .layout-options-group .layout-option-label-wrapper {
+  display: flex;
+  width: 120px;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.ProseMirror .layout-options-group input[type="radio"] {
+  accent-color: #1a9bc7;
+  width: 16px;
+  height: 16px;
+}
+
+.ProseMirror .layout-option-label {
+  color: #353535;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px;
+  user-select: none;
+}
+
 .hero-image-container .figure-block {
   border: none !important;
   padding: 8px;
@@ -1876,8 +1929,8 @@ th:hover > .table-context-menu-button,
   position: relative;
 }
 
-/* Right padding so abstract titles do not run under translation widgets. 
- * If we later block editing these titles, this padding can go away. 
+/* Right padding so abstract titles do not run under translation widgets.
+ * If we later block editing these titles, this padding can go away.
  */
 .ProseMirror .abstracts .block-section .block-section_title h1,
 .ProseMirror .abstracts .block-trans_abstract .block-section_title h1{
