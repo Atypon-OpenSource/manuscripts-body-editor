@@ -94,6 +94,7 @@ import {
   upsertSupplementsSection,
 } from './lib/doc'
 import { FileAttachment } from './lib/files'
+import { allowedHref } from './lib/url'
 import {
   createFootnote,
   findFootnotesContainerNode,
@@ -522,17 +523,57 @@ export const insertSupplementWeblink = (
   title: string,
   view: ManuscriptEditorView
 ) => {
-  const supplement = schema.nodes.supplement.createAndFill(
+  const supplement = schema.nodes.supplement.create(
     {
       id: generateNodeID(schema.nodes.supplement),
-      href: url
+      href: url,
     },
-    createAndFillCaption()
+    createWeblinkCaption(title)
   ) as SupplementNode
 
   const tr = view.state.tr
   const { pos } = upsertSupplementsSection(tr, supplement)
   tr.setSelection(NodeSelection.create(tr.doc, pos))
+  view.focus()
+  view.dispatch(tr.scrollIntoView())
+
+  return true
+}
+
+export const convertLinkToWeblink = (
+  linkPos: number,
+  view: ManuscriptEditorView
+) => {
+  const linkNode = view.state.doc.nodeAt(linkPos)
+  if (!linkNode || linkNode.type !== schema.nodes.link) {
+    return false
+  }
+
+  const href = linkNode.attrs.href as string
+  if (!allowedHref(href)) {
+    return false
+  }
+
+  const title = linkNode.textContent
+  const supplementId = generateNodeID(schema.nodes.supplement)
+  const supplement = schema.nodes.supplement.create(
+    {
+      id: supplementId,
+      href,
+    },
+    createWeblinkCaption(title)
+  ) as SupplementNode
+
+  const crossRef = schema.nodes.cross_reference.create({
+    rids: [supplementId],
+    label: title,
+  })
+
+  const tr = view.state.tr
+  tr.replaceWith(linkPos, linkPos + linkNode.nodeSize, crossRef)
+  upsertSupplementsSection(tr, supplement)
+  tr.setSelection(NodeSelection.create(tr.doc, linkPos))
+
   view.focus()
   view.dispatch(tr.scrollIntoView())
 
@@ -1782,6 +1823,17 @@ const createAndFillCaption = () => [
   schema.nodes.caption_title.create(),
   schema.nodes.caption.create(undefined, schema.nodes.text_block.create()),
 ]
+
+const createWeblinkCaption = (title: string) => {
+  const captionTitle = title.trim()
+    ? schema.nodes.caption_title.create({}, schema.text(title))
+    : schema.nodes.caption_title.create()
+
+  return [
+    captionTitle,
+    schema.nodes.caption.create(undefined, schema.nodes.text_block.create()),
+  ]
+}
 
 const createImageElement = (attrs?: Attrs) =>
   schema.nodes.image_element.create(

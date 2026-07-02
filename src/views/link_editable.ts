@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
+import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import { schema } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
-
 import {
   LinkForm,
   LinkFormProps,
   LinkValue,
 } from '../components/views/LinkForm'
+import { convertLinkToWeblink } from '../commands'
+import { handleEnterKey } from '../lib/navigation-utils'
 import { allowedHref } from '../lib/url'
 import { createEditableNodeView } from './creators'
 import { LinkView } from './link'
@@ -30,6 +32,7 @@ import { isDeleted } from '@manuscripts/track-changes-plugin'
 
 export class LinkEditableView extends LinkView {
   protected popperContainer: HTMLDivElement
+  private contextMenu: HTMLElement
 
   public ignoreMutation = () => true
 
@@ -55,21 +58,108 @@ export class LinkEditableView extends LinkView {
   protected createDOM = () => {
     this.dom = document.createElement('a')
     this.dom.classList.add('link')
-    this.dom.addEventListener('click', this.handleClick)
+    this.dom.addEventListener('click', (e) => e.preventDefault())
+    this.dom.addEventListener('mouseup', () => this.handleClick(false))
+    this.dom.addEventListener(
+      'keydown',
+      handleEnterKey(() => this.handleClick(true))
+    )
   }
 
   public selectNode = () => {
-    if (!isDeleted(this.node)) {
+    if (isDeleted(this.node)) {
+      return
+    }
+    const attrs = this.node.attrs
+    if (!attrs.href || !this.node.content.size) {
       this.showForm()
     }
   }
 
   public destroy = () => {
     this.closeForm()
+    this.props.popper.destroy()
   }
 
   public deselectNode = () => {
     this.closeForm()
+  }
+
+  private handleClick = (fromKeyboard: boolean) => {
+    if (isDeleted(this.node)) {
+      return
+    }
+    this.showContextMenu(fromKeyboard)
+  }
+
+  private showContextMenu = (autoFocus = true) => {
+    this.props.popper.destroy()
+
+    const can = this.props.getCapabilities()
+    const href = this.node.attrs.href
+    const actions: ContextMenuProps['actions'] = []
+    let linkExists = false
+
+    // Check if there is weblink with the same link in the supplements section
+    this.view.state.doc.descendants((node) => {
+      if (node.type.name === 'supplement') {
+        if (node.attrs.href === href) {
+          linkExists = true
+          return false
+        }
+      }
+    })
+
+    actions.push({
+      label: 'Edit',
+      action: () => {
+        this.props.popper.destroy()
+        this.showForm()
+      },
+      icon: 'Edit',
+      disabled: !can.editArticle
+    })
+    actions.push({
+      label: 'Convert to weblink',
+      action: () => {
+        this.props.popper.destroy()
+        convertLinkToWeblink(this.getPos(), this.view)
+      },
+      icon: 'ConvertLink',
+      disabled: !can.editArticle || !allowedHref(href) || linkExists,
+    })
+    actions.push({
+      label: 'Open link',
+      action: () => {
+        this.props.popper.destroy()
+        if (allowedHref(href)) {
+          window.open(href, '_blank', 'noopener,noreferrer')
+        }
+      },
+      icon: 'ExternalLink',
+      disabled: !allowedHref(href),
+    })
+
+    const componentProps: ContextMenuProps = {
+      actions,
+    }
+    this.contextMenu = ReactSubView(
+      this.props,
+      ContextMenu,
+      componentProps,
+      this.node,
+      this.getPos,
+      this.view,
+      ['context-menu']
+    )
+    this.props.popper.show(
+      this.dom,
+      this.contextMenu,
+      'right-start',
+      false,
+      [],
+      autoFocus
+    )
   }
 
   private showForm = () => {
@@ -103,12 +193,6 @@ export class LinkEditableView extends LinkView {
     )
 
     this.props.popper.show(this.dom, this.popperContainer, 'bottom')
-  }
-
-  private handleClick = (e: Event) => {
-    if (this.props.getCapabilities().editArticle) {
-      e.preventDefault()
-    }
   }
 
   private handleCancel = () => {

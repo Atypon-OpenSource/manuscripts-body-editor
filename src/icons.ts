@@ -27,6 +27,8 @@ import {
   ImageLeftIcon,
   ImageRightIcon,
   LinkIcon,
+  ExternalLinkIcon,
+  ConvertLinkIcon,
   LockIcon,
   ORCIDIcon as ORCID,
   PlusIcon,
@@ -58,7 +60,9 @@ export const fileCorruptedIcon = renderIcon(FileCorruptedIcon)
 export const draggableIcon = renderIcon(DraggableIcon)
 export const translateIcon = renderIcon(TranslateIcon)
 export const linkIcon = renderIcon(LinkIcon)
+export const externalLinkIcon = renderIcon(ExternalLinkIcon)
 export const fileMainDocumentIcon = renderIcon(FileMainDocumentIcon)
 export const tickIcon = renderIcon(TickIcon)
 export const ORCIDIcon = renderIcon(ORCID)
 export const webLinkIcon = renderIcon(WebLinkIcon)
+export const convertLinkIcon = renderIcon(ConvertLinkIcon)
