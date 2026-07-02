@@ -1309,11 +1309,14 @@
   font-style: normal;
 }
 
+.ProseMirror .headshot-element.drop-target-above,
+.ProseMirror .headshot-element.drop-target-below,
 .ProseMirror .supplement-item.drop-target-above,
 .ProseMirror .supplement-item.drop-target-below {
   border: 2px dotted #20aedf !important;
 }
 
+.ProseMirror .headshot-element.dragging,
 .ProseMirror .supplement-item.dragging {
   background-color: #f2f2f2 !important;
   opacity: 0.3;

@@ -1780,7 +1780,7 @@ th:hover > .table-context-menu-button,
 
 .ProseMirror .headshot-grid-container .headshot-grid-block .headshot-element {
   border-radius: 4px;
-  border: 1px solid #E2E2E2 !important;
+  border: 1px solid #E2E2E2;
   background: #FFF;
   position: relative;
 }
@@ -1900,6 +1900,24 @@ th:hover > .table-context-menu-button,
   z-index: 10;
 }
 
+.ProseMirror .headshot-drag-icon {
+  position: absolute;
+  top: 41%;
+  left: -6px;
+  border-radius: 8px;
+  border: 1px solid #E2E2E2;
+  background: #FFF;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 10px;
+  height: 22px;
+  padding: 3px 0;
+  cursor: grab;
+  visibility: hidden;
+}
+
 .ProseMirror .headshot-figure .headshot-remove-button {
   margin: 0;
   top: -6%;
@@ -1917,6 +1935,7 @@ th:hover > .table-context-menu-button,
   height: 8px;
 }
 
+.ProseMirror .headshot-element:hover .headshot-drag-icon,
 .ProseMirror .headshot-element:hover .block > .headshot-remove-button,
 .ProseMirror .headshot-figure:hover .headshot-remove-button,
 .ProseMirror .headshot-element:focus-within .headshot-remove-button {

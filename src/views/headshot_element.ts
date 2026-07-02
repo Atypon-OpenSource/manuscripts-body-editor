@@ -17,11 +17,12 @@
 import { HeadshotElementNode } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 
-import { plusIcon } from '../icons'
+import { draggableIcon, plusIcon } from '../icons'
 import { handleEnterKey } from '../lib/navigation-utils'
 import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
+import { DragDropManager } from '../lib/drag-drop-manager'
 
 export class HeadshotElement extends BaseNodeView<
   Trackable<HeadshotElementNode>
@@ -29,10 +30,14 @@ export class HeadshotElement extends BaseNodeView<
   public elementType = 'div'
   private container: HTMLElement
   private deleteHeadshotButton: HTMLElement
+  private cleanupDragDrop: (() => void) | undefined
+
+  public ignoreMutation = () => true
 
   public initialise() {
     this.createElement()
     this.updateContents()
+    this.setupDragAndDrop()
   }
 
   public createElement = () => {
@@ -66,6 +71,13 @@ export class HeadshotElement extends BaseNodeView<
         handleEnterKey(this.handleDeleteHeadshot)
       )
       this.container.appendChild(this.deleteHeadshotButton)
+
+      const dragIcon = document.createElement('div')
+      dragIcon.className = 'headshot-drag-icon'
+      dragIcon.contentEditable = 'false'
+      dragIcon.innerHTML = draggableIcon
+      dragIcon.draggable = false
+      this.container.appendChild(dragIcon)
     }
   }
 
@@ -86,11 +98,25 @@ export class HeadshotElement extends BaseNodeView<
     dispatch(tr)
   }
 
+  private setupDragAndDrop() {
+    const can = this.props.getCapabilities()
+    this.cleanupDragDrop = new DragDropManager().setup({
+      element: this.dom,
+      getContext: () => ({
+        view: this.view,
+        node: this.node,
+        pos: this.getPos(),
+      }),
+      disabled: !can.editArticle,
+    })
+  }
+
   public destroy() {
     this.deleteHeadshotButton?.removeEventListener(
       'click',
       this.handleDeleteHeadshot
     )
+    this.cleanupDragDrop?.()
     super.destroy()
   }
 }
