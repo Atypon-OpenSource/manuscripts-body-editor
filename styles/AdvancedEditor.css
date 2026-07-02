@@ -824,7 +824,7 @@ span.comment-marker {
 .selected-suggestion:not(.block-container):not(.graphical-abstract):not(
     .keywords
   ):not(figure):not(figure .equation):not(.inconsistency-highlight):not(
-    .supplement-item:is([data-track-op='move'])
+    .supplement-item:is([data-track-op='move']), .headshot-element:is([data-track-op='move'])
   ),
 .footnote-marker-selected {
   border-width: 2px 0 2px 0 !important;
@@ -2063,8 +2063,8 @@ th:hover > .table-context-menu-button,
   position: relative;
 }
 
-/* Right padding so abstract titles do not run under translation widgets. 
- * If we later block editing these titles, this padding can go away. 
+/* Right padding so abstract titles do not run under translation widgets.
+ * If we later block editing these titles, this padding can go away.
  */
 .ProseMirror .abstracts .block-section .block-section_title h1,
 .ProseMirror .abstracts .block-trans_abstract .block-section_title h1{
