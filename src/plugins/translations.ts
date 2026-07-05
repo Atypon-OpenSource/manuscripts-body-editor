@@ -15,7 +15,6 @@
  */
 
 import { schema } from '@manuscripts/transform'
-import { Node } from 'prosemirror-model'
 import { Plugin } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
@@ -90,11 +89,6 @@ const createLanguageMenu = (
   return { menu, destroy }
 }
 
-const getInsertionPos = (doc: Node, nodePos: number): number | null => {
-  const node = doc.nodeAt(nodePos)
-  return node ? nodePos + node.nodeSize : null
-}
-
 export default (props: EditorProps) =>
   new Plugin<null>({
     props: {
@@ -142,12 +136,8 @@ export default (props: EditorProps) =>
                     const handleActivate = (event: Event) => {
                       event.preventDefault()
                       event.stopPropagation()
-                      const insertPos = getInsertionPos(view.state.doc, pos)
-                      if (insertPos == null) {
-                        return
-                      }
                       if (isGraphical && category) {
-                        insertTransGraphicalAbstract(category, insertPos)(
+                        insertTransGraphicalAbstract(category)(
                           view.state,
                           view.dispatch,
                           view
@@ -156,8 +146,7 @@ export default (props: EditorProps) =>
                         insertTransAbstract(
                           view.state,
                           view.dispatch,
-                          node.attrs.category,
-                          insertPos
+                          node.attrs.category
                         )
                       }
                     }
