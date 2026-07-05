@@ -87,6 +87,7 @@ import {
   findBackmatter,
   findBibliographySection,
   findBody,
+  findFirstTransAbstract,
   findFootnotesSection,
   insertAttachmentsNode,
   insertAwardsNode,
@@ -1007,7 +1008,13 @@ export const insertAbstractSection =
       schema.nodes.graphical_abstract_section
     )[0]
 
-    let pos = ga ? ga.pos : abstracts.pos + abstracts.node.content.size + 1
+    // Regular abstracts must be placed after all regular abstracts but before
+    // any translated abstracts
+    const firstTrans = findFirstTransAbstract(state.doc)
+    const endOfRegularAbstracts =
+      firstTrans?.pos ?? abstracts.pos + abstracts.node.content.size + 1
+
+    let pos = ga ? ga.pos : endOfRegularAbstracts
     if (category.id === 'abstract') {
       pos = abstracts.pos + 1
     }
@@ -1095,8 +1102,8 @@ export const insertGraphicalAbstract =
       schema.nodes.graphical_abstract_section
     )[0]
 
-    // insert at the end of abstracts section
-    let pos = abstracts.pos + abstracts.node.content.size + 1
+    const firstTrans = findFirstTransAbstract(state.doc)
+    let pos = firstTrans?.pos ?? abstracts.pos + abstracts.node.content.size + 1
     // abstract-key-image insert before abstract-graphical
     pos = ga && category.id === 'abstract-key-image' ? ga.pos : pos
 
@@ -1389,8 +1396,7 @@ export const insertTOCSection = () => {
 export const insertTransAbstract = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch,
-  category?: string,
-  insertAfterPos?: number
+  category?: string
 ) => {
   if (!templateAllows(state, schema.nodes.trans_abstract)) {
     return false
@@ -1419,10 +1425,8 @@ export const insertTransAbstract = (
 
   const abstracts = findAbstractsNode(state.doc)
 
-  const pos =
-    insertAfterPos != null
-      ? insertAfterPos
-      : abstracts.pos + abstracts.node.nodeSize - 1
+  // Translated abstracts always go at the end of the abstracts node
+  const pos = abstracts.pos + abstracts.node.nodeSize - 1
   const tr = state.tr.insert(pos, node)
 
   const selection = TextSelection.create(tr.doc, pos + 1)
@@ -1433,7 +1437,7 @@ export const insertTransAbstract = (
 }
 
 export const insertTransGraphicalAbstract =
-  (category: SectionCategory, insertAfterPos?: number) =>
+  (category: SectionCategory) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
     if (!templateAllows(state, schema.nodes.trans_graphical_abstract)) {
       return false
@@ -1445,10 +1449,8 @@ export const insertTransGraphicalAbstract =
     const lang = state.doc.attrs.primaryLanguageCode || 'en'
 
     const abstracts = findAbstractsNode(state.doc)
-    const pos =
-      insertAfterPos != null
-        ? insertAfterPos
-        : abstracts.pos + abstracts.node.content.size + 1
+    // Translated abstracts always go at the end of the abstracts node.
+    const pos = abstracts.pos + abstracts.node.content.size + 1
 
     const node = schema.nodes.trans_graphical_abstract.createAndFill(
       {
