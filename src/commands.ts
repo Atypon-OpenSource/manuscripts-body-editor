@@ -1483,7 +1483,7 @@ export const insertTransGraphicalAbstract =
         category: category.id,
       },
       [
-        schema.nodes.section_title.create({}, schema.text(category.titles[0])),
+        schema.nodes.section_title.create(),
         createAndFillFigureElement(state),
       ]
     ) as TransGraphicalAbstractNode
