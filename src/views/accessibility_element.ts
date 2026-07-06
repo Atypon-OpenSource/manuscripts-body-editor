@@ -19,11 +19,18 @@ import { TextSelection } from 'prosemirror-state'
 import { createKeyboardInteraction } from '../lib/navigation-utils'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
+import empty from './empty'
 export class AccessibilityElementView extends BlockView<LongDescNode> {
   public contentDOM: HTMLElement
   private removeKeydownListener?: () => void
 
   public initialise() {
+    const $pos = this.view.state.doc.resolve(this.getPos())
+    if ($pos.parent.type === schema.nodes.headshot_element) {
+      const { dom } = empty('accessibility_element')()
+      this.dom = dom
+      return
+    }
     this.createDOM()
     this.createElement()
     this.updateContents()
