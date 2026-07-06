@@ -17,6 +17,7 @@ import { ManuscriptNode } from '@manuscripts/transform'
 import { EditorView } from 'prosemirror-view'
 
 import { findNodeByID } from './doc'
+import { NodeSelection } from 'prosemirror-state'
 
 interface DragDropContext {
   view: EditorView
@@ -31,7 +32,7 @@ interface DragDropConfig {
 }
 
 export class DragDropManager {
-  private static currentNodeId: string | null
+  private static currentNodeId: string | null = null
 
   private element: HTMLElement
   private getContext: () => DragDropContext
@@ -75,18 +76,24 @@ export class DragDropManager {
   private handleDragOver = (e: DragEvent) => {
     const draggedId = DragDropManager.currentNodeId
     const nodeId = this.getContext().node.attrs.id
-    if (draggedId === null || draggedId === nodeId) {
+    if (
+      DragDropManager.currentNodeId === null ||
+      draggedId === null ||
+      draggedId === nodeId
+    ) {
       return
     }
 
     e.preventDefault()
     e.stopPropagation()
 
-    const side = this.getDropSide(this.element, e.clientY)
-    this.clearDropClasses()
-    this.element.classList.add(
-      side === 'before' ? 'drop-target-above' : 'drop-target-below'
-    )
+   const movePosition = this.getMovePosition(e)
+    if (movePosition) {
+      const { noActualMove, side } = movePosition
+      !noActualMove && this.element.classList.add(
+        side === 'before' ? 'drop-target-above' : 'drop-target-below'
+      )
+    }
   }
 
   private handleDragLeave = (e: DragEvent) => {
@@ -103,12 +110,28 @@ export class DragDropManager {
     e.preventDefault()
     e.stopPropagation()
 
-    const {
-      view: { state },
-      node,
-      pos: toPos,
-    } = this.getContext()
-    const currentView = findNodeByID(state.doc, DragDropManager.currentNodeId)
+    const movePosition = this.getMovePosition(e)
+    if (movePosition) {
+      const { noActualMove, fromPos, targetPos, fromNode} = movePosition
+      !noActualMove && this.moveNode(fromNode, fromPos, targetPos)
+    }
+    this.clearDropClasses()
+  }
+
+  private clearDropClasses() {
+    this.element.classList.remove('drop-target-above', 'drop-target-below')
+  }
+
+  private getMovePosition(e: DragEvent) {
+    if (!DragDropManager.currentNodeId) {
+      return
+    }
+
+    const { view, node, pos: toPos } = this.getContext()
+    const currentView = findNodeByID(
+      view.state.doc,
+      DragDropManager.currentNodeId
+    )
     if (!currentView) {
       return
     }
@@ -117,20 +140,15 @@ export class DragDropManager {
     const targetPos = side === 'before' ? toPos : toPos + node.nodeSize
 
     const { node: fromNode, pos: fromPos } = currentView
-    // No-move if dropping at the node’s start or end position
-    const noActualMove =
-      targetPos === fromPos || targetPos === fromPos + fromNode.nodeSize
-    // Check if this would be a no actual position change
-    if (noActualMove) {
-      this.clearDropClasses()
-      return
+    return {
+      // No-move if dropping at the node’s start or end position
+      noActualMove:
+        targetPos === fromPos || targetPos === fromPos + fromNode.nodeSize,
+      side,
+      fromNode,
+      fromPos,
+      targetPos,
     }
-    this.moveNode(fromNode, fromPos, targetPos)
-    this.clearDropClasses()
-  }
-
-  private clearDropClasses() {
-    this.element.classList.remove('drop-target-above', 'drop-target-below')
   }
 
   private getDropSide(
@@ -153,6 +171,7 @@ export class DragDropManager {
     tr.insert(targetPos, fromNode)
     const mappedFrom = tr.mapping.map(fromPos, -1)
     tr.delete(mappedFrom, mappedFrom + fromNode.nodeSize)
+    tr.setSelection(NodeSelection.create(tr.doc, fromPos))
     view.dispatch(tr)
   }
 }
