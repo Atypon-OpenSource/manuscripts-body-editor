@@ -116,6 +116,7 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
   useEffect(() => {
     if (item) {
       setSelection(item)
+      setIsNew(false)
     } else {
       setIsNew(true)
       setSelection({
@@ -189,7 +190,7 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
     const currentCitationCount = citationCounts.get(item.id)
 
     if (currentCitationCount === undefined) {
-      citationCounts.set(item.id, 1) // update the citation count in the Map
+      citationCounts.set(item.id, 0) // update the citation count in the Map
     }
 
     onSave(item)
@@ -206,9 +207,13 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
     setSelection(undefined)
   }
 
-  const handleItemClick = (item: BibliographyItemAttrs) => {
+  const hasChanged = () => {
     const values = valuesRef.current
-    if (values && selection && !isEqual(values, normalize(selection))) {
+    return values && selection && !isEqual(values, normalize(selection))
+  }
+
+  const handleItemClick = (item: BibliographyItemAttrs) => {
+    if (hasChanged()) {
       setConfirm(true)
       return
     }
@@ -253,6 +258,10 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
             <ReferencesSidebarContent ref={ref}>
               <NewReferenceButton
                 onClick={() => {
+                  if (hasChanged()) {
+                    setConfirm(true)
+                    return
+                  }
                   setIsNew(true)
                   setSelection({
                     id: generateNodeID(schema.nodes.bibliography_item),

@@ -286,9 +286,22 @@ export class BibliographyElementBlockView extends BlockView<
     }
   }
 
-  isUncited(id: string) {}
-
+  inlineModalButton: HTMLSpanElement | null
   createInlineModalButton() {
+    const can = this.props.getCapabilities()
+
+    if (!can.editCitationsAndRefs) {
+      if (this.inlineModalButton) {
+        this.inlineModalButton.remove()
+        this.inlineModalButton = null
+      }
+      return
+    }
+
+    if (this.inlineModalButton) {
+      return
+    }
+
     const $span = document.createElement('span')
     $span.tabIndex = 0
     $span.className = 'add-new-reference add-trans-abstract'
@@ -297,6 +310,11 @@ export class BibliographyElementBlockView extends BlockView<
     $span.addEventListener('click', (e) => {
       this.showPopper()
     })
+    $span.addEventListener(
+      'keydown',
+      handleEnterKey(() => this.showPopper())
+    )
+    this.inlineModalButton = $span
     this.dom.appendChild($span)
   }
 
