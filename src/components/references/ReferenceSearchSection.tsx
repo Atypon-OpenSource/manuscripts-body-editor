@@ -64,9 +64,10 @@ type State = RunningState | CompletedState
 export const ReferenceSearchSection: React.FC<{
   query: string
   source: BibliographyItemSource
+  documentCitationCounts?: Map<string, number>
   isSelected: (item: BibliographyItemAttrs) => boolean
   onSelect: (item: BibliographyItemAttrs) => void
-}> = ({ query, source, isSelected, onSelect }) => {
+}> = ({ query, source, documentCitationCounts, isSelected, onSelect }) => {
   const [expanded, setExpanded] = useState(true)
   const [state, setState] = useState<State>()
   const [limit, setLimit] = useState(3)
@@ -121,6 +122,7 @@ export const ReferenceSearchSection: React.FC<{
         <ReferenceSearchResults
           items={state.items}
           total={state.total}
+          documentCitationCounts={documentCitationCounts}
           isSelected={isSelected}
           onSelect={onSelect}
           onShowMore={handleShowMore}

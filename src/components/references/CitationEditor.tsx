@@ -218,6 +218,7 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
       <InsertCitationModal
         sources={sources}
         items={items}
+        citationCounts={citationCounts}
         onAdd={handleAdd}
         onCite={(items) => {
           setSearching(false)
@@ -233,6 +234,7 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
         query={query}
         sources={sources}
         items={items}
+        citationCounts={citationCounts}
         onAdd={handleAdd}
         onCite={handleCite}
         onCancel={onCancel}

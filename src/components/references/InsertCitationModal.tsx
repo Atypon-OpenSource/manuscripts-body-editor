@@ -47,7 +47,7 @@ const Container = withFocusTrap(ModalContainer)
 
 const StyledModalSidebar = styled(ModalSidebar)`
   background: white;
-  width: 35vw;
+  width: 44vw;
   padding: ${(props) => props.theme.grid.unit * 6}px;
 `
 
@@ -79,10 +79,19 @@ export const InsertCitationModal: React.FC<{
   query?: string
   sources: BibliographyItemSource[]
   items: BibliographyItemAttrs[]
+  citationCounts: Map<string, number>
   onAdd: () => void
   onCite: (items: BibliographyItemAttrs[]) => void
   onCancel: () => void
-}> = ({ query: initialQuery, sources, items, onAdd, onCite, onCancel }) => {
+}> = ({
+  query: initialQuery,
+  sources,
+  items,
+  citationCounts,
+  onAdd,
+  onCite,
+  onCancel,
+}) => {
   const [isOpen, setOpen] = useState(true)
   const [query, setQuery] = useState<string>(initialQuery || '')
   const [selections, setSelections] = useState(
@@ -144,6 +153,7 @@ export const InsertCitationModal: React.FC<{
                 key={document.id}
                 query={query}
                 source={document}
+                documentCitationCounts={citationCounts}
                 isSelected={isSelected}
                 onSelect={toggleSelection}
               />
