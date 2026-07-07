@@ -201,10 +201,10 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
       {isOpen && (
         <DropdownMenu
           ref={dropdownMenuRef}
-          direction="right"
-          width={231}
-          height={400}
-          top={18}
+          $direction="right"
+          $width={231}
+          $height={400}
+          $top={18}
           onKeyDown={handleMenuKeyDown}
           role="menu"
         >

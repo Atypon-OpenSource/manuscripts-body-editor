@@ -50,22 +50,22 @@ const Items = withListNavigation(styled.div`
 `)
 
 const CrossReferenceItem = withNavigableListItem(styled.div<{
-  isSelected: boolean
+  $isSelected: boolean
 }>`
   cursor: pointer;
   padding: ${(props) => props.theme.grid.unit * 4}px;
   background-color: ${(props) =>
-    props.isSelected
+    props.$isSelected
       ? props.theme.colors.background.selected
       : props.theme.colors.background.primary};
   transition: background-color 0.1s;
   border: solid
     ${(props) =>
-      props.isSelected
+      props.$isSelected
         ? props.theme.colors.brand.medium
         : props.theme.colors.border.secondary};
   border-width: 1px 0;
-  z-index: ${(props) => (props.isSelected ? '1' : '0')};
+  z-index: ${(props) => (props.$isSelected ? '1' : '0')};
 
   &:hover {
     background-color: ${(props) => props.theme.colors.background.selected};
@@ -151,7 +151,7 @@ export const CrossReferenceItems: React.FC<Props> = ({
           targets.map((target) => (
             <CrossReferenceItem
               key={target.id}
-              isSelected={selectedItem === target.id}
+              $isSelected={selectedItem === target.id}
               onClick={() => setSelectedItem(target.id)}
             >
               <DefaultLabelWrapper>

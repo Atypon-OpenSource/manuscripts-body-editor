@@ -30,6 +30,7 @@ import sectionCategories from '../../testing/section-categories.json'
 import { PopperManager } from '../popper'
 import { getMatchingDescendant } from '../utils'
 import jsonDoc from './__fixtures__/doc.json'
+import { defaultTheme } from '@manuscripts/style-guide'
 const userProfile: UserProfile = {
   _id: 'MPUserProfile:1',
   userID: 'MPUser:1',
@@ -47,7 +48,7 @@ const buildProps = (doc: ActualManuscriptNode): EditorProps => ({
   setComment: () => undefined,
   setSelectedComment: () => undefined,
   setEditorSelectedSuggestion: () => undefined,
-  theme: {},
+  theme: defaultTheme,
   getFiles: () => [],
   fileManagement: {
     download: () => undefined, // eslint-disable-line @typescript-eslint/no-empty-function
