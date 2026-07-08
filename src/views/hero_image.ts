@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { FigureElementNode } from '@manuscripts/transform'
+import { HeroImageNode } from '@manuscripts/transform'
 
 import {
   arrowUp,
@@ -57,7 +57,7 @@ const LAYOUT_OPTIONS_CONFIG = [
   },
 ]
 
-export class HeroImageView extends BlockView<Trackable<FigureElementNode>> {
+export class HeroImageView extends BlockView<Trackable<HeroImageNode>> {
   private container: HTMLElement
   private layoutOptions: HTMLElement
   private abortController: AbortController
