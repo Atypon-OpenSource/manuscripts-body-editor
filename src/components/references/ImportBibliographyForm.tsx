@@ -138,7 +138,7 @@ export const ImportBibliographyForm = ({
           }}
           onDragLeave={() => setDragging(false)}
           onKeyDown={handleOnKeyDown}
-          active={dragging}
+          $active={dragging}
         >
           <input
             id="file"
@@ -203,13 +203,13 @@ const activeBoxStyle = css`
   border: 1px dashed #bce7f6;
 `
 
-const DropContainer = styled.div<{ active: boolean }>`
+const DropContainer = styled.div<{ $active: boolean }>`
   background: ${(props) => props.theme.colors.background.secondary};
   border: 1px dashed ${(props) => props.theme.colors.border.secondary};
   box-sizing: border-box;
   border-radius: ${(props) => props.theme.grid.radius.default};
   cursor: pointer;
-  ${({ active }) => active && activeBoxStyle};
+  ${({ $active }) => $active && activeBoxStyle};
 
   &:hover {
     ${activeBoxStyle}

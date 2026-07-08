@@ -1,5 +1,5 @@
 /*!
- * © 2025 Atypon Systems LLC
+ * © 2026 Atypon Systems LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,8 @@
  * limitations under the License.
  */
 
-import { CaptionNode, ManuscriptNodeView } from '@manuscripts/transform'
+import { createEditableNodeView } from './creators'
+import { EditableBlock } from './editable_block'
+import { HeadshotGridView } from './headshot_grid'
 
-import { BaseNodeView } from './base_node_view'
-import { createNodeView } from './creators'
-
-export class CaptionView
-  extends BaseNodeView<CaptionNode>
-  implements ManuscriptNodeView
-{
-  public initialise = () => {
-    this.createDOM()
-  }
-  protected createDOM() {
-    this.dom = document.createElement('caption')
-    this.dom.className = 'caption-description placeholder'
-    this.contentDOM = this.dom
-  }
-}
-
-export default createNodeView(CaptionView)
+export default createEditableNodeView(EditableBlock(HeadshotGridView))
