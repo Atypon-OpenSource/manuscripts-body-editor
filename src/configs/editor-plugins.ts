@@ -38,6 +38,7 @@ import detect_inconsistency from '../plugins/detect-inconsistency'
 import doi from '../plugins/doi'
 import editorProps from '../plugins/editor-props'
 import elements from '../plugins/elements'
+import elementSelection from '../plugins/element-selection'
 import footnotes from '../plugins/footnotes'
 import link from '../plugins/link'
 import lock_body from '../plugins/lock-body'
@@ -100,6 +101,7 @@ export default (props: EditorProps) => {
     prevent_empty(),
     move_node(),
     link(),
+    elementSelection()
   ]
 
   // @ts-ignore
