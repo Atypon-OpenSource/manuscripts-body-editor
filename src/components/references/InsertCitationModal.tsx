@@ -32,7 +32,7 @@ import {
 } from '@manuscripts/style-guide'
 import { BibliographyItemAttrs } from '@manuscripts/transform'
 import { debounce } from 'lodash'
-import React, { useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 
 import { StyledModalBody } from '../form/CreateModalStyles'
@@ -125,9 +125,15 @@ export const InsertCitationModal: React.FC<{
     return onCite(items)
   }
 
-  const debouncedSetQuery = debounce((e) => {
-    setQuery(e.target.value.trim())
-  }, 800)
+  const debouncedSetQuery = useMemo(
+    () =>
+      debounce((e) => {
+        setQuery(e.target.value.trim())
+      }, 800),
+    []
+  )
+
+  useEffect(() => () => debouncedSetQuery.cancel(), [debouncedSetQuery])
 
   return (
     <StyledModal
@@ -135,7 +141,7 @@ export const InsertCitationModal: React.FC<{
       onRequestClose={handleClose}
       shouldCloseOnOverlayClick={true}
     >
-      <Container data-cy={'reference-finder'}>
+      <Container data-cy="reference-finder">
         <ModalHeader>
           <CloseButton onClick={handleClose} data-cy="modal-close-button" />
         </ModalHeader>
