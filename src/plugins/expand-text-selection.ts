@@ -33,39 +33,36 @@ import { Decoration, DecorationSet } from 'prosemirror-view'
  * Used for decorating the expanded selection visually.
  */
 class ExpandedTextSelection extends TextSelection {
-  anchorNodePosition: { from: number; to: number }
-  headNodePosition: { from: number; to: number }
+  anchorNodeFrom: number
+  anchorNodeTo: number
+  headNodeFrom: number
+  headNodeTo: number
+
   static create(doc: Node, anchor: number, head: number) {
-    const expandedTextSelection = new this(
-      doc.resolve(anchor),
-      doc.resolve(head)
-    )
-    // TODO:: we need to rename or replace them
-    expandedTextSelection.anchorNodePosition = { from: 0, to: 0 }
-    expandedTextSelection.headNodePosition = { from: 0, to: 0 }
-    return expandedTextSelection
+    return new this(doc.resolve(anchor), doc.resolve(head))
   }
 }
 
-const key = new PluginKey<DecorationSet>('expaned-text-selection')
+const key = new PluginKey<DecorationSet>('expanded-text-selection')
 
 /**
- * Prevents partial text selections within structural elements.
+ * Expands text selections to whole element boundaries to prevent structural corruption.
  *
- * When users select text across element boundaries (e.g., table_element,
- * figure_element, box_element), this plugin automatically expands the
- * selection to include entire element nodes. This protects structural
- * integrity by preventing cut/copy/delete operations that would leave
- * elements in an invalid state.
+ * This plugin intercepts selections that span structural elements (table_element,
+ * figure_element, box_element) and expands them to include full node boundaries.
+ * This prevents partial deletions that would break required element structures.
  *
- * Examples:
- * - figure_element: Always keeps at least one image; deletes the entire
- *   figure if the last image would be removed
- * - box_element: Prevents deletion of the required section wrapper node
- * - table_element: Ensures table structure remains intact
+ * During selection (mouse drag):
+ * - The native DOM selection shows only the text range under the cursor
+ * - A decoration visually highlights the full expanded element boundaries
+ * - This provides immediate visual feedback of what will actually be selected
  *
- * The plugin also provides visual feedback by applying the 'selected-block-node'
- * CSS class to expanded selections.
+ * On mouseup:
+ * - The selection is converted to a standard TextSelection with the expanded range
+ * - The native DOM selection now matches the full expanded boundaries
+ *
+ * This two-phase approach ensures users see exactly what will be selected before
+ * committing the selection, preventing accidental structural damage to the document.
  */
 export default () =>
   new Plugin({
@@ -92,9 +89,8 @@ export default () =>
             contentNode.pos,
             contentNode.pos + contentNode.node.nodeSize
           )
-          selection.anchorNodePosition.from = contentNode.pos
-          selection.anchorNodePosition.to =
-            contentNode.pos + contentNode.node.nodeSize
+          selection.anchorNodeFrom = contentNode.pos
+          selection.anchorNodeTo = contentNode.pos + contentNode.node.nodeSize
           newTr.setSelection(selection)
           return newTr
         }
@@ -122,22 +118,22 @@ export default () =>
             return key.getState(state)
           }
           const decorations = []
-          if (state.selection.anchorNodePosition?.from) {
+          if (state.selection.anchorNodeFrom && state.selection.anchorNodeTo) {
             decorations.push(
               Decoration.node(
-                state.selection.anchorNodePosition.from,
-                state.selection.anchorNodePosition.to,
+                state.selection.anchorNodeFrom,
+                state.selection.anchorNodeTo,
                 {
                   class: 'selected-block-node',
                 }
               )
             )
           }
-          if (state.selection.headNodePosition?.from) {
+          if (state.selection.headNodeFrom && state.selection.headNodeTo) {
             decorations.push(
               Decoration.node(
-                state.selection.headNodePosition.from,
-                state.selection.headNodePosition.to,
+                state.selection.headNodeFrom,
+                state.selection.headNodeTo,
                 {
                   class: 'selected-block-node',
                 }
@@ -188,12 +184,11 @@ export default () =>
                 headParent.pos,
                 anchorParent.pos + anchorParent.node.nodeSize
               )
-          selection.anchorNodePosition.from = anchorParent.pos
-          selection.anchorNodePosition.to =
+          selection.anchorNodeFrom = anchorParent.pos
+          selection.anchorNodeFrom =
             anchorParent.pos + anchorParent.node.nodeSize
-          selection.headNodePosition.from = headParent.pos
-          selection.headNodePosition.to =
-            headParent.pos + headParent.node.nodeSize
+          selection.headNodeFrom = headParent.pos
+          selection.headNodeTo = headParent.pos + headParent.node.nodeSize
           return selection
         }
 
@@ -205,9 +200,8 @@ export default () =>
                 $head.pos,
                 anchorParent.pos + anchorParent.node.nodeSize
               )
-          selection.anchorNodePosition.from = anchorParent.pos
-          selection.anchorNodePosition.to =
-            anchorParent.pos + anchorParent.node.nodeSize
+          selection.anchorNodeFrom = anchorParent.pos
+          selection.anchorNodeTo = anchorParent.pos + anchorParent.node.nodeSize
 
           return selection
         }
@@ -220,9 +214,8 @@ export default () =>
                 headParent.pos + headParent.node.nodeSize
               )
             : ExpandedTextSelection.create(doc, headParent.pos, $anchor.pos)
-          selection.headNodePosition.from = headParent.pos
-          selection.headNodePosition.to =
-            headParent.pos + headParent.node.nodeSize
+          selection.headNodeFrom = headParent.pos
+          selection.headNodeTo = headParent.pos + headParent.node.nodeSize
           return selection
         }
 
@@ -247,7 +240,10 @@ const isTableShapeSelected = (state: EditorState) => {
 const getSelectableNode = ($pos: ResolvedPos) => (node: Node) => {
   if (node.type === schema.nodes.box_element) {
     // boxed element will be selectable only if the selection was part of its direct children
-    return $pos.node($pos.depth - 1).type === schema.nodes.box_element
+    return (
+      $pos.depth > 0 &&
+      $pos.node($pos.depth - 1).type === schema.nodes.box_element
+    )
   }
   return (
     node.type.isInGroup('element') &&
