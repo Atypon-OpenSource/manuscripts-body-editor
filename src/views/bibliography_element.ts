@@ -306,7 +306,7 @@ export class BibliographyElementBlockView extends BlockView<
     $span.tabIndex = 0
     $span.className = 'add-new-reference add-trans-abstract'
     $span.title = 'Add New Reference'
-    $span.innerHTML = `${addIcon} <span class="add-new-reference-text">Add new reference</span>`
+    $span.innerHTML = `${addIcon} <span type="button" tabindex="0" class="add-new-reference-text">Add new reference</span>`
     $span.addEventListener('click', (e) => {
       this.showPopper()
     })
