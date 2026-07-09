@@ -21,7 +21,7 @@ import {
 } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 
-import { addAuthorIcon } from '../icons'
+import { addIcon } from '../icons'
 import {
   createKeyboardInteraction,
   handleEnterKey,
@@ -59,7 +59,7 @@ export class HeadshotGridView extends BlockView<HeadshotGridNode> {
       this.addHeadshotButton.classList.add('add-headshot-element-button')
       this.addHeadshotButton.setAttribute('data-cy', 'headshot-add')
       this.addHeadshotButton.contentEditable = 'false'
-      this.addHeadshotButton.innerHTML = addAuthorIcon
+      this.addHeadshotButton.innerHTML = addIcon
       const buttonText = document.createElement('span')
       buttonText.classList.add('add-headshot-element-text')
       buttonText.innerText = 'Add Headshot'
