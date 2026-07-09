@@ -28,24 +28,44 @@ import {
 } from 'prosemirror-utils'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
-/** That is a normal text selection but hold locations of a block nodes to use that location for adding
- *  decoration that indicates text selection moves to the entire node */
-class AnchorNodeWithTextSelection extends TextSelection {
+/**
+ * A TextSelection that tracks both the text range and the containing block node boundaries.
+ * Used for decorating the expanded selection visually.
+ */
+class ExpandedTextSelection extends TextSelection {
   anchorNodePosition: { from: number; to: number }
   headNodePosition: { from: number; to: number }
   static create(doc: Node, anchor: number, head: number) {
-    return new this(doc.resolve(anchor), doc.resolve(head))
+    const expandedTextSelection = new this(
+      doc.resolve(anchor),
+      doc.resolve(head)
+    )
+    // TODO:: we need to rename or replace them
+    expandedTextSelection.anchorNodePosition = { from: 0, to: 0 }
+    expandedTextSelection.headNodePosition = { from: 0, to: 0 }
+    return expandedTextSelection
   }
 }
 
-const key = new PluginKey<DecorationSet>('block-selection')
+const key = new PluginKey<DecorationSet>('expaned-text-selection')
 
 /**
- * This plugin update text selection to include full node with selection range.
- * we did that to prevent partial text selection between the children of elements nodes like(figure_element, table_element)
- * to protect there structural integrity from cut/delete. example of that figure_element with multiple images we need to
- * keep always a one image in that figure_element or delete the entire node if we don't need that image at all,
- * same will be for box_element we need to prevent the deletion of the main section node.
+ * Prevents partial text selections within structural elements.
+ *
+ * When users select text across element boundaries (e.g., table_element,
+ * figure_element, box_element), this plugin automatically expands the
+ * selection to include entire element nodes. This protects structural
+ * integrity by preventing cut/copy/delete operations that would leave
+ * elements in an invalid state.
+ *
+ * Examples:
+ * - figure_element: Always keeps at least one image; deletes the entire
+ *   figure if the last image would be removed
+ * - box_element: Prevents deletion of the required section wrapper node
+ * - table_element: Ensures table structure remains intact
+ *
+ * The plugin also provides visual feedback by applying the 'selected-block-node'
+ * CSS class to expanded selections.
  */
 export default () =>
   new Plugin({
@@ -67,7 +87,7 @@ export default () =>
         )
         if (contentNode) {
           const newTr = newState.tr
-          const selection = AnchorNodeWithTextSelection.create(
+          const selection = ExpandedTextSelection.create(
             newState.doc,
             contentNode.pos,
             contentNode.pos + contentNode.node.nodeSize
@@ -83,7 +103,7 @@ export default () =>
     props: {
       handleDOMEvents: {
         mouseup: (view) => {
-          if (view.state.selection instanceof AnchorNodeWithTextSelection) {
+          if (view.state.selection instanceof ExpandedTextSelection) {
             view.dispatch(
               view.state.tr.setSelection(
                 TextSelection.create(
@@ -97,84 +117,80 @@ export default () =>
         },
       },
       decorations: (state) => {
-        if (state.selection instanceof AnchorNodeWithTextSelection) {
+        if (state.selection instanceof ExpandedTextSelection) {
           if (key.getState(state)) {
             return key.getState(state)
           }
-          return DecorationSet.create(state.doc, [
-            Decoration.node(
-              state.selection.anchorNodePosition.from,
-              state.selection.anchorNodePosition.to,
-              {
-                class: 'selected-block-node',
-              }
-            ),
-          ])
+          const decorations = []
+          if (state.selection.anchorNodePosition?.from) {
+            decorations.push(
+              Decoration.node(
+                state.selection.anchorNodePosition.from,
+                state.selection.anchorNodePosition.to,
+                {
+                  class: 'selected-block-node',
+                }
+              )
+            )
+          }
+          if (state.selection.headNodePosition?.from) {
+            decorations.push(
+              Decoration.node(
+                state.selection.headNodePosition.from,
+                state.selection.headNodePosition.to,
+                {
+                  class: 'selected-block-node',
+                }
+              )
+            )
+          }
+          return decorations.length > 0
+            ? DecorationSet.create(state.doc, decorations)
+            : null
         }
       },
-      createSelectionBetween: (view, anchor, head) => {
+      createSelectionBetween: (view, $anchor, $head) => {
+        // will keep using the same custom selection as it select entire node
         if (key.getState(view.state)) {
           return view.state.selection
         }
-        if (anchor.pos === head.pos) {
+        if ($anchor.pos === $head.pos) {
           return null
         }
-        const selectionAtTheNode =
-          anchor.depth === head.depth &&
-          anchor.sharedDepth(head.pos) === anchor.depth
-
-        if (selectionAtTheNode) {
+        const selectionAtTheNodeBoundary =
+          $anchor.depth === $head.depth &&
+          $anchor.sharedDepth($head.pos) === $anchor.depth
+        if (selectionAtTheNodeBoundary) {
           return null
         }
 
         const anchorParent = findParentNodeClosestToPos(
-          anchor,
-          getSelectableNode(anchor)
+          $anchor,
+          getSelectableNode($anchor)
         )
         const headParent = findParentNodeClosestToPos(
-          head,
-          getSelectableNode(head)
+          $head,
+          getSelectableNode($head)
         )
 
-        const isScrollDown = anchor.pos < head.pos
-        let selection = null
+        const isScrollDown = $anchor.pos < $head.pos
+        const doc = view.state.doc
 
-        if (headParent) {
-          if (anchorParent) {
-            if (isScrollDown) {
-              selection = AnchorNodeWithTextSelection.create(
-                view.state.doc,
+        if (anchorParent && headParent) {
+          const selection = isScrollDown
+            ? ExpandedTextSelection.create(
+                doc,
                 anchorParent.pos,
                 headParent.pos + headParent.node.nodeSize
               )
-            } else {
-              selection = AnchorNodeWithTextSelection.create(
-                view.state.doc,
+            : ExpandedTextSelection.create(
+                doc,
                 headParent.pos,
                 anchorParent.pos + anchorParent.node.nodeSize
               )
-            }
-            selection.anchorNodePosition.from = anchorParent.pos
-            selection.anchorNodePosition.to =
-              anchorParent.pos + anchorParent.node.nodeSize
-            selection.headNodePosition.from = headParent.pos
-            selection.headNodePosition.to =
-              headParent.pos + headParent.node.nodeSize
-            return selection
-          }
-
-          if (isScrollDown) {
-            selection = AnchorNodeWithTextSelection.create(
-              view.state.doc,
-              anchor.pos,
-              headParent.pos + headParent.node.nodeSize
-            )
-          }
-          selection = AnchorNodeWithTextSelection.create(
-            view.state.doc,
-            headParent.pos,
-            anchor.pos
-          )
+          selection.anchorNodePosition.from = anchorParent.pos
+          selection.anchorNodePosition.to =
+            anchorParent.pos + anchorParent.node.nodeSize
           selection.headNodePosition.from = headParent.pos
           selection.headNodePosition.to =
             headParent.pos + headParent.node.nodeSize
@@ -182,24 +198,35 @@ export default () =>
         }
 
         if (anchorParent) {
-          if (isScrollDown) {
-            selection = AnchorNodeWithTextSelection.create(
-              view.state.doc,
-              anchorParent.pos,
-              head.pos
-            )
-          }
-          selection = AnchorNodeWithTextSelection.create(
-            view.state.doc,
-            head.pos,
-            anchorParent.pos + anchorParent.node.nodeSize
-          )
+          const selection = isScrollDown
+            ? ExpandedTextSelection.create(doc, anchorParent.pos, $head.pos)
+            : ExpandedTextSelection.create(
+                doc,
+                $head.pos,
+                anchorParent.pos + anchorParent.node.nodeSize
+              )
           selection.anchorNodePosition.from = anchorParent.pos
           selection.anchorNodePosition.to =
             anchorParent.pos + anchorParent.node.nodeSize
+
+          return selection
         }
 
-        return selection
+        if (headParent) {
+          const selection = isScrollDown
+            ? ExpandedTextSelection.create(
+                doc,
+                $anchor.pos,
+                headParent.pos + headParent.node.nodeSize
+              )
+            : ExpandedTextSelection.create(doc, headParent.pos, $anchor.pos)
+          selection.headNodePosition.from = headParent.pos
+          selection.headNodePosition.to =
+            headParent.pos + headParent.node.nodeSize
+          return selection
+        }
+
+        return null
       },
     },
   })
