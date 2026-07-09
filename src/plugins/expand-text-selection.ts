@@ -48,31 +48,26 @@ const key = new PluginKey<DecorationSet>('expanded-text-selection')
 /**
  * Expands text selections to whole element boundaries to prevent structural corruption.
  *
- * When a selection spans structural elements (table_element, figure_element, box_element),
- * this plugin automatically expands it to include full node boundaries. This prevents
- * partial deletions that would break required element structures (e.g., leaving a
- * figure_element with no images, or a box_element without its section wrapper).
+ * When selecting across structural elements (table_element, figure_element, box_element),
+ * this plugin automatically expands the selection to include complete nodes, preventing
+ * partial deletions that would break required structures (e.g., a figure_element without
+ * images, or a box_element missing its section wrapper).
  *
- * We extend TextSelection as `ExpandedTextSelection` to store additional metadata about
- * the expanded node boundaries (anchorNodeFrom/To, headNodeFrom/To) alongside the actual
- * text selection range. This metadata is essential for tracking which element nodes were
- * expanded.
+ * Implementation:
  *
- * ## Why we need decorations:
+ * The plugin uses a custom ExpandedTextSelection that extends TextSelection to track both the text selection
+ * range and the expanded element node boundaries. This is necessary because when
+ * createSelectionBetween expands a selection, ProseMirror's state updates immediately,
+ * but the browser's native DOM selection lags behind until the next render cycle.
  *
- * When using `createSelectionBetween` to expand selections, ProseMirror updates the
- * selection state immediately, but the browser's native DOM selection doesn't update
- * until the next render cycle. This creates a visual mismatch during mouse drag:
- * - ProseMirror knows the full expanded range (e.g., entire table_element)
- * - The DOM still shows only the partial text selection under the cursor
+ * During a mouse drag, users would only see the partial text under their cursor, not
+ * the full expanded range they're actually selecting. To solve this, we apply decorations
+ * that visually highlight the complete expanded boundaries in real-time. On mouseup,
+ * the ExpandedTextSelection is converted to a standard TextSelection, syncing the DOM
+ * selection with what the user saw highlighted.
  *
- * Without visual feedback, users can't see what they're actually selecting, leading to
- * confusion and accidental deletions. The decoration solves this by:
- * 1. During drag: Applying a CSS class to visually highlight the full expanded boundaries
- * 2. On mouseup: Converting to a standard TextSelection so the DOM selection catches up
- *
- * This two-phase approach ensures users see exactly what will be selected before the
- * selection is finalized, preventing accidental structural damage to the document.
+ * This ensures users get immediate visual feedback showing exactly what will be selected,
+ * preventing accidental structural damage to the document.
  */
 export default () =>
   new Plugin({
