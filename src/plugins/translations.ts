@@ -106,7 +106,7 @@ export default (props: EditorProps) =>
 
         state.doc.descendants((node, pos, parent) => {
           const isAbstractSection =
-            (node.type === schema.nodes.section ||
+            (node.type === schema.nodes.abstract ||
               node.type === schema.nodes.graphical_abstract_section) &&
             parent?.type === schema.nodes.abstracts
 

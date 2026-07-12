@@ -154,7 +154,7 @@ const buildPluginState = (
     if (node.type === schema.nodes.box_element) {
       return false
     }
-    if (isSectionNode(node)) {
+    if (isSectionNode(node) || node.type === schema.nodes.abstract) {
       const categoryID = node.attrs.category
       const category = categories.get(categoryID)
       const $pos = state.doc.resolve(pos)
@@ -191,7 +191,10 @@ const buildPluginState = (
 }
 
 const getUsedSectionCategoryIDs = (state: EditorState): Set<string> => {
-  const sections = findChildrenByType(state.doc, schema.nodes.section)
+  const sections = [
+    ...findChildrenByType(state.doc, schema.nodes.section),
+    ...findChildrenByType(state.doc, schema.nodes.abstract),
+  ]
   const used = new Set<string>()
   sections.forEach(({ node }) => {
     if (node.attrs.category) {

@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-import { isDeleted, skipTracking, skipSelect } from '@manuscripts/track-changes-plugin'
+import {
+  isDeleted,
+  skipTracking,
+  skipSelect,
+} from '@manuscripts/track-changes-plugin'
 import {
   AttachmentNode,
   AwardNode,
@@ -87,7 +91,6 @@ import {
   findBackmatter,
   findBibliographySection,
   findBody,
-  findFirstTransAbstract,
   findFootnotesSection,
   insertAttachmentsNode,
   insertAwardsNode,
@@ -1023,30 +1026,20 @@ export const insertAbstractSection =
       return false
     }
     const abstracts = findAbstractsNode(state.doc)
-    const sections = findChildrenByType(abstracts.node, schema.nodes.section)
-    // Check if the section already exists
-    if (sections.some((s) => s.node.attrs.category === category.id)) {
+    const abstractNodes = findChildrenByType(
+      abstracts.node,
+      schema.nodes.abstract
+    )
+    if (abstractNodes.some((s) => s.node.attrs.category === category.id)) {
       return false
     }
 
-    // check if graphical abstract node exist to insert before it.
-    const ga = findChildrenByType(
-      state.doc,
-      schema.nodes.graphical_abstract_section
-    )[0]
+    const pos =
+      findInsertionPosition(schema.nodes.abstract, abstracts.node) +
+      abstracts.pos +
+      1
 
-    // Regular abstracts must be placed after all regular abstracts but before
-    // any translated abstracts
-    const firstTrans = findFirstTransAbstract(state.doc)
-    const endOfRegularAbstracts =
-      firstTrans?.pos ?? abstracts.pos + abstracts.node.content.size + 1
-
-    let pos = ga ? ga.pos : endOfRegularAbstracts
-    if (category.id === 'abstract') {
-      pos = abstracts.pos + 1
-    }
-
-    const node = schema.nodes.section.create({ category: category.id }, [
+    const node = schema.nodes.abstract.create({ category: category.id }, [
       schema.nodes.section_title.create({}, schema.text(category.titles[0])),
       schema.nodes.paragraph.create({ placeholder: 'Type abstract here...' }),
     ])
@@ -1124,15 +1117,13 @@ export const insertGraphicalAbstract =
       return false
     }
 
-    const ga = findChildrenByType(
-      state.doc,
-      schema.nodes.graphical_abstract_section
-    )[0]
-
-    const firstTrans = findFirstTransAbstract(state.doc)
-    let pos = firstTrans?.pos ?? abstracts.pos + abstracts.node.content.size + 1
-    // abstract-key-image insert before abstract-graphical
-    pos = ga && category.id === 'abstract-key-image' ? ga.pos : pos
+    const pos =
+      findInsertionPosition(
+        schema.nodes.graphical_abstract_section,
+        abstracts.node
+      ) +
+      abstracts.pos +
+      1
 
     const node = schema.nodes.graphical_abstract_section.createAndFill(
       { category: category.id },
@@ -1452,8 +1443,10 @@ export const insertTransAbstract = (
 
   const abstracts = findAbstractsNode(state.doc)
 
-  // Translated abstracts always go at the end of the abstracts node
-  const pos = abstracts.pos + abstracts.node.nodeSize - 1
+  const pos =
+    findInsertionPosition(schema.nodes.trans_abstract, abstracts.node) +
+    abstracts.pos +
+    1
   const tr = state.tr.insert(pos, node)
 
   const selection = TextSelection.create(tr.doc, pos + 1)
@@ -1476,18 +1469,20 @@ export const insertTransGraphicalAbstract =
     const lang = state.doc.attrs.primaryLanguageCode || 'en'
 
     const abstracts = findAbstractsNode(state.doc)
-    // Translated abstracts always go at the end of the abstracts node.
-    const pos = abstracts.pos + abstracts.node.content.size + 1
+    const pos =
+      findInsertionPosition(
+        schema.nodes.trans_graphical_abstract,
+        abstracts.node
+      ) +
+      abstracts.pos +
+      1
 
     const node = schema.nodes.trans_graphical_abstract.createAndFill(
       {
         lang,
         category: category.id,
       },
-      [
-        schema.nodes.section_title.create(),
-        createAndFillFigureElement(state),
-      ]
+      [schema.nodes.section_title.create(), createAndFillFigureElement(state)]
     ) as TransGraphicalAbstractNode
 
     const tr = state.tr.insert(pos, node)
