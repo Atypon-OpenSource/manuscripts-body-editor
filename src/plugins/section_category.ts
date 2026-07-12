@@ -154,7 +154,7 @@ const buildPluginState = (
     if (node.type === schema.nodes.box_element) {
       return false
     }
-    if (isSectionNode(node) || node.type === schema.nodes.abstract) {
+    if (isSectionNode(node)) {
       const categoryID = node.attrs.category
       const category = categories.get(categoryID)
       const $pos = state.doc.resolve(pos)
