@@ -1935,7 +1935,7 @@ th:hover > .table-context-menu-button,
   height: 8px;
 }
 
-.ProseMirror .headshot-element:hover .headshot-drag-icon,
+.ProseMirror .headshot-grid-block .headshot-element:not(:only-child):hover .headshot-drag-icon,
 .ProseMirror .headshot-element:hover .block > .headshot-remove-button,
 .ProseMirror .headshot-figure:hover .headshot-remove-button,
 .ProseMirror .headshot-element:focus-within .headshot-remove-button {

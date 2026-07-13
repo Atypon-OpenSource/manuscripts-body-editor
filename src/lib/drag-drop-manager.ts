@@ -28,6 +28,7 @@ interface DragDropContext {
 interface DragDropConfig {
   element: HTMLElement
   getContext: () => DragDropContext
+  restrictToParent?: boolean
   disabled?: boolean
 }
 
@@ -35,16 +36,18 @@ export class DragDropManager {
   private static currentNodeId: string | null = null
 
   private element: HTMLElement
+  private restrictToParent: boolean
   private getContext: () => DragDropContext
 
   setup(config: DragDropConfig) {
-    const { element, getContext, disabled } = config
+    const { element, restrictToParent, getContext, disabled } = config
     if (disabled) {
       return
     }
 
     this.element = element
     this.element.draggable = true
+    this.restrictToParent = restrictToParent || true
     this.getContext = getContext
 
     const abortController = new AbortController()
@@ -87,12 +90,14 @@ export class DragDropManager {
     e.preventDefault()
     e.stopPropagation()
 
-   const movePosition = this.getMovePosition(e)
+    const movePosition = this.getMovePosition(e)
     if (movePosition) {
-      const { noActualMove, side } = movePosition
-      !noActualMove && this.element.classList.add(
-        side === 'before' ? 'drop-target-above' : 'drop-target-below'
-      )
+      const { noActualMove, side, fromPos, targetPos } = movePosition
+      if (!noActualMove && this.canMoveOutsideParent(fromPos, targetPos)) {
+        this.element.classList.add(
+          side === 'before' ? 'drop-target-above' : 'drop-target-below'
+        )
+      }
     }
   }
 
@@ -112,8 +117,10 @@ export class DragDropManager {
 
     const movePosition = this.getMovePosition(e)
     if (movePosition) {
-      const { noActualMove, fromPos, targetPos, fromNode} = movePosition
-      !noActualMove && this.moveNode(fromNode, fromPos, targetPos)
+      const { noActualMove, fromPos, targetPos, fromNode } = movePosition
+      if (!noActualMove && this.canMoveOutsideParent(fromPos, targetPos)) {
+        this.moveNode(fromNode, fromPos, targetPos)
+      }
     }
     this.clearDropClasses()
   }
@@ -173,5 +180,15 @@ export class DragDropManager {
     tr.delete(mappedFrom, mappedFrom + fromNode.nodeSize)
     tr.setSelection(NodeSelection.create(tr.doc, fromPos))
     view.dispatch(tr)
+  }
+
+  private canMoveOutsideParent(from: number, to: number) {
+    if (!this.restrictToParent) {
+      return true
+    }
+    const { view } = this.getContext()
+    const $fromPos = view.state.doc.resolve(from)
+    const $toPos = view.state.doc.resolve(to)
+    return $fromPos.sameParent($toPos)
   }
 }
