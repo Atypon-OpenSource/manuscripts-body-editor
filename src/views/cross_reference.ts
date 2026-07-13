@@ -17,6 +17,7 @@
 import {
   CrossReferenceNode,
   ManuscriptNodeView,
+  schema,
   Target,
 } from '@manuscripts/transform'
 
@@ -45,10 +46,15 @@ export class CrossReferenceView
     super.updateContents()
     const targets = objectsKey.getState(this.view.state) as Map<string, Target>
     const attrs = this.node.attrs
+    const target = attrs.rids.length ? targets.get(attrs.rids[0]) : undefined
 
-    const label = attrs.rids.length && targets.get(attrs.rids[0])?.label
-    // attrs.label contains custom text inserted at cross-reference creation time
-    this.dom.textContent = attrs.label || label || ''
+    let derivedLabel = target?.label || ''
+    if (target?.type === schema.nodes.supplement.name && target.href) {
+      const file = this.props.getFiles().find((f) => f.id === target.href)
+      derivedLabel = file?.name ?? ''
+    }
+
+    this.dom.textContent = attrs.label || derivedLabel
     this.dom.addEventListener('click', this.handleClick)
   }
 

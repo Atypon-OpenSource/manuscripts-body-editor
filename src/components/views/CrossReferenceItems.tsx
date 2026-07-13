@@ -189,6 +189,7 @@ interface Props {
   handleCancel: () => void
   currentTargetId?: string
   currentCustomLabel?: string
+  isEdit?: boolean
 }
 
 export const CrossReferenceItems: React.FC<Props> = ({
@@ -197,6 +198,7 @@ export const CrossReferenceItems: React.FC<Props> = ({
   handleCancel,
   currentTargetId,
   currentCustomLabel,
+  isEdit = false,
 }) => {
   const [isOpen, setIsOpen] = useState(true)
   const [selectedItem, setSelectedItem] = useState<string>('')
@@ -229,7 +231,9 @@ export const CrossReferenceItems: React.FC<Props> = ({
           <CloseButton onClick={close} />
         </ModalHeader>
         <StyledModalBody>
-          <Heading>Insert Cross-reference</Heading>
+          <Heading>
+            {isEdit ? 'Update Cross-reference' : 'Insert Cross-reference'}
+          </Heading>
 
           <FieldLabel>Display text</FieldLabel>
           <CustomTextInput
@@ -237,9 +241,7 @@ export const CrossReferenceItems: React.FC<Props> = ({
             type="text"
             placeholder={'Custom display text...'}
             disabled={!selectedItem}
-            defaultValue={
-              currentTargetId && currentCustomLabel ? currentCustomLabel : ''
-            }
+            defaultValue={currentCustomLabel ?? ''}
           />
 
           <Items>
@@ -287,23 +289,13 @@ export const CrossReferenceItems: React.FC<Props> = ({
               onClick={() => {
                 if (selectedItem) {
                   setIsOpen(false)
-                  const selectedTarget = targets.find(
-                    (t) => t.id === selectedItem
-                  )
                   const customLabel = customTextRef.current?.value
-                  handleSelect(
-                    selectedItem,
-                    customLabel ||
-                      (selectedTarget?.type === schema.nodes.supplement.name &&
-                      selectedTarget.href
-                        ? selectedTarget.label
-                        : '')
-                  )
+                  handleSelect(selectedItem, customLabel || '')
                 }
               }}
               disabled={!selectedItem}
             >
-              Insert
+              {isEdit ? 'Update' : 'Insert'}
             </PrimaryButton>
           }
         />

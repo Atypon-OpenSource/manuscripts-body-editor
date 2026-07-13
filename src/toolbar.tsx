@@ -48,6 +48,7 @@ import {
   addInlineComment,
   blockActive,
   canInsert,
+  canInsertCrossReference,
   Dispatch,
   insertBlock,
   insertBoxElement,
@@ -184,7 +185,7 @@ export const toolbar: ToolbarConfig = {
     cross_reference: {
       title: 'Insert cross-reference',
       content: <ToolbarCrossReferenceIcon />,
-      isEnabled: isEnabled(canInsert(schema.nodes.cross_reference)),
+      isEnabled: isEnabled(canInsertCrossReference),
       run: insertCrossReference,
     },
     citation: {

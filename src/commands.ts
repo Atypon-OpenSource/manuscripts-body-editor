@@ -744,21 +744,62 @@ export const insertInlineCitation = (
   return true
 }
 
+export const canInsertCrossReference = (
+  state: ManuscriptEditorState
+): boolean => {
+  if (!canInsert(schema.nodes.cross_reference)(state)) {
+    return false
+  }
+  const { from, to, empty, $from, $to } = state.selection
+  if (empty) {
+    return true
+  }
+  if (!$from.sameParent($to)) {
+    return false
+  }
+  let overlaps = false
+  state.doc.nodesBetween(from, to, (node) => {
+    if (node.isAtom && !node.isText) {
+      overlaps = true
+      return false
+    }
+    return !overlaps
+  })
+  return !overlaps
+}
+
 export const insertCrossReference = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
+  if (!canInsertCrossReference(state)) {
+    return false
+  }
+
+  const text = selectedText()
+
   const node = state.schema.nodes.cross_reference.create({
+    id: generateNodeID(schema.nodes.cross_reference),
     rids: [],
+    label: text,
   })
 
-  const pos = state.selection.to
+  const { tr } = state
+  let pos: number
+  const isWrap = !state.selection.empty
 
-  const tr = state.tr.insert(pos, node)
+  if (isWrap) {
+    pos = state.selection.from
+    tr.replaceSelectionWith(node)
+  } else {
+    pos = state.selection.to
+    tr.insert(pos, node)
+  }
 
   if (dispatch) {
     const selection = NodeSelection.create(tr.doc, pos)
-    dispatch(tr.setSelection(selection).scrollIntoView())
+    tr.setSelection(selection).scrollIntoView()
+    dispatch(isWrap ? skipTracking(tr) : tr)
   }
 
   return true
