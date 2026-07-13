@@ -150,7 +150,7 @@ const StyledModalBody = styled(ModalBody)`
   padding: ${(props) => props.theme.grid.unit * 5}px
     ${(props) => props.theme.grid.unit * 6}px;
   max-height: 580px;
-  max-width: 600px;
+  min-width: 600px;
   overflow: hidden;
 `
 
