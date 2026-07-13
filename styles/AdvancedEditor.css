@@ -1798,7 +1798,7 @@ th:hover > .table-context-menu-button,
 }
 
 .ProseMirror .layout-options-group input[type="radio"]:focus-visible {
-  outline: 1px ridge #3DADFF;
+  outline: 1px solid var(--focus-outline-color);
   outline-offset: 2px;
 }
 
