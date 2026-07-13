@@ -26,6 +26,7 @@ import { PopperManager } from '../lib/popper'
 import { defaultCapabilities } from './default-capabilities'
 import emptyEditorDocJson from './empty-editor-doc.json'
 import sectionCategories from './section-categories.json'
+import { defaultTheme } from '@manuscripts/style-guide'
 
 export const defaultEditorProps: EditorProps = {
   attributes: {
@@ -45,7 +46,7 @@ export const defaultEditorProps: EditorProps = {
   }),
   // @ts-ignore
   history: createBrowserHistory(),
-  theme: {},
+  theme: defaultTheme,
   getFiles: () => [],
   fileManagement: {
     // @ts-ignore

@@ -24,8 +24,8 @@ import {
 import styled from 'styled-components'
 
 export const Button = styled(IconButton).attrs({
-  defaultColor: true,
-  size: 24,
+  $defaultColor: true,
+  $size: 24,
 })`
   circle,
   use {
@@ -93,7 +93,7 @@ export const PersonForm = styled.div`
 `
 
 export const Title = styled.h4<{
-  isInvalid?: boolean
+  $isInvalid?: boolean
 }>`
   margin: 0;
   display: flex;
@@ -101,9 +101,9 @@ export const Title = styled.h4<{
   font-size: 0.875rem;
   padding-right: 0.5rem;
   background: ${(props) =>
-    props.isInvalid ? props.theme.colors.background.warning : 'transparent'};
+    props.$isInvalid ? props.theme.colors.background.warning : 'transparent'};
   color: ${(props) =>
-    props.isInvalid ? props.theme.colors.text.warning : 'inherit'};
+    props.$isInvalid ? props.theme.colors.text.warning : 'inherit'};
 `
 
 export const DropdownIndicator = styled(ArrowDownIcon)`
@@ -114,7 +114,7 @@ export const DropdownIndicator = styled(ArrowDownIcon)`
 `
 
 export const ToggleButton = styled.button<{
-  isOpen: boolean
+  $isOpen: boolean
 }>`
   flex-grow: 1;
   display: flex;
@@ -134,7 +134,7 @@ export const ToggleButton = styled.button<{
   }
 
   svg {
-    transform: ${(props) => (props.isOpen ? 'rotateX(180deg)' : 'initial')};
+    transform: ${(props) => (props.$isOpen ? 'rotateX(180deg)' : 'initial')};
   }
   ${outlineStyle}
 `
