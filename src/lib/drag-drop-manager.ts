@@ -40,14 +40,14 @@ export class DragDropManager {
   private getContext: () => DragDropContext
 
   setup(config: DragDropConfig) {
-    const { element, restrictToParent, getContext, disabled } = config
+    const { element, restrictToParent = true, getContext, disabled } = config
     if (disabled) {
       return
     }
 
     this.element = element
     this.element.draggable = true
-    this.restrictToParent = restrictToParent || true
+    this.restrictToParent = restrictToParent
     this.getContext = getContext
 
     const abortController = new AbortController()
