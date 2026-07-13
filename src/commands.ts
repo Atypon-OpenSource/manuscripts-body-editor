@@ -967,6 +967,33 @@ export const insertBoxElement = (
   return true
 }
 
+export const insertHeadshotGrid = (
+  state: ManuscriptEditorState,
+  dispatch?: Dispatch
+) => {
+  const selection = state.selection
+  const { nodes } = schema
+
+  const isBody = hasParentNodeOfType(nodes.body)(selection)
+  if (!isBody) {
+    return false
+  }
+
+  const position = findBlockInsertPosition(state)
+
+  if (position && dispatch) {
+    const headshotElement =
+      schema.nodes.headshot_element.createAndFill() as ManuscriptNode
+    const node = nodes.headshot_grid.create({}, headshotElement)
+    const tr = state.tr.insert(position, node)
+    const headshotNamePosition = position + 2
+    tr.setSelection(TextSelection.create(tr.doc, headshotNamePosition))
+    dispatch(tr.scrollIntoView())
+  }
+
+  return true
+}
+
 export const insertSection =
   (subsection = false) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
@@ -1498,7 +1525,7 @@ export const insertTransGraphicalAbstract =
         category: category.id,
       },
       [
-        schema.nodes.section_title.create({}, schema.text(category.titles[0])),
+        schema.nodes.section_title.create(),
         createAndFillFigureElement(state),
       ]
     ) as TransGraphicalAbstractNode
