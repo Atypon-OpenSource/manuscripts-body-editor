@@ -49,18 +49,12 @@ export default () => {
     },
 
     filterTransaction(tr, state) {
-      // Allow non-doc-changing transactions (selections, focus, etc.)
-      if (!tr.docChanged) {
-        return true
-      }
-
       // plugins working with content silently are not the subject to a warning. Especially the Collab plugin!
-      if (tr.getMeta('addToHistory') === false) {
-        return true
-      }
-
-      // Track changes plugin can modify content without setting addToHistory=false
-      if (tr.getMeta(trackChangesPluginKey)) {
+      if (
+        !tr.docChanged ||
+        tr.getMeta(trackChangesPluginKey) ||
+        tr.getMeta('addToHistory') === false
+      ) {
         return true
       }
 
