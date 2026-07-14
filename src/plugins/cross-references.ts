@@ -64,15 +64,11 @@ export default () => {
         return true
       }
 
-      // Block all transactions while modal is active
+      // Block all transactions while modal is active - freezing to stabilize doc so same steps can be applied onConfirm
       if (modalActive) {
         return false
       }
 
-      // Single pass on tr.doc: collect all node ids and all xref rids.
-      // Using tr.doc ensures that if the transaction also deletes the xrefs
-      // that reference the node, they won't appear in the map and the
-      // transaction will be allowed through (producing a valid doc).
       const newIds = new Set<string>()
       const xrefsByRid = new Map<
         string,
@@ -107,9 +103,6 @@ export default () => {
         return true
       }
 
-      // Second pass (old doc only): confirm the orphaned ids actually existed
-      // before this transaction (i.e. they were deleted by it, not pre-existing
-      // broken refs). Also collect the referenced nodes for the modal.
       const xrefGroups: XrefGroup[] = []
       state.doc.descendants((node) => {
         const id = node.attrs.id
