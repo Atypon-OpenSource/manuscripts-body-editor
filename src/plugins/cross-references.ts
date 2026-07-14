@@ -19,6 +19,7 @@ import {
   ManuscriptNode,
   schema,
 } from '@manuscripts/transform'
+import { trackChangesPluginKey } from '@manuscripts/track-changes-plugin'
 import { isEqual } from 'lodash'
 import { Node } from 'prosemirror-model'
 import { Plugin } from 'prosemirror-state'
@@ -53,11 +54,13 @@ export default () => {
         return true
       }
 
-      // IMPORTANT: Always allow collab transactions — blocking these would
-      // cause the editor to desync with the authority and break collaboration.
-      // Also allow transactions from other plugins (appendTransaction, etc.)
-      // which also set addToHistory to false.
+      // plugins working with content silently are not the subject to a warning. Especially the Collab plugin!
       if (tr.getMeta('addToHistory') === false) {
+        return true
+      }
+
+      // Track changes plugin can modify content without setting addToHistory=false
+      if (tr.getMeta(trackChangesPluginKey)) {
         return true
       }
 
@@ -66,18 +69,21 @@ export default () => {
         return false
       }
 
-      // Build a map of xref references from the RESULTING doc (tr.doc).
+      // Single pass on tr.doc: collect all node ids and all xref rids.
       // Using tr.doc ensures that if the transaction also deletes the xrefs
       // that reference the node, they won't appear in the map and the
       // transaction will be allowed through (producing a valid doc).
+      const newIds = new Set<string>()
       const xrefsByRid = new Map<
         string,
         { node: ManuscriptNode; pos: number }[]
       >()
       tr.doc.descendants((node, pos) => {
+        if (node.attrs.id) {
+          newIds.add(node.attrs.id)
+        }
         if (node.type === schema.nodes.cross_reference) {
-          const rids = node.attrs.rids as string[]
-          for (const rid of rids) {
+          for (const rid of node.attrs.rids as string[]) {
             let entries = xrefsByRid.get(rid)
             if (!entries) {
               entries = []
@@ -88,52 +94,34 @@ export default () => {
         }
       })
 
-      // No xrefs in the resulting doc — nothing to warn about
-      if (xrefsByRid.size === 0) {
+      // Find xrefs that point to ids no longer present in the resulting doc
+      const orphanedRids = new Set<string>()
+      for (const rid of xrefsByRid.keys()) {
+        if (!newIds.has(rid)) {
+          orphanedRids.add(rid)
+        }
+      }
+
+      // No broken xrefs — allow the transaction
+      if (orphanedRids.size === 0) {
         return true
       }
 
-      // Collect ids of all nodes in the old doc
-      const oldIds = new Set<string>()
+      // Second pass (old doc only): confirm the orphaned ids actually existed
+      // before this transaction (i.e. they were deleted by it, not pre-existing
+      // broken refs). Also collect the referenced nodes for the modal.
+      const xrefGroups: XrefGroup[] = []
       state.doc.descendants((node) => {
         const id = node.attrs.id
-        if (id) {
-          oldIds.add(id)
-        }
-      })
-
-      // Collect ids of all nodes in the new doc
-      const newIds = new Set<string>()
-      tr.doc.descendants((node) => {
-        const id = node.attrs.id
-        if (id) {
-          newIds.add(id)
-        }
-      })
-
-      // Find fully deleted nodes whose ids are still referenced by xrefs
-      // in the resulting doc. Partial deletions preserve the node (and its
-      // id attribute), so they won't trigger a warning.
-      const xrefGroups: XrefGroup[] = []
-      for (const id of oldIds) {
-        if (!newIds.has(id) && xrefsByRid.has(id)) {
-          // Find the original node for the modal display
-          let referencedNode: ManuscriptNode | null = null
-          state.doc.descendants((node) => {
-            if (node.attrs.id === id) {
-              referencedNode = node as ManuscriptNode
-            }
+        if (id && orphanedRids.has(id)) {
+          xrefGroups.push({
+            referenced: node as ManuscriptNode,
+            xrefs: xrefsByRid.get(id)!.map(({ node, pos }) => [node, pos]),
           })
-          if (referencedNode) {
-            xrefGroups.push({
-              referenced: referencedNode,
-              xrefs: xrefsByRid.get(id)!.map(({ node, pos }) => [node, pos]),
-            })
-          }
         }
-      }
+      })
 
-      // No referenced nodes were deleted — allow the transaction
+      // Orphaned rids were already broken before this transaction — allow
       if (xrefGroups.length === 0) {
         return true
       }
@@ -148,6 +136,10 @@ export default () => {
           modalElement = null
         }
       }
+
+      const deletedIds = new Set(
+        xrefGroups.map((g) => g.referenced.attrs.id as string)
+      )
 
       const onConfirm = () => {
         cleanup()
@@ -167,6 +159,22 @@ export default () => {
             return
           }
           newTr.step(step)
+        }
+        // Remove cross-references that pointed to the now-deleted nodes.
+        // Collect positions in reverse order so deletions don't shift
+        // positions of earlier entries.
+        const xrefPositions: { from: number; to: number }[] = []
+        newTr.doc.descendants((node, pos) => {
+          if (node.type === schema.nodes.cross_reference) {
+            const rids = node.attrs.rids as string[]
+            if (rids.some((rid) => deletedIds.has(rid))) {
+              xrefPositions.push({ from: pos, to: pos + node.nodeSize })
+            }
+          }
+        })
+        for (let i = xrefPositions.length - 1; i >= 0; i--) {
+          const { from, to } = xrefPositions[i]
+          newTr.delete(from, to)
         }
         view.dispatch(newTr)
       }
