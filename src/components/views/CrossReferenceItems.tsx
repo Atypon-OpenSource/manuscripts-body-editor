@@ -151,6 +151,7 @@ const StyledModalBody = styled(ModalBody)`
     ${(props) => props.theme.grid.unit * 6}px;
   max-height: 580px;
   min-width: 600px;
+  max-width: 600px;
   overflow: hidden;
 `
 
