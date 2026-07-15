@@ -15,6 +15,7 @@
  */
 
 import { ManuscriptEditorView } from '@manuscripts/transform'
+import { ResolvedPos } from 'prosemirror-model'
 
 import { getEditorProps } from '../../plugins/editor-props'
 import ReactSubView from '../../views/ReactSubView'
@@ -24,7 +25,8 @@ export const openCrossRefWarningModal = (
   view: ManuscriptEditorView,
   xrefGroups: XrefGroup[],
   onConfirm: () => void,
-  onClose: () => void
+  onClose: () => void,
+  selectAndScrollTo: ($pos: ResolvedPos) => void
 ): HTMLDivElement => {
   const { state } = view
   const props = getEditorProps(state)
@@ -32,6 +34,7 @@ export const openCrossRefWarningModal = (
     xrefs: xrefGroups,
     onConfirm,
     onClose,
+    selectAndScrollTo,
   }
 
   const dialog = ReactSubView(

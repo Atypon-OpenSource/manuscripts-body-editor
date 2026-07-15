@@ -21,8 +21,8 @@ import {
 } from '@manuscripts/transform'
 import { trackChangesPluginKey } from '@manuscripts/track-changes-plugin'
 import { isEqual } from 'lodash'
-import { Node } from 'prosemirror-model'
-import { Plugin } from 'prosemirror-state'
+import { Node, ResolvedPos } from 'prosemirror-model'
+import { NodeSelection, Plugin } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
 import { XrefGroup } from '../components/cross-ref-check-modal/CrossRefWarningModal'
@@ -58,35 +58,31 @@ export default () => {
         return true
       }
 
-      // Block all transactions while modal is active - freezing to stabilize doc so same steps can be applied onConfirm
+      // Block doc-changing transactions while modal is active - freezing to stabilize doc so same steps can be applied onConfirm
       if (modalActive) {
         return false
       }
 
+      // Single pass on tr.doc: collect all node ids and all xref rids.
+      // Using tr.doc ensures that if the transaction also deletes the xrefs
+      // that reference the node, they won't appear and the transaction
+      // will be allowed through (producing a valid doc).
       const newIds = new Set<string>()
-      const xrefsByRid = new Map<
-        string,
-        { node: ManuscriptNode; pos: number }[]
-      >()
-      tr.doc.descendants((node, pos) => {
+      const xrefRids = new Set<string>()
+      tr.doc.descendants((node) => {
         if (node.attrs.id) {
           newIds.add(node.attrs.id)
         }
         if (node.type === schema.nodes.cross_reference) {
           for (const rid of node.attrs.rids as string[]) {
-            let entries = xrefsByRid.get(rid)
-            if (!entries) {
-              entries = []
-              xrefsByRid.set(rid, entries)
-            }
-            entries.push({ node: node as ManuscriptNode, pos })
+            xrefRids.add(rid)
           }
         }
       })
 
-      // Find xrefs that point to ids no longer present in the resulting doc
+      // Find xref rids that point to ids no longer present in the resulting doc
       const orphanedRids = new Set<string>()
-      for (const rid of xrefsByRid.keys()) {
+      for (const rid of xrefRids) {
         if (!newIds.has(rid)) {
           orphanedRids.add(rid)
         }
@@ -97,16 +93,42 @@ export default () => {
         return true
       }
 
-      const xrefGroups: XrefGroup[] = []
-      state.doc.descendants((node) => {
+      // Second pass on state.doc (the current live doc): collect the
+      // referenced nodes and their xrefs with resolved positions for the modal.
+      const referencedNodes = new Map<string, ManuscriptNode>()
+      const xrefsByRid = new Map<
+        string,
+        [ManuscriptNode, ResolvedPos][]
+      >()
+      state.doc.descendants((node, pos) => {
         const id = node.attrs.id
         if (id && orphanedRids.has(id)) {
-          xrefGroups.push({
-            referenced: node as ManuscriptNode,
-            xrefs: xrefsByRid.get(id)!.map(({ node, pos }) => [node, pos]),
-          })
+          referencedNodes.set(id, node as ManuscriptNode)
+        }
+        if (node.type === schema.nodes.cross_reference) {
+          for (const rid of node.attrs.rids as string[]) {
+            if (orphanedRids.has(rid)) {
+              let entries = xrefsByRid.get(rid)
+              if (!entries) {
+                entries = []
+                xrefsByRid.set(rid, entries)
+              }
+              entries.push([
+                node as ManuscriptNode,
+                state.doc.resolve(pos),
+              ])
+            }
+          }
         }
       })
+
+      const xrefGroups: XrefGroup[] = []
+      for (const [id, referenced] of referencedNodes) {
+        const xrefs = xrefsByRid.get(id)
+        if (xrefs?.length) {
+          xrefGroups.push({ referenced, xrefs })
+        }
+      }
 
       // Orphaned rids were already broken before this transaction — allow
       if (xrefGroups.length === 0) {
@@ -127,6 +149,16 @@ export default () => {
       const deletedIds = new Set(
         xrefGroups.map((g) => g.referenced.attrs.id as string)
       )
+
+      const selectAndScrollTo = ($pos: ResolvedPos) => {
+        if (!view) {
+          return
+        }
+        const tr = view.state.tr
+        tr.setSelection(NodeSelection.create(view.state.doc, $pos.pos))
+        tr.scrollIntoView()
+        view.dispatch(tr)
+      }
 
       const onConfirm = () => {
         cleanup()
@@ -175,7 +207,8 @@ export default () => {
           view,
           xrefGroups,
           onConfirm,
-          onClose
+          onClose,
+          selectAndScrollTo
         )
       }
 

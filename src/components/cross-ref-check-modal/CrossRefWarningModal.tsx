@@ -31,7 +31,7 @@ export const CrossRefWarningModal: React.FC<{
   onClose: () => void,
   xrefs: XrefGroup[],
   onConfirm: () => void,
-  selectAndScrollTo: (node: ManuscriptNode) => void
+  selectAndScrollTo: ($pos: ResolvedPos) => void
 }> = ({ onClose, xrefs, onConfirm, selectAndScrollTo }) => {
 
   const [isOpen, setIsOpen] = useState(true)
@@ -71,14 +71,14 @@ export const CrossRefWarningModal: React.FC<{
   )
 }
 
-const XrefGroupDisplay: React.FC<{group: XrefGroup, selectAndScrollTo: (node: ManuscriptNode) => void }> = ({ group, selectAndScrollTo }) => {
+const XrefGroupDisplay: React.FC<{group: XrefGroup, selectAndScrollTo: ($pos: ResolvedPos) => void }> = ({ group, selectAndScrollTo }) => {
   return <div>
     <h3>{startCase(group.referenced.type.name)}</h3>
     <ul>
-      {group.xrefs.map(([node, pos], i) => {
+      {group.xrefs.map(([, pos], i) => {
         return (
           <li key={i}>
-              <button onClick={() => selectAndScrollTo(node)}>
+              <button onClick={() => selectAndScrollTo(pos)}>
                 {`${startCase(pos.parent.type.name)} - ${truncate(pos.parent.textContent, { length: 20 })}`}
               </button>
           </li>)
