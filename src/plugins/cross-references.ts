@@ -96,10 +96,7 @@ export default () => {
       // Second pass on state.doc (the current live doc): collect the
       // referenced nodes and their xrefs with resolved positions for the modal.
       const referencedNodes = new Map<string, ManuscriptNode>()
-      const xrefsByRid = new Map<
-        string,
-        [ManuscriptNode, ResolvedPos][]
-      >()
+      const xrefsByRid = new Map<string, [ManuscriptNode, ResolvedPos][]>()
       state.doc.descendants((node, pos) => {
         const id = node.attrs.id
         if (id && orphanedRids.has(id)) {
@@ -113,10 +110,7 @@ export default () => {
                 entries = []
                 xrefsByRid.set(rid, entries)
               }
-              entries.push([
-                node as ManuscriptNode,
-                state.doc.resolve(pos),
-              ])
+              entries.push([node as ManuscriptNode, state.doc.resolve(pos)])
             }
           }
         }
@@ -154,6 +148,7 @@ export default () => {
         if (!view) {
           return
         }
+        view.focus()
         const tr = view.state.tr
         tr.setSelection(NodeSelection.create(view.state.doc, $pos.pos))
         tr.scrollIntoView()
