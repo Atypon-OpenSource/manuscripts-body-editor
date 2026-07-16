@@ -13,9 +13,6 @@
   --box-element-bg-color: #fafafa;
 }
 
-* {
-  scroll-behavior: smooth;
-}
 
 .button-reset {
   border: none;
@@ -2044,8 +2041,8 @@ th:hover > .table-context-menu-button,
   position: relative;
 }
 
-/* Right padding so abstract titles do not run under translation widgets. 
- * If we later block editing these titles, this padding can go away. 
+/* Right padding so abstract titles do not run under translation widgets.
+ * If we later block editing these titles, this padding can go away.
  */
 .ProseMirror .abstracts .block-section .block-section_title h1,
 .ProseMirror .abstracts .block-trans_abstract .block-section_title h1{
