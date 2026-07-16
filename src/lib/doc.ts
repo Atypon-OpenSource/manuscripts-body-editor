@@ -133,19 +133,6 @@ export const findBody = (doc: ManuscriptNode) => {
   return findChildrenByType(doc, schema.nodes.body)[0]!
 }
 
-export const findFirstTransAbstract = (doc: ManuscriptNode) => {
-  const transAbstracts = [
-    ...findChildrenByType(doc, schema.nodes.trans_abstract),
-    ...findChildrenByType(doc, schema.nodes.trans_graphical_abstract),
-  ]
-  if (!transAbstracts.length) {
-    return undefined
-  }
-  return transAbstracts.reduce((first, current) =>
-    current.pos < first.pos ? current : first
-  )
-}
-
 export const findBackmatter = (doc: ManuscriptNode) => {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   return findChildrenByType(doc, schema.nodes.backmatter)[0]!

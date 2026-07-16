@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
-import { schema } from '@manuscripts/transform'
+import {
+  isAbstractNode,
+  isGraphicalAbstractSectionNode,
+  isTransAbstractNode,
+  isTransGraphicalAbstractNode,
+  schema,
+} from '@manuscripts/transform'
 import { Plugin } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
@@ -22,11 +28,11 @@ import { insertTransAbstract, insertTransGraphicalAbstract } from '../commands'
 import { EditorProps } from '../configs/ManuscriptsEditor'
 import { addAuthorIcon, translateIcon } from '../icons'
 import { getLanguage, getLanguageLabel } from '../lib/languages'
-import { templateAllows } from '../lib/template'
 import {
-  handleEnterKey,
   createKeyboardInteraction,
+  handleEnterKey,
 } from '../lib/navigation-utils'
+import { templateAllows } from '../lib/template'
 
 const createMenuItem = (
   props: EditorProps,
@@ -104,19 +110,14 @@ export default (props: EditorProps) =>
 
         const widgets: Decoration[] = []
 
-        state.doc.descendants((node, pos, parent) => {
+        state.doc.descendants((node, pos) => {
           const isAbstractSection =
-            (node.type === schema.nodes.abstract ||
-              node.type === schema.nodes.graphical_abstract_section) &&
-            parent?.type === schema.nodes.abstracts
+            isAbstractNode(node) || isGraphicalAbstractSectionNode(node)
 
           // Show "Add translation" for abstract sections
           if (isAbstractSection) {
-            const isGraphical =
-              node.type === schema.nodes.graphical_abstract_section
             const category = props.sectionCategories.get(node.attrs.category)
-
-            const canEdit = isGraphical
+            const canEdit = isGraphicalAbstractSectionNode(node)
               ? canEditTransGraphicalAbstract &&
                 category &&
                 insertTransGraphicalAbstract(category)(state)
@@ -136,7 +137,7 @@ export default (props: EditorProps) =>
                     const handleActivate = (event: Event) => {
                       event.preventDefault()
                       event.stopPropagation()
-                      if (isGraphical && category) {
+                      if (isGraphicalAbstractSectionNode(node) && category) {
                         insertTransGraphicalAbstract(category)(
                           view.state,
                           view.dispatch,
@@ -166,8 +167,7 @@ export default (props: EditorProps) =>
 
           // Language selector for trans_abstract and trans_graphical_abstract nodes
           const isTransNode =
-            node.type === schema.nodes.trans_abstract ||
-            node.type === schema.nodes.trans_graphical_abstract
+            isTransAbstractNode(node) || isTransGraphicalAbstractNode(node)
 
           if (isTransNode) {
             const canEdit =
