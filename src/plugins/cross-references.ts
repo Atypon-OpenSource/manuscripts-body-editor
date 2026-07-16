@@ -148,11 +148,16 @@ export default () => {
         if (!view) {
           return
         }
-        view.focus()
-        const tr = view.state.tr
-        tr.setSelection(NodeSelection.create(view.state.doc, $pos.pos))
-        tr.scrollIntoView()
-        view.dispatch(tr)
+        const selTr = view.state.tr
+        selTr.setSelection(NodeSelection.create(view.state.doc, $pos.pos))
+        view.dispatch(selTr)
+        // Standard PM's scrollIntoView doesn't allow placement control - hence switching to native DOM's peer method
+        const coords = view.coordsAtPos($pos.pos)
+        const targetY = coords.top
+        const viewportHeight = window.innerHeight
+        // We want the element at 75% of the viewport (middle of bottom half)
+        const scrollTo = targetY + window.scrollY - viewportHeight * 0.75
+        window.scrollTo({ top: scrollTo, behavior: 'smooth' })
       }
 
       const onConfirm = () => {
@@ -165,7 +170,6 @@ export default () => {
         for (const step of tr.steps) {
           const result = step.apply(newTr.doc)
           if (result.failed) {
-            // Steps are no longer applicable (e.g. doc changed via collab)
             console.warn(
               'Cross-ref warning: could not replay step —',
               result.failed
