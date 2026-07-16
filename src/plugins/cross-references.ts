@@ -154,10 +154,17 @@ export default () => {
         if (!view) {
           return
         }
-        const tr = view.state.tr
-        tr.setSelection(NodeSelection.create(view.state.doc, $pos.pos))
-        tr.scrollIntoView()
-        view.dispatch(tr)
+        const selTr = view.state.tr
+        selTr.setSelection(NodeSelection.create(view.state.doc, $pos.pos))
+        view.dispatch(selTr)
+        // Scroll so the selection appears in the center of the bottom half
+        // of the screen, leaving the top half free for the warning modal.
+        const coords = view.coordsAtPos($pos.pos)
+        const targetY = coords.top
+        const viewportHeight = window.innerHeight
+        // We want the element at 75% of the viewport (middle of bottom half)
+        const scrollTo = targetY + window.scrollY - viewportHeight * 0.75
+        window.scrollTo({ top: scrollTo, behavior: 'smooth' })
       }
 
       const onConfirm = () => {
