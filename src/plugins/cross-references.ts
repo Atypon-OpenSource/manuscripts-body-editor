@@ -141,6 +141,7 @@ export default () => {
       const cleanup = () => {
         modalActive = false
         if (modalElement) {
+          modalElement.classList.remove('modal-bottom')
           modalElement.remove()
           modalElement = null
         }
@@ -164,7 +165,15 @@ export default () => {
         const viewportHeight = window.innerHeight
         // We want the element at 75% of the viewport (middle of bottom half)
         const scrollTo = targetY + window.scrollY - viewportHeight * 0.75
-        window.scrollTo({ top: scrollTo, behavior: 'smooth' })
+        if (scrollTo < 0) {
+          // Element is too close to the top of the document to scroll into
+          // the bottom half — move the modal to the bottom instead.
+          modalElement?.classList.add('modal-bottom')
+          window.scrollTo({ top: 0, behavior: 'smooth' })
+        } else {
+          modalElement?.classList.remove('modal-bottom')
+          window.scrollTo({ top: scrollTo, behavior: 'smooth' })
+        }
       }
 
       const onConfirm = () => {
