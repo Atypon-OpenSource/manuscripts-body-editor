@@ -96,10 +96,7 @@ export default () => {
       // Second pass on state.doc (the current live doc): collect the
       // referenced nodes and their xrefs with resolved positions for the modal.
       const referencedNodes = new Map<string, ManuscriptNode>()
-      const xrefsByRid = new Map<
-        string,
-        [ManuscriptNode, ResolvedPos][]
-      >()
+      const xrefsByRid = new Map<string, [ManuscriptNode, ResolvedPos][]>()
       state.doc.descendants((node, pos) => {
         const id = node.attrs.id
         if (id && orphanedRids.has(id)) {
@@ -113,10 +110,7 @@ export default () => {
                 entries = []
                 xrefsByRid.set(rid, entries)
               }
-              entries.push([
-                node as ManuscriptNode,
-                state.doc.resolve(pos),
-              ])
+              entries.push([node as ManuscriptNode, state.doc.resolve(pos)])
             }
           }
         }
@@ -158,8 +152,7 @@ export default () => {
         const selTr = view.state.tr
         selTr.setSelection(NodeSelection.create(view.state.doc, $pos.pos))
         view.dispatch(selTr)
-        // Scroll so the selection appears in the center of the bottom half
-        // of the screen, leaving the top half free for the warning modal.
+        // Standard PM's scrollIntoView doesn't allow placement control - hence switching to native DOM's peer method
         const coords = view.coordsAtPos($pos.pos)
         const targetY = coords.top
         const viewportHeight = window.innerHeight
@@ -186,7 +179,6 @@ export default () => {
         for (const step of tr.steps) {
           const result = step.apply(newTr.doc)
           if (result.failed) {
-            // Steps are no longer applicable (e.g. doc changed via collab)
             console.warn(
               'Cross-ref warning: could not replay step —',
               result.failed
