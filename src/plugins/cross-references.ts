@@ -18,6 +18,7 @@ import {
   ManuscriptEditorView,
   ManuscriptNode,
   schema,
+  Target,
 } from '@manuscripts/transform'
 import { trackChangesPluginKey } from '@manuscripts/track-changes-plugin'
 import { isEqual } from 'lodash'
@@ -63,10 +64,6 @@ export default () => {
         return false
       }
 
-      // Single pass on tr.doc: collect all node ids and all xref rids.
-      // Using tr.doc ensures that if the transaction also deletes the xrefs
-      // that reference the node, they won't appear and the transaction
-      // will be allowed through (producing a valid doc).
       const newIds = new Set<string>()
       const xrefRids = new Set<string>()
       tr.doc.descendants((node) => {
@@ -75,6 +72,7 @@ export default () => {
         }
         if (node.type === schema.nodes.cross_reference) {
           for (const rid of node.attrs.rids as string[]) {
+            // console.log(rid)
             xrefRids.add(rid)
           }
         }
@@ -93,8 +91,7 @@ export default () => {
         return true
       }
 
-      // Second pass on state.doc (the current live doc): collect the
-      // referenced nodes and their xrefs with resolved positions for the modal.
+      // collect the referenced nodes and their xrefs with resolved positions for the modal.
       const referencedNodes = new Map<string, ManuscriptNode>()
       const xrefsByRid = new Map<string, [ManuscriptNode, ResolvedPos][]>()
       state.doc.descendants((node, pos) => {
@@ -117,10 +114,13 @@ export default () => {
       })
 
       const xrefGroups: XrefGroup[] = []
+      const targets = objectsKey.getState(state) as Map<string, Target>
+
       for (const [id, referenced] of referencedNodes) {
         const xrefs = xrefsByRid.get(id)
         if (xrefs?.length) {
-          xrefGroups.push({ referenced, xrefs })
+          const label = targets.get(referenced.attrs.id)?.label || ''
+          xrefGroups.push({ referenced, label, xrefs })
         }
       }
 
@@ -149,23 +149,26 @@ export default () => {
         if (!view) {
           return
         }
+
         const selTr = view.state.tr
         selTr.setSelection(NodeSelection.create(view.state.doc, $pos.pos))
+        view.focus()
         view.dispatch(selTr)
         // Standard PM's scrollIntoView doesn't allow placement control - hence switching to native DOM's peer method
         const coords = view.coordsAtPos($pos.pos)
+        const scrollable = view.dom
         const targetY = coords.top
-        const viewportHeight = window.innerHeight
+        const viewportHeight = scrollable.clientHeight
         // We want the element at 75% of the viewport (middle of bottom half)
-        const scrollTo = targetY + window.scrollY - viewportHeight * 0.75
+        const scrollTo = targetY + scrollable.scrollTop - viewportHeight * 0.75
         if (scrollTo < 0) {
           // Element is too close to the top of the document to scroll into
           // the bottom half — move the modal to the bottom instead.
           modalElement?.classList.add('modal-bottom')
-          window.scrollTo({ top: 0, behavior: 'smooth' })
+          scrollable.scrollTo({ top: 0, behavior: 'smooth' })
         } else {
           modalElement?.classList.remove('modal-bottom')
-          window.scrollTo({ top: scrollTo, behavior: 'smooth' })
+          scrollable.scrollTo({ top: scrollTo, behavior: 'smooth' })
         }
       }
 

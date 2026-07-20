@@ -18,18 +18,22 @@ import { ManuscriptNode } from '@manuscripts/transform'
 import React, { useState } from 'react'
 
 import {
+  AttentionOrangeIcon,
   CloseButton,
   ModalContainer,
   ModalHeader,
+  PrimaryButton,
   StyledModal,
+  TertiaryButton,
+  TextButton,
 } from '@manuscripts/style-guide'
-import { StyledModalBody } from '../form/CreateModalStyles'
 import { ResolvedPos } from 'prosemirror-model'
-import { startCase, truncate } from 'lodash'
+import { startCase } from 'lodash'
 import styled from 'styled-components'
 
 export type XrefGroup = {
   referenced: ManuscriptNode
+  label: string
   xrefs: [ManuscriptNode, ResolvedPos][]
 }
 
@@ -54,13 +58,16 @@ export const CrossRefWarningModal: React.FC<{
     >
       <Container data-cy="cross-reference-warning-modal">
         <ModalHeader>
-          Delete referenced content?
           <CloseButton
             onClick={() => handleClose()}
             data-cy="modal-close-button"
           />
         </ModalHeader>
-        <StyledModalBody>
+        <Body>
+          <Title>
+            <AttentionOrangeIcon width={24} height={22} /> Delete referenced
+            content?
+          </Title>
           <p>You are deleting content referenced elsewhere in the document:</p>
           {xrefs.map((group, i) => (
             <XrefGroupDisplay
@@ -69,15 +76,22 @@ export const CrossRefWarningModal: React.FC<{
               selectAndScrollTo={selectAndScrollTo}
             />
           ))}
-          <div>
-            <button type="button" onClick={() => handleClose()}>
+          <Actions>
+            <TertiaryButton type="button" onClick={() => handleClose()}>
               Cancel
-            </button>
-            <button type="button" onClick={() => onConfirm()}>
+            </TertiaryButton>
+            <PrimaryButton
+              $danger={true}
+              type="button"
+              onClick={() => {
+                onConfirm()
+                setIsOpen(false)
+              }}
+            >
               Delete & remove citation
-            </button>
-          </div>
-        </StyledModalBody>
+            </PrimaryButton>
+          </Actions>
+        </Body>
       </Container>
     </Modal>
   )
@@ -89,18 +103,18 @@ const XrefGroupDisplay: React.FC<{
 }> = ({ group, selectAndScrollTo }) => {
   return (
     <div>
-      <h3>{startCase(group.referenced.type.name)}</h3>
-      <ul>
+      <h3>{group.label}</h3>
+      <ReferencesList>
         {group.xrefs.map(([, pos], i) => {
           return (
             <li key={i}>
-              <button onClick={() => selectAndScrollTo(pos)}>
-                {`${startCase(pos.parent.type.name)} - ${truncate(pos.parent.textContent, { length: 20 })}`}
-              </button>
+              <TextButton onClick={() => selectAndScrollTo(pos)}>
+                {`${startCase(pos.parent.type.name)} - ${pos.parent.textContent}`}
+              </TextButton>
             </li>
           )
         })}
-      </ul>
+      </ReferencesList>
     </div>
   )
 }
@@ -114,6 +128,9 @@ const Modal = styled(StyledModal)`
   top: 0;
   left: 0;
   z-index: 1100;
+  width: 100%;
+  max-width: 480px;
+  color: #6e6e6e;
 
   &:after {
     content: '';
@@ -126,7 +143,51 @@ const Modal = styled(StyledModal)`
     bottom: 0;
     background: rgba(0, 0, 0, 0.2);
   }
+  h3 {
+    font-size: 16px;
+  }
+`
+
+const Body = styled.div`
+  margin: 1.5rem;
+`
+
+const Title = styled.h2`
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.5;
+  margin: 0;
+  color: #353535;
+  svg {
+    vertical-align: text-top;
+  }
+`
+
+const ReferencesList = styled.ul`
+  padding: 8px;
+  margin-left: 0;
+  list-style: none;
+  background: #f2f2f2;
+  border: 1px solid #e2e2e2;
+  border-radius: 3px;
+
+  ${TextButton} {
+    margin-left: 0;
+    text-decoration: underline;
+    &:hover {
+      text-decoration: none;
+    }
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    color: #353535;
+    text-overflow: ellipsis;
+  }
 `
 const Container = styled(ModalContainer)`
   max-height: calc(50vh - 3rem);
+`
+
+const Actions = styled.footer`
+  text-align: right;
 `
