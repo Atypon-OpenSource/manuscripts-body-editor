@@ -155,9 +155,17 @@ export default () => {
         view.focus()
         view.dispatch(selTr)
         // Standard PM's scrollIntoView doesn't allow placement control - hence switching to native DOM's peer method.
-        // coordsAtPos returns screen-relative coords, so we offset by the
-        // container's top to get position relative to the scroll container.
-        const scrollable = view.dom
+        let scrollable = view.dom.parentElement
+
+        while (
+          scrollable != null &&
+          scrollable.scrollHeight <= scrollable.clientHeight
+        ) {
+          scrollable = scrollable.parentElement
+        }
+        if (!scrollable) {
+          return // will need more advance handling not to overlap if there is no scroll. The plethora of edge-cases suggest that the warning shouldn't be overlapping the editor really
+        }
         const coords = view.coordsAtPos($pos.pos)
         const containerRect = scrollable.getBoundingClientRect()
         const offsetInContainer =
@@ -187,7 +195,7 @@ export default () => {
           const result = step.apply(newTr.doc)
           if (result.failed) {
             console.warn(
-              'Cross-ref warning: could not replay step —',
+              'Cross-ref deletion warning: could not replay step —',
               result.failed
             )
             return

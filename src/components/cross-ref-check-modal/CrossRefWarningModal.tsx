@@ -69,13 +69,15 @@ export const CrossRefWarningModal: React.FC<{
             content?
           </Title>
           <p>You are deleting content referenced elsewhere in the document:</p>
-          {xrefs.map((group, i) => (
-            <XrefGroupDisplay
-              key={i}
-              group={group}
-              selectAndScrollTo={selectAndScrollTo}
-            />
-          ))}
+          <ScrolableItems>
+            {xrefs.map((group, i) => (
+              <XrefGroupDisplay
+                key={i}
+                group={group}
+                selectAndScrollTo={selectAndScrollTo}
+              />
+            ))}
+          </ScrolableItems>
           <Actions>
             <TertiaryButton type="button" onClick={() => handleClose()}>
               Cancel
@@ -119,18 +121,37 @@ const XrefGroupDisplay: React.FC<{
   )
 }
 
+const Container = styled(ModalContainer)`
+  position: absolute;
+  top: 1rem;
+  left: 50%;
+  right: 0;
+  max-height: calc(50vh - 2rem);
+  min-height: 280px;
+  transform: translate(-50%, 0);
+  max-width: 480px;
+  transition:
+    top 0.2s,
+    transform 0.2s;
+`
+
 // since we need to scroll inside the editor when this dialog is active, we can't use dialog.showModal()
 // so we recreate the appearance using classic position:fixed/after approach.
 // While showModal doesn't block scrolling - it doesn't allow to focus on the editor and that kills the scrollIntoView
 const Modal = styled(StyledModal)`
-  margin-top: 1rem;
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 1100;
   width: 100%;
-  max-width: 480px;
+  height: 100%;
+  z-index: 1100;
   color: #6e6e6e;
+  margin: auto;
+
+  &.modal-bottom ${Container} {
+    top: calc(100% - 2rem);
+    transform: translate(-50%, -100%);
+  }
 
   &:after {
     content: '';
@@ -145,11 +166,17 @@ const Modal = styled(StyledModal)`
   }
   h3 {
     font-size: 16px;
+    margin: 0.5em 0;
+  }
+  p {
+    margin: 0.5em 0;
   }
 `
 
 const Body = styled.div`
   margin: 1.5rem;
+  display: flex;
+  flex-flow: column;
 `
 
 const Title = styled.h2`
@@ -184,10 +211,13 @@ const ReferencesList = styled.ul`
     text-overflow: ellipsis;
   }
 `
-const Container = styled(ModalContainer)`
-  max-height: calc(50vh - 3rem);
-`
 
 const Actions = styled.footer`
   text-align: right;
+  padding-top: 1rem;
+`
+const ScrolableItems = styled.div`
+  max-height: 16vh;
+  min-height: 100px;
+  overflow-y: auto;
 `
