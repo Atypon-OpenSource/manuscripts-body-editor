@@ -52,6 +52,7 @@ export default () => {
     filterTransaction(tr, state) {
       // plugins working with content silently are not the subject to a warning. Especially the Collab plugin!
       if (
+        !view ||
         !tr.docChanged ||
         tr.getMeta(trackChangesPluginKey) ||
         tr.getMeta('addToHistory') === false
@@ -72,7 +73,6 @@ export default () => {
         }
         if (node.type === schema.nodes.cross_reference) {
           for (const rid of node.attrs.rids as string[]) {
-            // console.log(rid)
             xrefRids.add(rid)
           }
         }
