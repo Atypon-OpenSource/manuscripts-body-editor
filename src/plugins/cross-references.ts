@@ -154,13 +154,17 @@ export default () => {
         selTr.setSelection(NodeSelection.create(view.state.doc, $pos.pos))
         view.focus()
         view.dispatch(selTr)
-        // Standard PM's scrollIntoView doesn't allow placement control - hence switching to native DOM's peer method
-        const coords = view.coordsAtPos($pos.pos)
+        // Standard PM's scrollIntoView doesn't allow placement control - hence switching to native DOM's peer method.
+        // coordsAtPos returns screen-relative coords, so we offset by the
+        // container's top to get position relative to the scroll container.
         const scrollable = view.dom
-        const targetY = coords.top
-        const viewportHeight = scrollable.clientHeight
-        // We want the element at 75% of the viewport (middle of bottom half)
-        const scrollTo = targetY + scrollable.scrollTop - viewportHeight * 0.75
+        const coords = view.coordsAtPos($pos.pos)
+        const containerRect = scrollable.getBoundingClientRect()
+        const offsetInContainer =
+          coords.top - containerRect.top + scrollable.scrollTop
+        const containerHeight = scrollable.clientHeight
+        // We want the element at 75% of the container (middle of bottom half)
+        const scrollTo = offsetInContainer - containerHeight * 0.75
         if (scrollTo < 0) {
           // Element is too close to the top of the document to scroll into
           // the bottom half — move the modal to the bottom instead.
