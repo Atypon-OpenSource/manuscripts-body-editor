@@ -502,7 +502,7 @@ ProseMirror .block-embed .position-menu {
 }
 
 .comment-marker:has(+ .block-headshot_grid) {
-  top: -1%;
+  top: 0;
 }
 
 .block-subtitles .comment-marker {
