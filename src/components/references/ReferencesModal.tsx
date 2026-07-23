@@ -34,7 +34,7 @@ import {
 } from '@manuscripts/style-guide'
 import { BibliographyItemAttrs } from '@manuscripts/transform'
 import { isEqual } from 'lodash'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 import {
@@ -209,10 +209,25 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
 
   const [selection, setSelection] = useState<BibliographyItemAttrs>()
   const selectionRef = useRef<HTMLDivElement>(null)
+
+  const sortedItems = useMemo(
+    () =>
+      [...items].sort((a, b) => {
+        const aUncited = (citationCounts.get(a.id) ?? 0) === 0
+        const bUncited = (citationCounts.get(b.id) ?? 0) === 0
+
+        if (aUncited === bUncited) {
+          return 0
+        }
+        return aUncited ? 1 : -1
+      }),
+    [items, citationCounts]
+  )
+
   const isSelected = (item: BibliographyItemAttrs) => {
     return item.id === selection?.id
   }
-  const selectionIndex = items.findIndex(isSelected)
+  const selectionIndex = sortedItems.findIndex(isSelected)
 
   useEffect(() => {
     setSelection(item)
@@ -237,8 +252,8 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
   useEffect(() => {
     const base = Math.max(0, selectionIndex - selectionTopOffset)
     setStartIndex(base)
-    setEndIndex(Math.min(items.length - 1, base + pageSize))
-  }, [selectionIndex, items])
+    setEndIndex(Math.min(sortedItems.length - 1, base + pageSize))
+  }, [selectionIndex, sortedItems])
 
   useEffect(() => {
     if (triggers.top) {
@@ -247,12 +262,12 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
       setEndIndex(Math.min(newFirst + dropLimit, endIndex))
     }
     if (triggers.bottom) {
-      const newLast = Math.min(items.length - 1, endIndex + pageSize)
+      const newLast = Math.min(sortedItems.length - 1, endIndex + pageSize)
       setEndIndex(newLast)
       setStartIndex(Math.max(newLast - dropLimit, startIndex))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [triggers, items])
+  }, [triggers, sortedItems])
 
   const actionsRef = useRef<ReferenceFormActions>(undefined)
 
@@ -321,19 +336,9 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
     setImportSuccessCount(data.length)
   }
 
-  if (items.length <= 0) {
+  if (sortedItems.length <= 0) {
     return <></>
   }
-
-  const sortedItems = [...items].sort((a, b) => {
-    const aUncited = (citationCounts.get(a.id) ?? 0) === 0
-    const bUncited = (citationCounts.get(b.id) ?? 0) === 0
-
-    if (aUncited === bUncited) {
-      return 0
-    }
-    return aUncited ? 1 : -1
-  })
 
   return (
     <>
