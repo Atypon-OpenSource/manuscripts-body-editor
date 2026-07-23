@@ -168,5 +168,5 @@ export const openAuthorsAndAffiliationsModals = (
   view.focus()
   document.body.appendChild(dialog)
   // @TODO refactor to allow cleaning it up
-  return dialog;
+  return dialog
 }
