@@ -33,14 +33,14 @@ importers:
         specifier: 1.1.2
         version: 1.1.2
       '@manuscripts/style-guide':
-        specifier: 3.6.6-LEAN-5683.0
-        version: 3.6.6-LEAN-5683.0(@types/hoist-non-react-statics@3.3.7(@types/react@19.2.17))(@types/node@20.17.46)(@types/react@19.2.17)(css-to-react-native@3.2.0)
+        specifier: 3.6.6-LEAN-5683.1
+        version: 3.6.6-LEAN-5683.1(@types/hoist-non-react-statics@3.3.7(@types/react@19.2.17))(@types/node@20.17.46)(@types/react@19.2.17)(css-to-react-native@3.2.0)
       '@manuscripts/track-changes-plugin':
         specifier: 2.4.0
         version: 2.4.0
       '@manuscripts/transform':
-        specifier: 4.4.6-LEAN-5683.5
-        version: 4.4.6-LEAN-5683.5(prosemirror-state@1.4.3)
+        specifier: 4.4.6-LEAN-5683.6
+        version: 4.4.6-LEAN-5683.6(prosemirror-state@1.4.3)
       '@popperjs/core':
         specifier: 2.11.8
         version: 2.11.8
@@ -857,16 +857,16 @@ packages:
       eslint-plugin-simple-import-sort: '>= 8'
       typescript: '*'
 
-  '@manuscripts/style-guide@3.6.6-LEAN-5683.0':
-    resolution: {integrity: sha512-oto7LIOYdzFh1yEPK5MKeDZBTkqFwYOvRXwYW9uaLJ8ex/lidU+i+j3CfYerYtFtXcbNet0eF8P7SvNDq7uvMg==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/style-guide/-/@manuscripts/style-guide-3.6.6-LEAN-5683.0.tgz}
+  '@manuscripts/style-guide@3.6.6-LEAN-5683.1':
+    resolution: {integrity: sha512-kooC/zYTYe1Vr0LA+7Fh1ns20/iD+qH+ehFS+FCfzLBRfyD85XLebHy+j0bnxEVNPLmIPDDy/GgkVuFuMNGA0w==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/style-guide/-/@manuscripts/style-guide-3.6.6-LEAN-5683.1.tgz}
     engines: {node: '>=22'}
 
   '@manuscripts/track-changes-plugin@2.4.0':
     resolution: {integrity: sha512-I+KDqXvKRtmRWcqxtjEVLK7GR55pSzwFCoIouZ4wE2d72MXg0l3yUYXL/73FdUE2xwIzVneW65Q3RjHlvL8Ekg==}
     engines: {node: '>=22'}
 
-  '@manuscripts/transform@4.4.6-LEAN-5683.5':
-    resolution: {integrity: sha512-Pi9nNiBxDpE22fBHXIBqJpNnJUq2mWEGEAT4A8s7Z8CP8AFGLJFUBBAJY23IeCtdJ/A/MbhZ7tepi1BA+ygA9Q==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/transform/-/@manuscripts/transform-4.4.6-LEAN-5683.5.tgz}
+  '@manuscripts/transform@4.4.6-LEAN-5683.6':
+    resolution: {integrity: sha512-JTjrHoyBhIik19nTvGEr5i3O5l/4oT1/Ua4aX+BhcAijEEEGN5aok174Cx2Px3B6jEbwTwa6D+tkOnSYn0KPnA==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/transform/-/@manuscripts/transform-4.4.6-LEAN-5683.6.tgz}
     engines: {node: '>=22'}
 
   '@napi-rs/wasm-runtime@1.1.5':
@@ -5554,7 +5554,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@manuscripts/style-guide@3.6.6-LEAN-5683.0(@types/hoist-non-react-statics@3.3.7(@types/react@19.2.17))(@types/node@20.17.46)(@types/react@19.2.17)(css-to-react-native@3.2.0)':
+  '@manuscripts/style-guide@3.6.6-LEAN-5683.1(@types/hoist-non-react-statics@3.3.7(@types/react@19.2.17))(@types/node@20.17.46)(@types/react@19.2.17)(css-to-react-native@3.2.0)':
     dependencies:
       '@headlessui/react': 2.2.10(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       formik: 2.4.9(@types/react@19.2.17)(react@19.2.6)
@@ -5592,7 +5592,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@manuscripts/transform@4.4.6-LEAN-5683.5(prosemirror-state@1.4.3)':
+  '@manuscripts/transform@4.4.6-LEAN-5683.6(prosemirror-state@1.4.3)':
     dependencies:
       citeproc: 2.4.63
       jszip: 3.10.1
