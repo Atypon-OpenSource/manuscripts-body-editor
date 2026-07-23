@@ -61,6 +61,8 @@ export class DragDropManager {
 
     return () => {
       DragDropManager.currentNodeId = null
+      this.clearDropClasses()
+      this.element.classList.remove('dragging')
       abortController.abort()
     }
   }
@@ -102,7 +104,7 @@ export class DragDropManager {
   }
 
   private handleDragLeave = (e: DragEvent) => {
-    if (this.element.contains(e.relatedTarget as Node)) {
+    if (!this.element.contains(e.relatedTarget as Node)) {
       this.clearDropClasses()
     }
   }
