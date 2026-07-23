@@ -26,7 +26,7 @@ import { ReferencesModal, ReferencesModalProps } from './ReferencesModal'
 
 export type ReferencesEditorProps = Omit<
   ReferencesModalProps,
-  'isOpen' | 'onCancel'
+  'isOpen' | 'onCancel' | 'handleImport'
 >
 
 const itemsReducer = attrsReducer<BibliographyItemAttrs>()
