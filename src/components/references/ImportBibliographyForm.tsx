@@ -182,7 +182,7 @@ export const ImportBibliographyForm = ({
             !formik.dirty || formik.isSubmitting || !formik.values.data.length
           }
         >
-          Save
+          Import References
         </PrimaryButton>
       </FormActionsBar>
     </form>

@@ -13,8 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { BibliographyItemAttrs } from '@manuscripts/transform'
-import React, { useReducer, useState } from 'react'
+import {
+  BibliographyItemAttrs,
+  generateNodeID,
+  schema,
+} from '@manuscripts/transform'
+import React, { useEffect, useReducer, useState } from 'react'
 
 import { attrsReducer } from '../../lib/array-reducer'
 import { cleanItemValues } from '../../lib/utils'
@@ -30,6 +34,11 @@ const itemsReducer = attrsReducer<BibliographyItemAttrs>()
 export const ReferencesEditor: React.FC<ReferencesEditorProps> = (props) => {
   const [isOpen, setOpen] = useState(true)
   const [items, dispatch] = useReducer(itemsReducer, props.items)
+  const [selectedItem, setSelectedItem] = useState(props.item)
+
+  useEffect(() => {
+    setSelectedItem(props.item)
+  }, [props.item])
 
   const handleSave = (item: BibliographyItemAttrs) => {
     const cleanedItem = cleanItemValues(item)
@@ -48,14 +57,34 @@ export const ReferencesEditor: React.FC<ReferencesEditorProps> = (props) => {
     })
   }
 
+  const handleImport = (data: BibliographyItemAttrs[]) => {
+    const newItems = data.map((item) =>
+      cleanItemValues({
+        ...item,
+        id: generateNodeID(schema.nodes.bibliography_item),
+      })
+    )
+
+    const itemsToImport = [...newItems].reverse()
+
+    itemsToImport.forEach((item) => props.onSave(item))
+
+    dispatch({
+      type: 'set',
+      state: [...items, ...newItems],
+    })
+  }
+
   return (
     <ReferencesModal
-      {...props}
       isOpen={isOpen}
       onCancel={() => setOpen(false)}
       items={items}
+      item={selectedItem}
+      citationCounts={props.citationCounts}
       onSave={handleSave}
       onDelete={handleDelete}
+      handleImport={handleImport}
     />
   )
 }

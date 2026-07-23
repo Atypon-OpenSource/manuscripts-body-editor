@@ -15,7 +15,9 @@
  */
 
 import {
+  BibliographyItemAttrs,
   ManuscriptEditorView,
+  ManuscriptNode,
   ManuscriptNodeType,
   schema,
 } from '@manuscripts/transform'
@@ -96,5 +98,57 @@ export const deleteNode = (view: ManuscriptEditorView, id: string) => {
     const pos = child.pos
     const node = child.node
     view.dispatch(view.state.tr.delete(pos, pos + node.nodeSize))
+  }
+}
+
+const createBibliographySection = (node: ManuscriptNode) =>
+  schema.nodes.bibliography_section.createAndFill({}, [
+    schema.nodes.section_title.create({}, schema.text('References')),
+    schema.nodes.bibliography_element.create({}, node ? [node] : []),
+  ]) as ManuscriptNode
+
+export const insertBibliographyItem = (
+  view: ManuscriptEditorView,
+  attrs: BibliographyItemAttrs
+) => {
+  const { doc, tr } = view.state
+
+  const biblioSection = utils.findChildrenByType(
+    doc,
+    schema.nodes.bibliography_element,
+    true
+  )
+
+  const backmatter = utils.findChildrenByType(
+    doc,
+    schema.nodes.backmatter,
+    true
+  )
+  const backmatterEnd = backmatter[0]
+    ? backmatter[0].node.nodeSize + backmatter[0].pos
+    : 0
+
+  const node = schema.nodes.bibliography_item.create(attrs)
+
+  if (biblioSection.length) {
+    view.dispatch(tr.insert(biblioSection[0].pos + 1, node))
+  } else {
+    view.dispatch(
+      tr.insert(
+        backmatterEnd ? backmatterEnd - 1 : tr.doc.content.size,
+        createBibliographySection(node)
+      )
+    )
+  }
+}
+
+export const saveBibliographyItem = (
+  view: ManuscriptEditorView,
+  attrs: BibliographyItemAttrs
+) => {
+  if (findChildByID(view, attrs.id)) {
+    updateNodeAttrs(view, schema.nodes.bibliography_item, attrs)
+  } else {
+    insertBibliographyItem(view, attrs)
   }
 }

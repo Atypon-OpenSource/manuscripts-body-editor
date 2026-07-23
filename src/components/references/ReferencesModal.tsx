@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import {
+  AddAuthorIcon,
   Category,
   CitationCountIcon,
   CloseButton,
@@ -41,6 +42,8 @@ import {
   ReferenceFormActions,
 } from './ReferenceForm/ReferenceForm'
 import { ReferenceLine } from './ReferenceLine'
+import { ImportBibliographyModal } from './ImportBibliographyModal'
+import { ImportSuccessPlaceholder } from './ImportSuccessPlaceholder'
 
 const ReferencesModalContainer = styled(ModalContainer)`
   min-width: 960px;
@@ -52,6 +55,35 @@ const ReferencesSidebar = styled(ModalSidebar)`
 
 const ReferencesSidebarContent = styled(SidebarContent)`
   overflow-y: auto;
+`
+
+const ImportFromFileFooter = styled.div`
+  padding: 16px;
+`
+
+const ImportFromFileButton = styled.button`
+  display: flex;
+  width: 100%;
+  padding: 8px 24px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border-radius: 4px;
+  border: 1px dashed #c9c9c9;
+  background: #fafafa;
+  cursor: pointer;
+  font-family: ${(props) => props.theme.font.family.sans};
+  font-size: 14px;
+  color: #353535;
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  svg rect {
+    fill: #6e6e6e;
+  }
 `
 
 const ReferencesInnerWrapper = withListNavigation(styled.div`
@@ -155,6 +187,7 @@ export interface ReferencesModalProps {
   citationCounts: Map<string, number>
   onSave: (item: BibliographyItemAttrs) => void
   onDelete: (item: BibliographyItemAttrs) => void
+  handleImport: (data: BibliographyItemAttrs[]) => void
 }
 
 export const ReferencesModal: React.FC<ReferencesModalProps> = ({
@@ -165,7 +198,12 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
   citationCounts,
   onSave,
   onDelete,
+  handleImport,
 }) => {
+  const [importing, setImporting] = useState(false)
+  const [importSuccessCount, setImportSuccessCount] = useState<number | null>(
+    null
+  )
   const [confirm, setConfirm] = useState(false)
   const valuesRef = useRef<BibliographyItemAttrs>(undefined)
 
@@ -260,7 +298,10 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
     setSelection(undefined)
   }
 
+  const clearImportSuccess = () => setImportSuccessCount(null)
+
   const handleItemClick = (item: BibliographyItemAttrs) => {
+    clearImportSuccess()
     const values = valuesRef.current
     if (values && selection && !isEqual(values, normalize(selection))) {
       setConfirm(true)
@@ -272,81 +313,121 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
   const handleChange = (values: BibliographyItemAttrs) => {
     valuesRef.current = values
   }
+
+  const handleImportSave = (data: BibliographyItemAttrs[]) => {
+    handleImport(data)
+    setImporting(false)
+    setSelection(undefined)
+    setImportSuccessCount(data.length)
+  }
+
   if (items.length <= 0) {
     return <></>
   }
 
+  const sortedItems = [...items].sort((a, b) => {
+    const aUncited = (citationCounts.get(a.id) ?? 0) === 0
+    const bUncited = (citationCounts.get(b.id) ?? 0) === 0
+
+    if (aUncited === bUncited) {
+      return 0
+    }
+    return aUncited ? 1 : -1
+  })
+
   return (
-    <StyledModal isOpen={isOpen} onRequestClose={onCancel}>
-      <Dialog
-        isOpen={confirm}
-        category={Category.confirmation}
-        header="You've made changes to this option"
-        message="Would you like to save or discard your changes?"
-        actions={{
-          secondary: {
-            action: () => reset(),
-            title: 'Discard',
-          },
-          primary: {
-            action: () => handleSave(valuesRef.current),
-            title: 'Save',
-          },
-        }}
-      />
-      <ReferencesModalContainer data-cy={'references-editor'}>
-        <ModalHeader>
-          <CloseButton onClick={onCancel} />
-        </ModalHeader>
-        <ModalBody>
-          <ReferencesSidebar>
-            <ModalSidebarHeader>
-              <ModalSidebarTitle>References</ModalSidebarTitle>
-            </ModalSidebarHeader>
-            <ReferencesSidebarContent ref={ref}>
-              <ReferencesInnerWrapper>
-                {items.slice(startIndex, endIndex + 1).map((item) => (
-                  <ReferenceButton
-                    key={item.id}
-                    id={item.id}
-                    className={isSelected(item) ? 'selected' : ''}
-                    onClick={() => handleItemClick(item)}
-                    ref={isSelected(item) ? selectionRef : null}
-                  >
-                    <IconContainer>
-                      <CitationCountIcon />
-                      {(citationCounts.get(item.id) || 0) > 0 ? (
-                        <CitationCount data-tooltip-content="Number of times used in the document">
-                          {citationCounts.get(item.id)}
-                        </CitationCount>
-                      ) : (
-                        <CitationCount className="unused">0</CitationCount>
-                      )}
-                    </IconContainer>
-                    <ReferenceLine item={item} />
-                  </ReferenceButton>
-                ))}
-              </ReferencesInnerWrapper>
-            </ReferencesSidebarContent>
-          </ReferencesSidebar>
-          <ScrollableModalContent>
-            {selection && (
-              <ReferenceForm
-                values={normalize(selection)}
-                showDelete={
-                  !citationCounts.get(selection.id) &&
-                  isNewItem(selection, ['id', 'type']) // disable the delete button for the new citations
-                }
-                onChange={handleChange}
-                onCancel={onCancel}
-                onDelete={handleDelete}
-                onSave={handleSave}
-                actionsRef={actionsRef}
-              />
-            )}
-          </ScrollableModalContent>
-        </ModalBody>
-      </ReferencesModalContainer>
-    </StyledModal>
+    <>
+      {importing && (
+        <ImportBibliographyModal
+          onCancel={() => setImporting(false)}
+          onSave={handleImportSave}
+        />
+      )}
+      <StyledModal isOpen={isOpen} onRequestClose={onCancel}>
+        <Dialog
+          isOpen={confirm}
+          category={Category.confirmation}
+          header="You've made changes to this option"
+          message="Would you like to save or discard your changes?"
+          actions={{
+            secondary: {
+              action: () => reset(),
+              title: 'Discard',
+            },
+            primary: {
+              action: () => handleSave(valuesRef.current),
+              title: 'Save',
+            },
+          }}
+        />
+        <ReferencesModalContainer data-cy={'references-editor'}>
+          <ModalHeader>
+            <CloseButton onClick={onCancel} />
+          </ModalHeader>
+          <ModalBody>
+            <ReferencesSidebar>
+              <ModalSidebarHeader>
+                <ModalSidebarTitle>References</ModalSidebarTitle>
+              </ModalSidebarHeader>
+              <ReferencesSidebarContent ref={ref}>
+                <ReferencesInnerWrapper>
+                  {sortedItems.slice(startIndex, endIndex + 1).map((item) => (
+                    <ReferenceButton
+                      key={item.id}
+                      id={item.id}
+                      className={isSelected(item) ? 'selected' : ''}
+                      onClick={() => handleItemClick(item)}
+                      ref={isSelected(item) ? selectionRef : null}
+                    >
+                      <IconContainer>
+                        <CitationCountIcon />
+                        {(citationCounts.get(item.id) || 0) > 0 ? (
+                          <CitationCount data-tooltip-content="Number of times used in the document">
+                            {citationCounts.get(item.id)}
+                          </CitationCount>
+                        ) : (
+                          <CitationCount className="unused">0</CitationCount>
+                        )}
+                      </IconContainer>
+                      <ReferenceLine item={item} />
+                    </ReferenceButton>
+                  ))}
+                </ReferencesInnerWrapper>
+              </ReferencesSidebarContent>
+              <ImportFromFileFooter>
+                <ImportFromFileButton
+                  type="button"
+                  data-cy="import-from-file-button"
+                  onClick={() => setImporting(true)}
+                >
+                  <AddAuthorIcon />
+                  Import from file
+                </ImportFromFileButton>
+              </ImportFromFileFooter>
+            </ReferencesSidebar>
+            <ScrollableModalContent>
+              {importSuccessCount !== null ? (
+                <ImportSuccessPlaceholder count={importSuccessCount} />
+              ) : (
+                selection && (
+                  <ReferenceForm
+                    values={normalize(selection)}
+                    showDelete={
+                      !citationCounts.get(selection.id) &&
+                      isNewItem(selection, ['id', 'type']) // disable the delete button for the new citations
+                    }
+                    onChange={handleChange}
+                    onCancel={onCancel}
+                    onDelete={handleDelete}
+                    onSave={handleSave}
+                    actionsRef={actionsRef}
+                  />
+                )
+              )}
+            </ScrollableModalContent>
+          </ModalBody>
+        </ReferencesModalContainer>
+      </StyledModal>
+    </>
   )
 }

@@ -16,13 +16,8 @@
 
 import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import { isDeleted } from '@manuscripts/track-changes-plugin'
-import {
-  BibliographyItemAttrs,
-  ManuscriptNode,
-  schema,
-} from '@manuscripts/transform'
+import { BibliographyItemAttrs } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
-import { findChildrenByType } from 'prosemirror-utils'
 
 import {
   CitationEditor,
@@ -35,17 +30,11 @@ import {
 import { handleComment } from '../lib/comments'
 import { Crossref } from '../lib/crossref'
 import { handleEnterKey } from '../lib/navigation-utils'
-import { deleteNode, findChildByID, updateNodeAttrs } from '../lib/view'
+import { deleteNode, saveBibliographyItem } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import { CitationView } from './citation'
 import { createEditableNodeView } from './creators'
 import ReactSubView from './ReactSubView'
-
-const createBibliographySection = (node: ManuscriptNode) =>
-  schema.nodes.bibliography_section.createAndFill({}, [
-    schema.nodes.section_title.create({}, schema.text('References')),
-    schema.nodes.bibliography_element.create({}, node ? [node] : []),
-  ]) as ManuscriptNode
 
 export class CitationEditableView extends CitationView {
   private editor: HTMLElement
@@ -217,11 +206,7 @@ export class CitationEditableView extends CitationView {
   }
 
   private handleSave = (attrs: BibliographyItemAttrs) => {
-    if (!findChildByID(this.view, attrs.id)) {
-      this.insertBibliographyNode(attrs)
-    } else {
-      updateNodeAttrs(this.view, schema.nodes.bibliography_item, attrs)
-    }
+    saveBibliographyItem(this.view, attrs)
   }
 
   private handleUncite = (id: string) => {
@@ -260,7 +245,7 @@ export class CitationEditableView extends CitationView {
       if (existingItem) {
         item.id = existingItem.id
       } else {
-        this.insertBibliographyNode(item)
+        saveBibliographyItem(this.view, item)
       }
 
       rids.push(item.id)
@@ -276,36 +261,6 @@ export class CitationEditableView extends CitationView {
 
   private handleDelete = (item: BibliographyItemAttrs) => {
     return deleteNode(this.view, item.id)
-  }
-
-  private insertBibliographyNode(attrs: BibliographyItemAttrs) {
-    const { doc, tr } = this.view.state
-
-    const biblioSection = findChildrenByType(
-      doc,
-      schema.nodes.bibliography_element,
-      true
-    )
-
-    const backmatter = findChildrenByType(doc, schema.nodes.backmatter, true)
-    const backmatterEnd = backmatter[0]
-      ? backmatter[0].node.nodeSize + backmatter[0].pos
-      : 0
-
-    const node = schema.nodes.bibliography_item.create(attrs)
-
-    if (biblioSection.length) {
-      this.view.dispatch(tr.insert(biblioSection[0].pos + 1, node))
-    } else {
-      this.view.dispatch(
-        tr.insert(
-          backmatterEnd ? backmatterEnd - 1 : tr.doc.content.size,
-          createBibliographySection(node)
-        )
-      )
-    }
-
-    return false
   }
 }
 

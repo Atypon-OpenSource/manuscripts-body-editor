@@ -19,7 +19,6 @@ import {
   BibliographyElementNode,
   BibliographyItemAttrs,
   BibliographyItemNode,
-  schema,
 } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 
@@ -32,7 +31,7 @@ import { handleEnterKey } from '../lib/navigation-utils'
 import { findNodeByID } from '../lib/doc'
 import { sanitize } from '../lib/dompurify'
 
-import { deleteNode, findChildByID, updateNodeAttrs } from '../lib/view'
+import { deleteNode, findChildByID, saveBibliographyItem } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import { commentsKey, setCommentSelection } from '../plugins/comments'
 import { selectedSuggestionKey } from '../plugins/selected-suggestion'
@@ -270,7 +269,7 @@ export class BibliographyElementBlockView extends BlockView<
   }
 
   private handleSave = (attrs: BibliographyItemAttrs) => {
-    updateNodeAttrs(this.view, schema.nodes.bibliography_item, attrs)
+    saveBibliographyItem(this.view, attrs)
   }
 
   private handleDelete = (item: BibliographyItemAttrs) => {
