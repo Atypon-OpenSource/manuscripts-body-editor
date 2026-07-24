@@ -146,7 +146,10 @@ export class FigureElementView extends ImageElementView {
       const figureView = (
         figureElement as HTMLElement & { __figureView?: FigureEditableView }
       ).__figureView
-      figureView?.addTools()
+      // Skip views that were destroyed between update() and this rAF callback
+      if (figureView && typeof figureView.getPos() === 'number') {
+        figureView.addTools()
+      }
     })
   }
 

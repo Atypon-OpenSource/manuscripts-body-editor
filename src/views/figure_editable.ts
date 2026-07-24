@@ -240,13 +240,20 @@ export class FigureEditableView extends FigureView {
   }
 
   public addTools() {
+    const pos = this.getPos()
+    // getPos() is undefined once the node view is destroyed; parent figure_element
+    // may still call this via requestAnimationFrame after a child is removed.
+    if (typeof pos !== 'number') {
+      return
+    }
+
     this.manageReactTools()
 
     const existingDragHandlers =
       this.container.querySelectorAll('.drag-handler')
     existingDragHandlers.forEach((handler) => handler.remove())
 
-    const $pos = this.view.state.doc.resolve(this.getPos())
+    const $pos = this.view.state.doc.resolve(pos)
 
     const parent = $pos.parent
     // Create drag handle for figure elements with multiple figures (not simple image)
@@ -271,8 +278,13 @@ export class FigureEditableView extends FigureView {
 
   // Helper function to count non-deleted figures in current figure element
   countFigures() {
+    const pos = this.getPos()
+    if (typeof pos !== 'number') {
+      return 0
+    }
+
     const parent = findParentNodeOfTypeClosestToPos(
-      this.view.state.doc.resolve(this.getPos()),
+      this.view.state.doc.resolve(pos),
       schema.nodes.figure_element
     )
     let count = 0
@@ -282,6 +294,16 @@ export class FigureEditableView extends FigureView {
       }
     })
     return count
+  }
+
+  public destroy() {
+    const domElement = this.dom as HTMLElement & {
+      __figureView?: FigureEditableView
+    }
+    if (domElement.__figureView === this) {
+      delete domElement.__figureView
+    }
+    super.destroy()
   }
 
   private manageReactTools() {
