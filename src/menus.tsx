@@ -40,6 +40,7 @@ import {
   insertCrossReference,
   insertEmbed,
   insertGraphicalAbstract,
+  insertHeadshotGrid,
   insertHeroImage,
   insertInlineCitation,
   insertInlineEquation,
@@ -54,6 +55,7 @@ import {
 import { openInsertTableDialog } from './components/toolbar/InsertTableDialog'
 import { ListMenuItem } from './components/toolbar/ListMenuItem'
 import { openInsertSpecialCharacterDialog } from './components/views/InsertSpecialCharacter'
+import { openKeyboardShortcuts } from './components/keyboard-shortcuts-modal/KeyboardShortcutsModal'
 import {
   deleteClosestParentElement,
   findClosestParentElementNodeName,
@@ -333,6 +335,15 @@ export const getEditorMenus = (
         isHidden: !templateAllows(state, schema.nodes.box_element),
       },
       {
+        id: 'insert-headshot-grid',
+        label: 'Headshot Panel',
+        isEnabled:
+          isEditAllowed(state) &&
+          isCommandValid(canInsert(schema.nodes.headshot_grid)),
+        run: doCommand(insertHeadshotGrid),
+        isHidden: !templateAllows(state, schema.nodes.headshot_grid),
+      },
+      {
         role: 'separator',
       },
       {
@@ -388,45 +399,6 @@ export const getEditorMenus = (
       },
       {
         role: 'separator',
-      },
-      {
-        id: 'insert-citation',
-        label: 'Citation',
-        shortcut: {
-          mac: 'Option+CommandOrControl+C',
-          pc: 'CommandOrControl+Option+C',
-        },
-        isEnabled:
-          isEditAllowed(state) &&
-          isCommandValid(canInsert(schema.nodes.citation)),
-        run: doCommand(insertInlineCitation),
-        isHidden: !templateAllows(state, schema.nodes.citation),
-      },
-      {
-        id: 'insert-cross-reference',
-        label: 'Cross-reference',
-        shortcut: {
-          mac: 'Option+CommandOrControl+R',
-          pc: 'CommandOrControl+Option+R',
-        },
-        isEnabled:
-          isEditAllowed(state) &&
-          isCommandValid(canInsert(schema.nodes.cross_reference)),
-        run: doCommand(insertCrossReference),
-        isHidden: !templateAllows(state, schema.nodes.cross_reference),
-      },
-      {
-        id: 'insert-footnote',
-        label: 'Footnote',
-        shortcut: {
-          mac: 'Option+CommandOrControl+F',
-          pc: 'CommandOrControl+Option+F',
-        },
-        isEnabled:
-          isEditAllowed(state) &&
-          isCommandValid(canInsert(schema.nodes.inline_footnote)),
-        run: doCommand(insertInlineFootnote),
-        isHidden: !templateAllows(state, schema.nodes.inline_footnote),
       },
       {
         id: 'insert-special-character',
@@ -661,5 +633,70 @@ export const getEditorMenus = (
     ],
   }
 
-  return [edit, insert, metadata, format]
+  const references: MenuSpec = {
+    id: 'references',
+    label: 'References',
+    isEnabled: true,
+    submenu: [
+      {
+        id: 'insert-citation',
+        label: 'Citation',
+        shortcut: {
+          mac: 'Option+CommandOrControl+C',
+          pc: 'CommandOrControl+Option+C',
+        },
+        isEnabled:
+          isEditAllowed(state) &&
+          isCommandValid(canInsert(schema.nodes.citation)),
+        run: doCommand(insertInlineCitation),
+        isHidden: !templateAllows(state, schema.nodes.citation),
+      },
+      {
+        id: 'insert-cross-reference',
+        label: 'Cross-reference',
+        shortcut: {
+          mac: 'Option+CommandOrControl+R',
+          pc: 'CommandOrControl+Option+R',
+        },
+        isEnabled:
+          isEditAllowed(state) &&
+          isCommandValid(canInsert(schema.nodes.cross_reference)),
+        run: doCommand(insertCrossReference),
+        isHidden: !templateAllows(state, schema.nodes.cross_reference),
+      },
+      {
+        id: 'insert-footnote',
+        label: 'Footnote',
+        shortcut: {
+          mac: 'Option+CommandOrControl+F',
+          pc: 'CommandOrControl+Option+F',
+        },
+        isEnabled:
+          isEditAllowed(state) &&
+          isCommandValid(canInsert(schema.nodes.inline_footnote)),
+        run: doCommand(insertInlineFootnote),
+        isHidden: !templateAllows(state, schema.nodes.inline_footnote),
+      },
+    ],
+  }
+
+  const help: MenuSpec = {
+    id: 'help',
+    label: 'Help',
+    isEnabled: true,
+    submenu: [
+      {
+        id: 'help-keyboard-shortcuts',
+        label: 'Keyboard shortcuts',
+        isEnabled: true,
+        shortcut: {
+          mac: 'CommandOrControl+Shift+/',
+          pc: 'CommandOrControl+Shift+/',
+        },
+        run: () => openKeyboardShortcuts(view),
+      },
+    ],
+  }
+
+  return [edit, insert, metadata, references, format, help]
 }

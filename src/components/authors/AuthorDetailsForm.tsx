@@ -225,7 +225,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                   <TextFieldWithError
                     id={'given-name'}
                     {...props.field}
-                    error={showNamePairError}
+                    $error={showNamePairError}
                   />
                   {showNamePairError && (
                     <InputErrorText>
@@ -251,7 +251,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                   <TextFieldWithError
                     id={'family-name'}
                     {...props.field}
-                    error={showNamePairError}
+                    $error={showNamePairError}
                   />
                   {showNamePairError && (
                     <InputErrorText>
@@ -329,7 +329,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                     type="email"
                     required={isEmailRequired}
                     {...props.field}
-                    error={hasError}
+                    $error={hasError}
                   />
                   {hasError && (
                     <InputErrorText>
@@ -346,7 +346,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
             {(props: FieldProps) => (
               <>
                 <UnsavedLabel htmlFor="role" showDot={showUnsavedDot('role')}>
-                  Job Title
+                  Job title
                 </UnsavedLabel>
                 <TextField id={'role'} {...props.field} />
               </>
@@ -374,7 +374,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
                     {...props.field}
                     pattern={ORCID_INPUT_PATTERN}
                     title="Please enter a valid ORCID URL: https://orcid.org/xxxx-xxxx-xxxx-xxxx"
-                    error={hasError}
+                    $error={hasError}
                   />
                   {hasError && (
                     <InputErrorText>
@@ -393,7 +393,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
           <MultiValueInput
             id={'degrees'}
             inputType="text"
-            placeholder="E.g. Bsc Computer Science"
+            placeholder="E.g. PhD, M.D., etc."
             initialValues={
               Array.isArray(formik.values.degrees) ? formik.values.degrees : []
             }

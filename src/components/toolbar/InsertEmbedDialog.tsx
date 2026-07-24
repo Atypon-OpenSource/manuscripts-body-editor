@@ -110,7 +110,7 @@ export const InsertEmbedDialog: React.FC<InsertEmbedDialogProps> = ({
 
         <MessageContainer>
           <Container>
-            <FormRow direction={'row'}>
+            <FormRow $direction={'row'}>
               <Label htmlFor={'embed-link'}>Media link</Label>
               {url && allowedHref(url) && (
                 <Open

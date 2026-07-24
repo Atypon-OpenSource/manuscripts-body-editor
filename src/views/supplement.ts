@@ -28,13 +28,12 @@ export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
   private supplementInfoEl: HTMLDivElement
   private static currentDragSupplementId: string | null = null
   private dragIcon: HTMLDivElement | undefined
-
+  private dragAndDropInitialized = false
   public ignoreMutation = () => true
 
   public initialise() {
     this.createElement()
     this.updateContents()
-    this.setupDragAndDrop()
   }
 
   public createElement = () => {
@@ -56,6 +55,20 @@ export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
   public updateContents() {
     super.updateContents()
     this.refreshFileInfo()
+    const can = this.props.getCapabilities()
+    this.dom.draggable = can.editArticle
+    if (can.editArticle) {
+      if (!this.dragAndDropInitialized) {
+        this.setupDragAndDrop()
+        this.dragAndDropInitialized = true
+      }
+      if (!this.dragIcon) {
+        this.addDragIcon()
+      }
+    } else {
+      this.dragIcon?.remove()
+      this.dragIcon = undefined
+    }
   }
 
   private getDropSide(element: Element, clientY: number): 'before' | 'after' {

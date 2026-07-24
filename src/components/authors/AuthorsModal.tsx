@@ -499,7 +499,6 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                       </AuthorTabPanel>
                     )}
                     <AuthorTabPanel>
-                      <FormSubtitle>Contributions (CRediT)</FormSubtitle>
                       <ContributionsDescriptionSubtitle>
                         Select the roles this author contributed to according to
                         the CRediT taxonomy
@@ -599,6 +598,7 @@ const AddAuthorButton = styled.button`
   &[data-active='true'] {
     background: ${(props) => props.theme.colors.background.fifth};
     border: 1px solid ${(props) => props.theme.colors.border.primary};
+    padding: 11px 8px 11px 12px;
     border-left: 0;
     border-right: 0;
   }

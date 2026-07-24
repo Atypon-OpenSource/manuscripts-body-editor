@@ -19,6 +19,10 @@ export { ManuscriptOutline } from './components/outline/ManuscriptOutline'
 export { OutlineItemIcon } from './components/outline/Outline'
 export { TypeSelector } from './components/toolbar/type-selector/TypeSelector'
 export { default as LanguageDropdown } from './components/LanguageDropdown'
+export {
+  KeyboardShortcutsModal,
+  openKeyboardShortcuts,
+} from './components/keyboard-shortcuts-modal/KeyboardShortcutsModal'
 export * from './components/toolbar/ListMenuItem'
 export * from './components/toolbar/InsertTableDialog'
 export * from './menus'

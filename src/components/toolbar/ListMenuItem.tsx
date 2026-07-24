@@ -130,7 +130,7 @@ export const ListStyles: React.FC<ListSubmenuItemsProps> = ({
         >
           {styleItems[style].map((item, index) => (
             <BlockItem key={index}>
-              <Label hide={item === '-'}>{item}</Label>
+              <Label $hide={item === '-'}>{item}</Label>
               <Block />
             </BlockItem>
           ))}
@@ -193,11 +193,11 @@ export const Block = styled.div`
   background: ${(props) => props.theme.colors.border.tertiary};
 `
 
-export const Label = styled.div<{ hide?: boolean }>`
+export const Label = styled.div<{ $hide?: boolean }>`
   font-family: Lato, serif;
   font-size: ${(props) => props.theme.font.size.small};
   font-weight: ${(props) => props.theme.font.weight.normal};
   line-height: ${(props) => props.theme.font.lineHeight.small};
   font-style: normal;
-  color: ${(props) => (props.hide && 'white') || 'initial'};
+  color: ${(props) => (props.$hide && 'white') || 'initial'};
 `

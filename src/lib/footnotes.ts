@@ -21,7 +21,9 @@ import {
   ManuscriptNode,
   schema,
 } from '@manuscripts/transform'
+import { Selection } from 'prosemirror-state'
 import {
+  ContentNodeWithPos,
   findParentNodeOfType,
   findParentNodeOfTypeClosestToPos,
 } from 'prosemirror-utils'
@@ -41,7 +43,7 @@ export const findFootnotesContainerNode = (
   )
 }
 
-export const findParentFootnote = findParentNodeOfType([
+export const findParentFootnote: (selection: Selection) => ContentNodeWithPos | undefined = findParentNodeOfType([
   schema.nodes.footnote,
   schema.nodes.general_table_footnote,
 ])
