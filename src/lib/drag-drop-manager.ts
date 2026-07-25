@@ -180,7 +180,7 @@ export class DragDropManager {
     tr.insert(targetPos, fromNode)
     const mappedFrom = tr.mapping.map(fromPos, -1)
     tr.delete(mappedFrom, mappedFrom + fromNode.nodeSize)
-    tr.setSelection(NodeSelection.create(tr.doc, fromPos))
+    tr.setSelection(NodeSelection.near(tr.doc.resolve(fromPos)))
     view.dispatch(tr)
   }
 
