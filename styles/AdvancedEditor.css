@@ -498,6 +498,10 @@ ProseMirror .block-embed .position-menu {
   right: 26px;
 }
 
+.comment-marker:has(+ .block-headshot_grid) {
+  top: 0;
+}
+
 .block-subtitles .comment-marker {
   top: 0 !important;
   left: 0 !important;
