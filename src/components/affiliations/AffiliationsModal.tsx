@@ -32,7 +32,7 @@ import {
   StyledModal,
 } from '@manuscripts/style-guide'
 import { generateNodeID, schema } from '@manuscripts/transform'
-import { isEqual } from 'lodash'
+import isEqual from 'lodash/isEqual'
 import React, {
   useCallback,
   useEffect,

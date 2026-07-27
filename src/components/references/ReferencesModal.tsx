@@ -32,7 +32,7 @@ import {
   withNavigableListItem,
 } from '@manuscripts/style-guide'
 import { BibliographyItemAttrs } from '@manuscripts/transform'
-import { isEqual } from 'lodash'
+import isEqual from 'lodash/isEqual'
 import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 

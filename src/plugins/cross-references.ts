@@ -15,7 +15,7 @@
  */
 
 import { schema } from '@manuscripts/transform'
-import { isEqual } from 'lodash'
+import isEqual from 'lodash/isEqual'
 import { Node } from 'prosemirror-model'
 import { Plugin } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
