@@ -92,11 +92,12 @@ export class HorizontalPositionMenu {
         selected: currentPosition === HorizontalPositions.left,
       },
       {
-        title: 'Center',
+        title: 'Default',
         action: createAction(HorizontalPositions.default),
         IconComponent: imageDefaultIcon,
         iconName: 'ImageDefault',
-        selected: !currentPosition,
+        selected:
+          !currentPosition || currentPosition === HorizontalPositions.default,
       },
       {
         title: 'Right',
