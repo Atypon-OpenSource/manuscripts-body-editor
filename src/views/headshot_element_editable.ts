@@ -1,5 +1,5 @@
 /*!
- * © 2019 Atypon Systems LLC
+ * © 2026 Atypon Systems LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-declare module '@iarna/word-count' {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  export default (text: string) => number
-}
+import { createEditableNodeView } from './creators'
+import { HeadshotElement } from './headshot_element'
+
+export default createEditableNodeView(HeadshotElement)

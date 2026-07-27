@@ -14,4 +14,5 @@
  * limitations under the License.
  */
 
-export const isMac = /Mac/.test(window.navigator.platform)
+export const isMac =
+  typeof navigator !== 'undefined' && /Mac/.test(navigator.userAgent)

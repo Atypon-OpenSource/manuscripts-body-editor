@@ -18,6 +18,7 @@ import {
   AlertIcon,
   ArrowDownCircleIcon,
   ArrowUpIcon,
+  CameraIcon,
   DeleteIcon,
   DraggableIcon,
   EditIcon,
@@ -44,6 +45,7 @@ export const addAuthorIcon = renderIcon(AddAuthorIcon)
 export const arrowDown = renderIcon(ArrowDownCircleIcon)
 export const arrowUp = renderIcon(ArrowUpIcon)
 export const alertIcon = renderIcon(AlertIcon)
+export const cameraIcon = renderIcon(CameraIcon)
 export const deleteIcon = renderIcon(DeleteIcon)
 export const editIcon = renderIcon(EditIcon)
 export const sectionCategoryIcon = renderIcon(SectionCategoryIcon)

@@ -215,7 +215,7 @@ export const DraggableAuthor: React.FC<DraggableAuthorProps> = React.memo(
         <AuthorName data-cy="author-name">{authorLabel(author)}</AuthorName>
         {isSelected && (
           <RemoveButton
-            size={13}
+            $size={13}
             onClick={() => onDelete()}
             data-tooltip-content="Delete"
           >
