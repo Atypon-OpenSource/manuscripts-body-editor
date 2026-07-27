@@ -13,9 +13,6 @@
   --box-element-bg-color: #fafafa;
 }
 
-* {
-  scroll-behavior: smooth;
-}
 
 .button-reset {
   border: none;
@@ -499,6 +496,10 @@
   right: 26px;
 }
 
+.comment-marker:has(+ .block-headshot_grid) {
+  top: 0;
+}
+
 .block-subtitles .comment-marker {
   top: 0 !important;
   left: 0 !important;
@@ -822,7 +823,7 @@ span.comment-marker {
 .selected-suggestion:not(.block-container):not(.graphical-abstract):not(
     .keywords
   ):not(figure):not(figure .equation):not(.inconsistency-highlight):not(
-    .supplement-item:is([data-track-op='move'])
+    .supplement-item:is([data-track-op='move']), .headshot-element:is([data-track-op='move'])
   ),
 .footnote-marker-selected {
   border-width: 2px 0 2px 0 !important;
@@ -1777,7 +1778,7 @@ th:hover > .table-context-menu-button,
 
 .ProseMirror .headshot-grid-container .headshot-grid-block .headshot-element {
   border-radius: 4px;
-  border: 1px solid #E2E2E2 !important;
+  border: 1px solid #E2E2E2;
   background: #FFF;
   position: relative;
 }
@@ -1897,6 +1898,24 @@ th:hover > .table-context-menu-button,
   z-index: 10;
 }
 
+.ProseMirror .headshot-drag-icon {
+  position: absolute;
+  top: 41%;
+  left: -6px;
+  border-radius: 8px;
+  border: 1px solid #E2E2E2;
+  background: #FFF;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 10px;
+  height: 22px;
+  padding: 3px 0;
+  cursor: grab;
+  visibility: hidden;
+}
+
 .ProseMirror .headshot-figure .headshot-remove-button {
   margin: 0;
   top: -6%;
@@ -1914,6 +1933,7 @@ th:hover > .table-context-menu-button,
   height: 8px;
 }
 
+.ProseMirror .headshot-grid-block .headshot-element:not(:only-child):hover .headshot-drag-icon,
 .ProseMirror .headshot-element:hover .block > .headshot-remove-button,
 .ProseMirror .headshot-figure:hover .headshot-remove-button,
 .ProseMirror .headshot-element:focus-within .headshot-remove-button {
@@ -2041,8 +2061,8 @@ th:hover > .table-context-menu-button,
   position: relative;
 }
 
-/* Right padding so abstract titles do not run under translation widgets. 
- * If we later block editing these titles, this padding can go away. 
+/* Right padding so abstract titles do not run under translation widgets.
+ * If we later block editing these titles, this padding can go away.
  */
 .ProseMirror .abstracts .block-section .block-section_title h1,
 .ProseMirror .abstracts .block-trans_abstract .block-section_title h1 {
