@@ -6109,8 +6109,8 @@ snapshots:
 
   '@typescript-eslint/project-service@8.62.0(typescript@5.9.2)':
     dependencies:
-      '@typescript-eslint/tsconfig-utils': 8.61.1(typescript@5.9.2)
-      '@typescript-eslint/types': 8.61.1
+      '@typescript-eslint/tsconfig-utils': 8.62.0(typescript@5.9.2)
+      '@typescript-eslint/types': 8.62.0
       debug: 4.4.3
       typescript: 5.9.2
     transitivePeerDependencies:
@@ -6189,10 +6189,10 @@ snapshots:
 
   '@typescript-eslint/typescript-estree@8.62.0(typescript@5.9.2)':
     dependencies:
-      '@typescript-eslint/project-service': 8.61.1(typescript@5.9.2)
-      '@typescript-eslint/tsconfig-utils': 8.61.1(typescript@5.9.2)
-      '@typescript-eslint/types': 8.61.1
-      '@typescript-eslint/visitor-keys': 8.61.1
+      '@typescript-eslint/project-service': 8.62.0(typescript@5.9.2)
+      '@typescript-eslint/tsconfig-utils': 8.62.0(typescript@5.9.2)
+      '@typescript-eslint/types': 8.62.0
+      '@typescript-eslint/visitor-keys': 8.62.0
       debug: 4.4.3
       minimatch: 10.2.5
       semver: 7.8.5
