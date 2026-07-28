@@ -227,7 +227,7 @@ export const CrossReferenceItems: React.FC<Props> = ({
       onRequestClose={close}
       shouldCloseOnOverlayClick={true}
     >
-      <ModalContainer>
+      <ModalContainer data-cy="cross-reference-editor">
         <ModalHeader>
           <CloseButton onClick={close} />
         </ModalHeader>
@@ -236,9 +236,13 @@ export const CrossReferenceItems: React.FC<Props> = ({
             {isEdit ? 'Update Cross-reference' : 'Insert Cross-reference'}
           </Heading>
 
-          <FieldLabel>Display text</FieldLabel>
+          <FieldLabel htmlFor="cross-reference-custom-text">
+            Display text
+          </FieldLabel>
           <CustomTextInput
             ref={customTextRef}
+            id="cross-reference-custom-text"
+            data-cy="cross-reference-custom-text"
             type="text"
             placeholder={'Custom display text...'}
             disabled={!selectedItem}
@@ -257,22 +261,25 @@ export const CrossReferenceItems: React.FC<Props> = ({
                     const icon = getTargetIcon(target)
 
                     return (
-                    <CrossReferenceItem
-                      key={target.id}
-                      className={
-                        selectedItem === target.id ? 'active' : undefined
-                      }
-                      onClick={() => setSelectedItem(target.id)}
-                    >
-                      <DefaultLabelWrapper>
-                        {icon ? <ItemIcon>{icon}</ItemIcon> : null}
-                        <Label>
-                          {target.label}
-                          {target.caption && `:`}
-                        </Label>
-                        <Caption>{trimmedCaption(target.caption, 200)}</Caption>
-                      </DefaultLabelWrapper>
-                    </CrossReferenceItem>
+                      <CrossReferenceItem
+                        key={target.id}
+                        data-cy="cross-reference-item"
+                        className={
+                          selectedItem === target.id ? 'active' : undefined
+                        }
+                        onClick={() => setSelectedItem(target.id)}
+                      >
+                        <DefaultLabelWrapper>
+                          {icon ? <ItemIcon>{icon}</ItemIcon> : null}
+                          <Label>
+                            {target.label}
+                            {target.caption && `:`}
+                          </Label>
+                          <Caption>
+                            {trimmedCaption(target.caption, 200)}
+                          </Caption>
+                        </DefaultLabelWrapper>
+                      </CrossReferenceItem>
                     )
                   })}
                 </GroupExpandableSection>

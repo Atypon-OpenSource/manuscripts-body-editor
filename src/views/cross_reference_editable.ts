@@ -61,8 +61,7 @@ export class CrossReferenceEditableView extends CrossReferenceView {
       componentProps,
       this.node,
       this.getPos,
-      this.view,
-      ['cross-reference-editor']
+      this.view
     )
     this.popperContainer.setAttribute('tabindex', '0')
     this.props.popper.show(this.dom, this.popperContainer, 'auto')
