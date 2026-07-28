@@ -1309,11 +1309,24 @@
   font-style: normal;
 }
 
+.ProseMirror .headshot-element.drop-target-above {
+  border-top: 3px solid  #20aedf !important;
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+}
+
+.ProseMirror .headshot-element.drop-target-below {
+  border-bottom: 3px solid #20aedf !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
 .ProseMirror .supplement-item.drop-target-above,
 .ProseMirror .supplement-item.drop-target-below {
   border: 2px dotted #20aedf !important;
 }
 
+.ProseMirror .headshot-element.dragging,
 .ProseMirror .supplement-item.dragging {
   background-color: #f2f2f2 !important;
   opacity: 0.3;
