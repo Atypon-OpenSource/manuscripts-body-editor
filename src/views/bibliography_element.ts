@@ -268,7 +268,7 @@ export class BibliographyElementBlockView extends BlockView<
     this.dom.appendChild(this.container)
   }
 
-  private handleSave = (attrs: BibliographyItemAttrs) => {
+  private handleSave = (attrs: BibliographyItemAttrs[]) => {
     saveBibliographyItem(this.view, attrs)
   }
 

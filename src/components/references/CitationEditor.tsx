@@ -91,7 +91,7 @@ export interface CitationEditorProps {
   sources: BibliographyItemSource[]
   onCite: (items: BibliographyItemAttrs[]) => void
   onUncite: (id: string) => void
-  onSave: (item: BibliographyItemAttrs) => void
+  onSave: (item: BibliographyItemAttrs[]) => void
   onDelete: (item: BibliographyItemAttrs) => void
   onCancel: () => void
   canEdit: boolean
@@ -117,7 +117,7 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
   const [rids, dispatchRids] = useReducer(ridsReducer, $rids)
   const handleSave = (item: BibliographyItemAttrs) => {
     const cleanedItem = cleanItemValues(item)
-    onSave(cleanedItem)
+    onSave([cleanedItem])
     dispatchItems({
       type: 'update',
       items: [cleanedItem],
@@ -184,9 +184,7 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
       })
     )
 
-    const itemsToImport = [...newItems].reverse()
-
-    itemsToImport.forEach((item) => onSave(item))
+    onSave(newItems)
 
     dispatchItems({
       type: 'set',

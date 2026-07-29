@@ -26,8 +26,10 @@ import { ReferencesModal, ReferencesModalProps } from './ReferencesModal'
 
 export type ReferencesEditorProps = Omit<
   ReferencesModalProps,
-  'isOpen' | 'onCancel' | 'handleImport'
->
+  'isOpen' | 'onCancel' | 'handleImport' | 'onSave'
+> & {
+  onSave: (item: BibliographyItemAttrs[]) => void
+}
 
 const itemsReducer = attrsReducer<BibliographyItemAttrs>()
 
@@ -42,7 +44,7 @@ export const ReferencesEditor: React.FC<ReferencesEditorProps> = (props) => {
 
   const handleSave = (item: BibliographyItemAttrs) => {
     const cleanedItem = cleanItemValues(item)
-    props.onSave(cleanedItem)
+    props.onSave([cleanedItem])
     dispatch({
       type: 'update',
       items: [cleanedItem],
@@ -65,9 +67,7 @@ export const ReferencesEditor: React.FC<ReferencesEditorProps> = (props) => {
       })
     )
 
-    const itemsToImport = [...newItems].reverse()
-
-    itemsToImport.forEach((item) => props.onSave(item))
+    props.onSave(newItems)
 
     dispatch({
       type: 'set',

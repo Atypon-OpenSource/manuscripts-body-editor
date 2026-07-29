@@ -205,7 +205,7 @@ export class CitationEditableView extends CitationView {
     this.props.popper.destroy()
   }
 
-  private handleSave = (attrs: BibliographyItemAttrs) => {
+  private handleSave = (attrs: BibliographyItemAttrs[]) => {
     saveBibliographyItem(this.view, attrs)
   }
 
@@ -245,7 +245,7 @@ export class CitationEditableView extends CitationView {
       if (existingItem) {
         item.id = existingItem.id
       } else {
-        saveBibliographyItem(this.view, item)
+        saveBibliographyItem(this.view, [item])
       }
 
       rids.push(item.id)
