@@ -39,7 +39,7 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
   dialog: HTMLElement
   contextMenu: HTMLDivElement
   isMenuShown: boolean
-  numberOfMenuActions: number
+  availableActionsCount: number
 
   public initialise = () => {
     this.dom = document.createElement('div')
@@ -87,15 +87,15 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
     const actions = this.getContextMenuActions()
     if (
       selectionInsideNode &&
-      (!this.isMenuShown || actions.length !== this.numberOfMenuActions)
+      (!this.isMenuShown || actions.length !== this.availableActionsCount)
     ) {
       this.showContextMenu(actions, false)
       this.isMenuShown = true
-      this.numberOfMenuActions = actions.length
+      this.availableActionsCount = actions.length
     } else if (!selectionInsideNode && this.isMenuShown) {
       this.props.popper.destroy()
       this.isMenuShown = false
-      this.numberOfMenuActions = 0
+      this.availableActionsCount = 0
     }
   }
 
