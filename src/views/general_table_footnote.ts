@@ -63,7 +63,9 @@ export class GeneralTableFootnoteView extends BaseNodeView<
       this.node,
       this.getPos()
     )
-    if (selectionInsideNode && !this.isMenuShown) {
+    const can = this.props.getCapabilities()
+    const canShowMenu = can.editArticle && !isDeleted(this.node)
+    if (canShowMenu && selectionInsideNode && !this.isMenuShown) {
       this.showContextMenu(false)
       this.isMenuShown = true
     } else if (!selectionInsideNode && this.isMenuShown) {
@@ -73,22 +75,16 @@ export class GeneralTableFootnoteView extends BaseNodeView<
   }
 
   showContextMenu(autoFocus = false) {
-    const can = this.props.getCapabilities()
-    if (!can.editArticle) {
-      return
-    }
-
     this.props.popper.destroy()
 
     const componentProps: ContextMenuProps = {
-      actions: [],
-    }
-    if (!isDeleted(this.node)) {
-      componentProps.actions.push({
-        label: 'Delete',
-        action: () => this.handleDeleteClick(),
-        icon: 'Delete',
-      })
+      actions: [
+        {
+          label: 'Delete',
+          action: () => this.handleDeleteClick(),
+          icon: 'Delete',
+        },
+      ],
     }
 
     this.contextMenu = ReactSubView(
