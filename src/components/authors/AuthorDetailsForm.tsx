@@ -393,7 +393,7 @@ export const AuthorDetailsForm: React.FC<AuthorDetailsFormProps> = ({
           <MultiValueInput
             id={'degrees'}
             inputType="text"
-            placeholder="E.g. Bsc Computer Science"
+            placeholder="E.g. PhD, M.D., etc."
             initialValues={
               Array.isArray(formik.values.degrees) ? formik.values.degrees : []
             }
