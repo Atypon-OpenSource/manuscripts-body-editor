@@ -33,10 +33,12 @@ import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
 import { handleEnterKey } from '../lib/navigation-utils'
+import { isSelectionInsideNode } from '../lib/view'
 
 export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
   dialog: HTMLElement
   contextMenu: HTMLDivElement
+  isMenuShown: boolean
 
   public initialise = () => {
     this.dom = document.createElement('div')
@@ -44,10 +46,9 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
     this.dom.tabIndex = 0
     this.contentDOM = document.createElement('div')
     this.contentDOM.classList.add('footnote-text')
-    this.dom.addEventListener('mousedown', (e) => this.handleClick(e, false))
     this.dom.addEventListener(
       'keydown',
-      handleEnterKey((e) => this.handleClick(e, true))
+      handleEnterKey(() => this.showContextMenu(true))
     )
     this.updateContents()
   }
@@ -73,6 +74,19 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
     this.dom.innerHTML = ''
     this.dom.appendChild(marker)
     this.contentDOM && this.dom.appendChild(this.contentDOM)
+
+    const selectionInsideNode = isSelectionInsideNode(
+      this.view,
+      this.node,
+      this.getPos()
+    )
+    if (selectionInsideNode && !this.isMenuShown) {
+      this.showContextMenu(false)
+      this.isMenuShown = true
+    } else if (!selectionInsideNode && this.isMenuShown) {
+      this.props.popper.destroy()
+      this.isMenuShown = false
+    }
   }
 
   getFootnoteState() {
@@ -81,7 +95,7 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
     return { id, fn }
   }
 
-  showContextMenu(element: HTMLElement, autoFocus: boolean) {
+  showContextMenu(autoFocus: boolean) {
     this.props.popper.destroy()
 
     const can = this.props.getCapabilities()
@@ -112,24 +126,16 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
       this.node,
       this.getPos,
       this.view,
-      ['context-menu', 'footnote-context-menu']
+      ['menu', 'footnote-context-menu']
     )
     this.props.popper.show(
-      element,
+      this.dom,
       this.contextMenu,
       'right-start',
       true,
       [],
       autoFocus
     )
-  }
-
-  handleClick = (event: Event, fromKeyboard = false) => {
-    const element = event.target as HTMLElement
-    const item = element.closest('.footnote')
-    if (item) {
-      this.showContextMenu(item as HTMLElement, fromKeyboard)
-    }
   }
 
   handleMarkerClick = (e?: Event) => {

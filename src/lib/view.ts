@@ -16,6 +16,7 @@
 
 import {
   ManuscriptEditorView,
+  ManuscriptNode,
   ManuscriptNodeType,
   schema,
 } from '@manuscripts/transform'
@@ -25,6 +26,7 @@ import * as utils from 'prosemirror-utils'
 
 import { isHidden } from './track-changes-utils'
 import { sanitizeAttrsChange } from '@manuscripts/track-changes-plugin'
+import { EditorView } from 'prosemirror-view'
 
 const metaNodeTypes = [
   schema.nodes.bibliography_item,
@@ -97,4 +99,13 @@ export const deleteNode = (view: ManuscriptEditorView, id: string) => {
     const node = child.node
     view.dispatch(view.state.tr.delete(pos, pos + node.nodeSize))
   }
+}
+
+export const isSelectionInsideNode = (
+  view: EditorView,
+  node: ManuscriptNode,
+  pos: number
+) => {
+  const { from, to } = view.state.selection
+  return from >= pos && to <= pos + node.nodeSize
 }

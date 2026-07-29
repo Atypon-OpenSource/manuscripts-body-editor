@@ -166,6 +166,7 @@
 .popper .footnote-editor,
 .popper .table-footnote-editor,
 .popper .table-cell-context-menu,
+.popper .footnote-context-menu,
 .context-menu > div {
   background: #fff;
   border: 1px solid #e2e2e2;
