@@ -46,7 +46,13 @@ export class GeneralTableFootnoteView extends BaseNodeView<
     this.dom.tabIndex = 0
     this.dom.addEventListener(
       'keydown',
-      handleEnterKey(() => this.showContextMenu(true))
+      handleEnterKey(() => {
+        const can = this.props.getCapabilities()
+        const canShowMenu = can.editArticle && !isDeleted(this.node)
+        if (canShowMenu) {
+          this.showContextMenu(true)
+        }
+      })
     )
     this.contentDOM = document.createElement('div')
     this.contentDOM.classList.add('footnote-text')

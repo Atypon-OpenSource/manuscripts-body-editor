@@ -49,9 +49,12 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
     this.contentDOM.classList.add('footnote-text')
     this.dom.addEventListener(
       'keydown',
-      handleEnterKey(() =>
-        this.showContextMenu(this.getContextMenuActions(), true)
-      )
+      handleEnterKey(() => {
+        const actions = this.getContextMenuActions()
+        if (actions.length > 0) {
+          this.showContextMenu(actions, true)
+        }
+      })
     )
     this.updateContents()
   }
@@ -87,7 +90,8 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
     const actions = this.getContextMenuActions()
     if (
       selectionInsideNode &&
-      (!this.isMenuShown || actions.length !== this.availableActionsCount)
+      (!this.isMenuShown ||
+        (actions.length > 0 && actions.length !== this.availableActionsCount))
     ) {
       this.showContextMenu(actions, false)
       this.isMenuShown = true
