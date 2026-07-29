@@ -106,6 +106,13 @@ export const isSelectionInsideNode = (
   node: ManuscriptNode,
   pos: number
 ) => {
-  const { from, to } = view.state.selection
-  return from >= pos && to <= pos + node.nodeSize
+  const { from, to, empty } = view.state.selection
+  const end = pos + node.nodeSize
+
+  // Treat a cursor as "inside" only when it is strictly within the node range.
+  if (empty) {
+    return from > pos && from < end
+  }
+
+  return from >= pos && to <= end
 }
