@@ -191,7 +191,10 @@ const buildPluginState = (
 }
 
 const getUsedSectionCategoryIDs = (state: EditorState): Set<string> => {
-  const sections = findChildrenByType(state.doc, schema.nodes.section)
+  const sections = [
+    ...findChildrenByType(state.doc, schema.nodes.section),
+    ...findChildrenByType(state.doc, schema.nodes.abstract),
+  ]
   const used = new Set<string>()
   sections.forEach(({ node }) => {
     if (node.attrs.category) {

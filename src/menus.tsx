@@ -562,7 +562,7 @@ export const getEditorMenus = (
   const abstractSection = allAbstractsCategories.find(
     (s) => s.id === ABSTRACT_ID
   )
-  const ABSTRACT_GRAPHICAL_ID = 'abstract-graphical'
+  const ABSTRACT_GRAPHICAL_ID = 'graphical'
   const graphicalAbstractSection = allAbstractsCategories.find(
     (s) => s.id === ABSTRACT_GRAPHICAL_ID
   )
