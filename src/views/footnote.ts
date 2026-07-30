@@ -88,15 +88,16 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
     )
 
     const actions = this.getContextMenuActions()
+    const hasActions = actions.length > 0
     const actionsKeys = actions.map(({ label }) => label).join('|')
     if (
       selectionInsideNode &&
-      (!this.isMenuShown ||
-        (actions.length > 0 && actionsKeys !== this.availableActionsKeys))
+      hasActions &&
+      (!this.isMenuShown || actionsKeys !== this.availableActionsKeys)
     ) {
       this.showContextMenu(actions, false)
       this.availableActionsKeys = actionsKeys
-    } else if (!selectionInsideNode && this.isMenuShown) {
+    } else if ((!hasActions || !selectionInsideNode) && this.isMenuShown) {
       this.props.popper.destroy()
       this.isMenuShown = false
       this.availableActionsKeys = ''
