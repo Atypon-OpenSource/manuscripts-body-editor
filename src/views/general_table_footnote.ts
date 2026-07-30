@@ -38,7 +38,7 @@ export class GeneralTableFootnoteView extends BaseNodeView<
 > {
   dialog: HTMLElement
   contextMenu: HTMLDivElement
-  isMenuShown: boolean
+  isMenuShown: boolean = false
 
   public initialise = () => {
     this.dom = document.createElement('div')
@@ -73,14 +73,14 @@ export class GeneralTableFootnoteView extends BaseNodeView<
     const canShowMenu = can.editArticle && !isDeleted(this.node)
     if (canShowMenu && selectionInsideNode && !this.isMenuShown) {
       this.showContextMenu(false)
-      this.isMenuShown = true
-    } else if (!selectionInsideNode && this.isMenuShown) {
+    } else if ((!canShowMenu || !selectionInsideNode) && this.isMenuShown) {
       this.props.popper.destroy()
       this.isMenuShown = false
     }
   }
 
   showContextMenu(autoFocus = false) {
+    this.isMenuShown = true
     this.props.popper.destroy()
 
     const componentProps: ContextMenuProps = {

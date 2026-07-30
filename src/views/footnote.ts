@@ -38,8 +38,8 @@ import { isSelectionInsideNode } from '../lib/view'
 export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
   dialog: HTMLElement
   contextMenu: HTMLDivElement
-  isMenuShown: boolean
-  availableActionsKeys: string
+  isMenuShown: boolean = false
+  availableActionsKeys: string = ''
 
   public initialise = () => {
     this.dom = document.createElement('div')
@@ -91,10 +91,10 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
     const actionsKeys = actions.map(({ label }) => label).join('|')
     if (
       selectionInsideNode &&
-      (!this.isMenuShown || actionsKeys !== this.availableActionsKeys)
+      (!this.isMenuShown ||
+        (actions.length > 0 && actionsKeys !== this.availableActionsKeys))
     ) {
       this.showContextMenu(actions, false)
-      this.isMenuShown = true
       this.availableActionsKeys = actionsKeys
     } else if (!selectionInsideNode && this.isMenuShown) {
       this.props.popper.destroy()
@@ -110,6 +110,7 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
   }
 
   showContextMenu(actions: ContextMenuProps['actions'], autoFocus: boolean) {
+    this.isMenuShown = true
     this.props.popper.destroy()
     this.contextMenu = ReactSubView(
       this.props,
@@ -137,7 +138,7 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
 
     if (!fn?.unusedFootnoteIDs.has(id)) {
       actions.push({
-        label: 'Go to footnote Refernce',
+        label: 'Go to footnote Reference',
         action: () => this.handleMarkerClick(),
         icon: 'Scroll',
       })
