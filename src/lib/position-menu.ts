@@ -155,7 +155,10 @@ export class HorizontalPositionMenu {
     }
     const onClick = () => this.showPositionMenu()
     if (can.editArticle) {
-      positionMenuButton.tabIndex = -1
+      positionMenuButton.tabIndex = 0
+      positionMenuButton.addEventListener('mousedown', (e) =>
+        e.preventDefault()
+      )
       positionMenuButton.addEventListener('click', onClick)
       positionMenuButton.addEventListener('keydown', handleEnterKey(onClick))
     }
