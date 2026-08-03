@@ -40,6 +40,7 @@ import {
   SectionCategoryIcon,
   TickIcon,
   TranslateIcon,
+  WebLinkIcon,
 } from '@manuscripts/style-guide'
 import React, { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
@@ -72,3 +73,4 @@ export const leadingHalfLeftIcon = renderIcon(LeadingHalfLeftIcon)
 export const fileMainDocumentIcon = renderIcon(FileMainDocumentIcon)
 export const tickIcon = renderIcon(TickIcon)
 export const ORCIDIcon = renderIcon(ORCID)
+export const webLinkIcon = renderIcon(WebLinkIcon)
