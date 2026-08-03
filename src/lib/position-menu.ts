@@ -130,13 +130,15 @@ export class HorizontalPositionMenu {
     }))
   }
 
+  buttonClass = 'position-menu-button'
+
   createPositionMenuWrapper(currentPosition: string, props: EditorProps) {
     const can = props.getCapabilities()
     const positionMenuWrapper = document.createElement('div')
     positionMenuWrapper.classList.add(this.posMenuSelector)
 
     const positionMenuButton = document.createElement('div')
-    positionMenuButton.classList.add('position-menu-button')
+    positionMenuButton.classList.add(this.buttonClass)
 
     let icon
     switch (currentPosition) {
@@ -153,19 +155,19 @@ export class HorizontalPositionMenu {
     if (icon) {
       positionMenuButton.innerHTML = icon
     }
-    const onClick = () => this.showPositionMenu()
+    const onClick = () => {
+      this.showPositionMenu()
+    }
     if (can.editArticle) {
-      positionMenuButton.tabIndex = 0
-      positionMenuButton.addEventListener('mousedown', (e) =>
-        e.preventDefault()
-      )
+      positionMenuButton.tabIndex = -1
+
       positionMenuButton.addEventListener('click', onClick)
       positionMenuButton.addEventListener('keydown', handleEnterKey(onClick))
     }
 
     if (this.positionMenuWrapper) {
       const button = this.positionMenuWrapper.querySelector(
-        '.position-menu-button'
+        '.' + this.buttonClass
       )
       if (button) {
         this.positionMenuWrapper.removeChild(button)
@@ -230,7 +232,6 @@ export class HorizontalPositionMenu {
       this.menuOpen = false
       return
     }
-
     const posSource = this.getPositionSource
       ? this.getPositionSource()
       : this.parent.node
@@ -240,6 +241,7 @@ export class HorizontalPositionMenu {
       this.onChange,
       p.props.popper.destroy.bind(p.props.popper)
     )
+
     createSubViewAsync(
       p.props,
       ContextMenu,
@@ -252,9 +254,19 @@ export class HorizontalPositionMenu {
       if (this.menuOpen && p.props.popper.isActive()) {
         p.props.popper.replaceContent(content)
       } else {
-        p.props.popper.show(this.positionMenuWrapper, content, 'left', false)
+        p.props.popper.show(
+          this.positionMenuWrapper,
+          content,
+          'left',
+          false,
+          [],
+          true,
+          () => {
+            this.menuOpen = false
+          }
+        )
+        this.menuOpen = true
       }
-      this.menuOpen = true
     })
   }
 
