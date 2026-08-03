@@ -27,6 +27,23 @@ import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 
+/**
+ * Linked-file xrefs point at image_element ids. Once the linked file (extLink)
+ * is removed, the image node remains in buildTargets as a plain image, but is
+ * no longer a valid cross-reference target.
+ */
+export const isValidCrossReferenceTarget = (
+  target?: Target
+): target is Target => {
+  if (!target) {
+    return false
+  }
+  if (target.type === schema.nodes.image_element.name && !target.href) {
+    return false
+  }
+  return true
+}
+
 export class CrossReferenceView
   extends BaseNodeView<Trackable<CrossReferenceNode>>
   implements ManuscriptNodeView
@@ -47,10 +64,17 @@ export class CrossReferenceView
     const targets = objectsKey.getState(this.view.state) as Map<string, Target>
     const attrs = this.node.attrs
     const target = attrs.rids.length ? targets.get(attrs.rids[0]) : undefined
+    const validTarget = isValidCrossReferenceTarget(target)
+      ? target
+      : undefined
 
-    let derivedLabel = target?.label || ''
-    if (target?.type === schema.nodes.supplement.name && target.href) {
-      const file = this.props.getFiles().find((f) => f.id === target.href)
+    let derivedLabel = validTarget?.label || ''
+    if (
+      (validTarget?.type === schema.nodes.supplement.name ||
+        validTarget?.type === schema.nodes.image_element.name) &&
+      validTarget.href
+    ) {
+      const file = this.props.getFiles().find((f) => f.id === validTarget.href)
       derivedLabel = file?.name ?? ''
     }
 

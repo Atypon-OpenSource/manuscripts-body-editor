@@ -167,7 +167,10 @@ const trimmedCaption = (caption: string, limit: number): string => {
 }
 
 const getTargetIcon = (target: Target): React.ReactNode => {
-  if (target.type === schema.nodes.supplement.name) {
+  if (
+    target.type === schema.nodes.supplement.name ||
+    target.type === schema.nodes.image_element.name
+  ) {
     return getFileIcon(target.label ?? '') ?? <FileUnknownIcon />
   }
 
@@ -182,6 +185,7 @@ const GROUP_LABELS: Record<string, string> = {
   box_element: 'Boxes',
   embed: 'Media',
   supplement: 'Supplementary files',
+  image_element: 'Linked files',
 }
 
 interface Props {
@@ -233,11 +237,11 @@ export const CrossReferenceItems: React.FC<Props> = ({
         </ModalHeader>
         <StyledModalBody>
           <Heading>
-            {isEdit ? 'Update Cross-reference' : 'Insert Cross-reference'}
+            {isEdit ? 'Edit Cross-reference' : 'Insert Cross-reference'}
           </Heading>
 
           <FieldLabel htmlFor="cross-reference-custom-text">
-            Display text
+            Custom display text
           </FieldLabel>
           <CustomTextInput
             ref={customTextRef}

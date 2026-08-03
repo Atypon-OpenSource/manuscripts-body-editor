@@ -23,7 +23,10 @@ import { CrossReferenceItems } from '../components/views/CrossReferenceItems'
 import { handleComment } from '../lib/comments'
 import { objectsKey } from '../plugins/objects'
 import { createEditableNodeView } from './creators'
-import { CrossReferenceView } from './cross_reference'
+import {
+  CrossReferenceView,
+  isValidCrossReferenceTarget,
+} from './cross_reference'
 import ReactSubView from './ReactSubView'
 
 export class CrossReferenceEditableView extends CrossReferenceView {
@@ -77,19 +80,20 @@ export class CrossReferenceEditableView extends CrossReferenceView {
   }
 
   public getTargets = () => {
-    const excludedTypes = [schema.nodes.image_element.name]
-
     const targets = objectsKey.getState(this.view.state) as Map<string, Target>
     const fileMap = new Map(this.props.getFiles().map((f) => [f.id, f.name]))
+    const imageElement = schema.nodes.image_element.name
+    const supplement = schema.nodes.supplement.name
 
     return Array.from(targets.values()).reduce<Target[]>((acc, t) => {
-      if (excludedTypes.includes(t.type)) {
+      // Plain Simple Images are not cross-referenceable; only those with a
+      // linked file (extLink → Target.href) should appear in the picker.
+      if (t.type === imageElement && !t.href) {
         return acc
       }
-      // Supplement targets reference uploaded files via href; the file name is
-      // used as the label and caption is not applicable, so both are overridden
-      // with values derived from the file map rather than the node's own attrs.
-      if (t.type === schema.nodes.supplement.name && t.href) {
+      // File-backed targets (supplements and linked files) use the uploaded
+      // file name as the label; caption is not applicable.
+      if ((t.type === supplement || t.type === imageElement) && t.href) {
         acc.push({ ...t, label: fileMap.get(t.href) ?? '', caption: '' })
       } else {
         acc.push(t)
@@ -157,7 +161,7 @@ export class CrossReferenceEditableView extends CrossReferenceView {
 
     const targets = objectsKey.getState(this.view.state) as Map<string, Target>
     const rid = this.node.attrs.rids[0]
-    const isOrphaned = !targets?.get(rid)
+    const isOrphaned = !isValidCrossReferenceTarget(targets?.get(rid))
 
     const actions: ContextMenuProps['actions'] = [
       {
