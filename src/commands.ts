@@ -529,7 +529,7 @@ export const insertSupplementWeblink = (
   const supplement = schema.nodes.supplement.createAndFill(
     {
       id: generateNodeID(schema.nodes.supplement),
-      href: url
+      href: url,
     },
     createAndFillCaption()
   ) as SupplementNode
@@ -558,7 +558,7 @@ export const updateSupplementWeblink = (
     ...node.attrs,
     href: url,
     title: title,
-    })
+  })
   view.dispatch(tr)
   return true
 }
@@ -1569,10 +1569,7 @@ export const insertTransGraphicalAbstract =
         lang,
         category: category.id,
       },
-      [
-        schema.nodes.section_title.create(),
-        createAndFillFigureElement(state),
-      ]
+      [schema.nodes.section_title.create(), createAndFillFigureElement(state)]
     ) as TransGraphicalAbstractNode
 
     const tr = state.tr.insert(pos, node)

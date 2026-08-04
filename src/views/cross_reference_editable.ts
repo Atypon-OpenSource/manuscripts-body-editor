@@ -16,11 +16,13 @@
 
 import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import { isDeleted, skipTracking } from '@manuscripts/track-changes-plugin'
-import { schema, Target } from '@manuscripts/transform'
+import { schema, SupplementNode, Target } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 
 import { CrossReferenceItems } from '../components/views/CrossReferenceItems'
 import { handleComment } from '../lib/comments'
+import { findNodeByID } from '../lib/doc'
+import { getSupplementDisplayLabel } from '../lib/supplements'
 import { objectsKey } from '../plugins/objects'
 import { createEditableNodeView } from './creators'
 import {
@@ -52,6 +54,7 @@ export class CrossReferenceEditableView extends CrossReferenceView {
     const componentProps = {
       handleSelect: this.handleSelect,
       targets: this.getTargets(),
+      files: this.props.getFiles(),
       handleCancel: this.handleCancel,
       currentTargetId: rids[0],
       currentCustomLabel: this.node.attrs.label,
@@ -81,7 +84,8 @@ export class CrossReferenceEditableView extends CrossReferenceView {
 
   public getTargets = () => {
     const targets = objectsKey.getState(this.view.state) as Map<string, Target>
-    const fileMap = new Map(this.props.getFiles().map((f) => [f.id, f.name]))
+    const files = this.props.getFiles()
+    const fileMap = new Map(files.map((f) => [f.id, f.name]))
     const imageElement = schema.nodes.image_element.name
     const supplement = schema.nodes.supplement.name
 
@@ -91,10 +95,15 @@ export class CrossReferenceEditableView extends CrossReferenceView {
       if (t.type === imageElement && !t.href) {
         return acc
       }
-      // File-backed targets (supplements and linked files) use the uploaded
-      // file name as the label; caption is not applicable.
-      if ((t.type === supplement || t.type === imageElement) && t.href) {
+      if (t.type === imageElement && t.href) {
         acc.push({ ...t, label: fileMap.get(t.href) ?? '', caption: '' })
+      } else if (t.type === supplement && t.href) {
+        // Prefer caption title, then URL / file name.
+        const found = findNodeByID(this.view.state.doc, t.id)
+        const label = found
+          ? getSupplementDisplayLabel(found.node as SupplementNode, files)
+          : (fileMap.get(t.href) ?? t.href)
+        acc.push({ ...t, label, caption: '' })
       } else {
         acc.push(t)
       }

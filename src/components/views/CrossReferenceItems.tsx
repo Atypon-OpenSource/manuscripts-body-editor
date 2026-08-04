@@ -27,11 +27,14 @@ import {
   ModalContainer,
   ModalHeader,
   ModalBody,
+  WebLinkIcon,
 } from '@manuscripts/style-guide'
 import { Target, schema } from '@manuscripts/transform'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
+import { FileAttachment } from '../../lib/files'
+import { allowedHref } from '../../lib/url'
 import { nodeTypeIcon } from '../../node-type-icons'
 import FormFooter from '../form/FormFooter'
 
@@ -166,12 +169,20 @@ const trimmedCaption = (caption: string, limit: number): string => {
   return caption.replace(captionSearch, '$1…')
 }
 
-const getTargetIcon = (target: Target): React.ReactNode => {
+const getTargetIcon = (
+  target: Target,
+  files: FileAttachment[]
+): React.ReactNode => {
   if (
     target.type === schema.nodes.supplement.name ||
     target.type === schema.nodes.image_element.name
   ) {
-    return getFileIcon(target.label ?? '') ?? <FileUnknownIcon />
+    if (target.href && allowedHref(target.href)) {
+      return <WebLinkIcon className="file-icon" />
+    }
+    const fileName =
+      files.find((f) => f.id === target.href)?.name ?? target.label ?? ''
+    return getFileIcon(fileName) ?? <FileUnknownIcon />
   }
 
   return nodeTypeIcon(schema.nodes[target.type])
@@ -190,6 +201,7 @@ const GROUP_LABELS: Record<string, string> = {
 
 interface Props {
   targets: Target[]
+  files: FileAttachment[]
   handleSelect: (id: string, customLabel?: string) => void
   handleCancel: () => void
   currentTargetId?: string
@@ -199,6 +211,7 @@ interface Props {
 
 export const CrossReferenceItems: React.FC<Props> = ({
   targets,
+  files,
   handleSelect,
   handleCancel,
   currentTargetId,
@@ -262,7 +275,7 @@ export const CrossReferenceItems: React.FC<Props> = ({
                   icon={ArrowDownIcon}
                 >
                   {group.map((target) => {
-                    const icon = getTargetIcon(target)
+                    const icon = getTargetIcon(target, files)
 
                     return (
                       <CrossReferenceItem
