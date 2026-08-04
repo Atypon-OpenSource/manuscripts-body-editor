@@ -18,7 +18,8 @@ import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import { isDeleted, isPendingInsert } from '@manuscripts/track-changes-plugin'
 import { FootnoteNode, ManuscriptNode, schema } from '@manuscripts/transform'
 
-import { isEqual } from 'lodash'
+import isEqual from 'lodash/isEqual'
+import xor from 'lodash/xor'
 import { NodeSelection, Transaction } from 'prosemirror-state'
 import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 
@@ -39,7 +40,7 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
   dialog: HTMLElement
   contextMenu: HTMLDivElement
   isMenuShown: boolean = false
-  availableActionsKeys: string = ''
+  previousActionsLabels: string[] = []
 
   public initialise = () => {
     this.dom = document.createElement('div')
@@ -89,18 +90,19 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
 
     const actions = this.getContextMenuActions()
     const hasActions = actions.length > 0
-    const actionsKeys = actions.map(({ label }) => label).join('|')
+    const currentLabels = actions.map(({ label }) => label)
+    const changedLabels = xor(currentLabels, this.previousActionsLabels)
     if (
       selectionInsideNode &&
       hasActions &&
-      (!this.isMenuShown || actionsKeys !== this.availableActionsKeys)
+      (!this.isMenuShown || changedLabels.length > 0)
     ) {
       this.showContextMenu(actions, false)
-      this.availableActionsKeys = actionsKeys
+      this.previousActionsLabels = actions.map(({ label }) => label)
     } else if ((!hasActions || !selectionInsideNode) && this.isMenuShown) {
       this.props.popper.destroy()
       this.isMenuShown = false
-      this.availableActionsKeys = ''
+      this.previousActionsLabels = []
     }
   }
 
