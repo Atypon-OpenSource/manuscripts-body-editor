@@ -29,12 +29,18 @@ import {
   ImageRightIcon,
   LinkIcon,
   LockIcon,
+  LeadingHalfLeftIcon,
+  LeadingHeroImageIcon,
+  LeadingLargeFloatIcon,
+  LeadingSmallFloatIcon,
+  LeadingWallpaperIcon,
   ORCIDIcon as ORCID,
   PlusIcon,
   ScrollIcon,
   SectionCategoryIcon,
   TickIcon,
   TranslateIcon,
+  WebLinkIcon,
 } from '@manuscripts/style-guide'
 import React, { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
@@ -59,6 +65,12 @@ export const fileCorruptedIcon = renderIcon(FileCorruptedIcon)
 export const draggableIcon = renderIcon(DraggableIcon)
 export const translateIcon = renderIcon(TranslateIcon)
 export const linkIcon = renderIcon(LinkIcon)
+export const leadingHeroImageIcon = renderIcon(LeadingHeroImageIcon)
+export const leadingSmallFloatIcon = renderIcon(LeadingSmallFloatIcon)
+export const leadingLargeFloatIcon = renderIcon(LeadingLargeFloatIcon)
+export const leadingWallpaperIcon = renderIcon(LeadingWallpaperIcon)
+export const leadingHalfLeftIcon = renderIcon(LeadingHalfLeftIcon)
 export const fileMainDocumentIcon = renderIcon(FileMainDocumentIcon)
 export const tickIcon = renderIcon(TickIcon)
 export const ORCIDIcon = renderIcon(ORCID)
+export const webLinkIcon = renderIcon(WebLinkIcon)
