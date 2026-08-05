@@ -25,10 +25,7 @@ import { findNodeByID } from '../lib/doc'
 import { getSupplementDisplayLabel } from '../lib/supplements'
 import { objectsKey } from '../plugins/objects'
 import { createEditableNodeView } from './creators'
-import {
-  CrossReferenceView,
-  isValidCrossReferenceTarget,
-} from './cross_reference'
+import { CrossReferenceView } from './cross_reference'
 import ReactSubView from './ReactSubView'
 
 export class CrossReferenceEditableView extends CrossReferenceView {
@@ -86,19 +83,15 @@ export class CrossReferenceEditableView extends CrossReferenceView {
     const targets = objectsKey.getState(this.view.state) as Map<string, Target>
     const files = this.props.getFiles()
     const fileMap = new Map(files.map((f) => [f.id, f.name]))
-    const imageElement = schema.nodes.image_element.name
+    const excludedTypes = [schema.nodes.image_element.name]
     const supplement = schema.nodes.supplement.name
 
     return Array.from(targets.values()).reduce<Target[]>((acc, t) => {
-      // Plain Simple Images are not cross-referenceable; only those with a
-      // linked file (extLink → Target.href) should appear in the picker.
-      if (t.type === imageElement && !t.href) {
+      if (excludedTypes.includes(t.type)) {
         return acc
       }
-      if (t.type === imageElement && t.href) {
-        acc.push({ ...t, label: fileMap.get(t.href) ?? '', caption: '' })
-      } else if (t.type === supplement && t.href) {
-        // Prefer caption title, then URL / file name.
+      // Prefer caption title, then URL / file name for supplements and weblinks.
+      if (t.type === supplement && t.href) {
         const found = findNodeByID(this.view.state.doc, t.id)
         const label = found
           ? getSupplementDisplayLabel(found.node as SupplementNode, files)
@@ -170,7 +163,7 @@ export class CrossReferenceEditableView extends CrossReferenceView {
 
     const targets = objectsKey.getState(this.view.state) as Map<string, Target>
     const rid = this.node.attrs.rids[0]
-    const isOrphaned = !isValidCrossReferenceTarget(targets?.get(rid))
+    const isOrphaned = !targets?.get(rid)
 
     const actions: ContextMenuProps['actions'] = [
       {

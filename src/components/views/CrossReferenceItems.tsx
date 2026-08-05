@@ -173,10 +173,7 @@ const getTargetIcon = (
   target: Target,
   files: FileAttachment[]
 ): React.ReactNode => {
-  if (
-    target.type === schema.nodes.supplement.name ||
-    target.type === schema.nodes.image_element.name
-  ) {
+  if (target.type === schema.nodes.supplement.name) {
     if (target.href && allowedHref(target.href)) {
       return <WebLinkIcon className="file-icon" />
     }
@@ -196,7 +193,6 @@ const GROUP_LABELS: Record<string, string> = {
   box_element: 'Boxes',
   embed: 'Media',
   supplement: 'Supplementary files',
-  image_element: 'Linked files',
 }
 
 interface Props {
