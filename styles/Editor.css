@@ -1,6 +1,6 @@
 :root {
   --body-side-margin: 65px;
-  --focus-outline-color: #3DADFF;
+  --focus-outline-color: #3dadff;
   --focus-outline-offset: 2px;
   --focus-outline-radius: 3px;
 }
@@ -83,7 +83,7 @@
   content: '— ';
 }
 
-.ProseMirror .block-container > .block.pullquote {
+.ProseMirror .block-container > .container > .block.pullquote {
   padding: 0 0 7px 48px;
 }
 .ProseMirror .pullquote {
@@ -327,7 +327,7 @@
 
 .ProseMirror .caption-title[element-label]::before,
 .ProseMirror .caption-description > [element-label]::before {
-  content: attr(element-label)":";
+  content: attr(element-label) ':';
 }
 
 .ProseMirror .caption-title:not(:has(.placeholder-text)) {
@@ -338,11 +338,14 @@
   display: block;
 }
 
-.ProseMirror .caption-description, .ProseMirror .caption-description[element-label] > p:first-child {
+.ProseMirror .caption-description,
+.ProseMirror .caption-description[element-label] > p:first-child {
   display: inline;
 }
 
-.ProseMirror .caption-description, .ProseMirror .caption-title, .ProseMirror .element-label {
+.ProseMirror .caption-description,
+.ProseMirror .caption-title,
+.ProseMirror .element-label {
   font-size: 14px;
   outline: none;
   margin: 0;
@@ -708,6 +711,7 @@
   z-index: 2;
 }
 
+.ProseMirror .block-container > .container > .block,
 .ProseMirror .block-container > .block {
   margin: 0;
   z-index: 1;
