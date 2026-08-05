@@ -652,6 +652,19 @@ export const getEditorMenus = (
         isHidden: !templateAllows(state, schema.nodes.citation),
       },
       {
+        id: 'insert-reference-section',
+        label: 'New reference',
+        shortcut: {
+          mac: 'Option+CommandOrControl+N',
+          pc: 'CommandOrControl+Option+N',
+        },
+        isEnabled:
+          isEditAllowed(state) &&
+          isCommandValid(canInsert(schema.nodes.cross_reference)),
+        run: doCommand(insertCrossReference),
+        isHidden: !templateAllows(state, schema.nodes.bibliography_item),
+      },
+      {
         id: 'insert-cross-reference',
         label: 'Cross-reference',
         shortcut: {

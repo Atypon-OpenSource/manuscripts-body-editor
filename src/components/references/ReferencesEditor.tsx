@@ -19,6 +19,11 @@ import React, { useReducer, useState } from 'react'
 import { attrsReducer } from '../../lib/array-reducer'
 import { cleanItemValues } from '../../lib/utils'
 import { ReferencesModal, ReferencesModalProps } from './ReferencesModal'
+import { EditorState, Transaction } from 'prosemirror-state'
+import { EditorView } from 'prosemirror-view'
+import { getEditorProps } from '../../plugins/editor-props'
+import ReactSubView from '../../views/ReactSubView'
+import { getBibliographyPluginState } from '../../plugins/bibliography'
 
 export type ReferencesEditorProps = Omit<
   ReferencesModalProps,
@@ -58,4 +63,36 @@ export const ReferencesEditor: React.FC<ReferencesEditorProps> = (props) => {
       onDelete={handleDelete}
     />
   )
+}
+
+export const openReferencesEditor = (
+  state: EditorState,
+  dispatch?: (tr: Transaction) => void,
+  view?: EditorView
+) => {
+  if (!view) {
+    return
+  }
+
+  const props = getEditorProps(state)
+  const onSave = () => {
+
+  }
+  const componentProps: ReferencesEditorProps = {
+    items: [],
+    citationCounts: new Map<string, number>(),
+    // onSave: this.handleSave,
+    // onDelete: this.handleDelete,
+  }
+
+  const referencesEditor = ReactSubView(
+    props,
+    ReferencesEditor,
+    componentProps,
+    state.doc,
+    () => 0,
+    view
+  )
+  view.focus()
+  document.body.appendChild(referencesEditor)
 }
