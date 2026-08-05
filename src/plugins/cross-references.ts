@@ -21,7 +21,7 @@ import {
   Target,
 } from '@manuscripts/transform'
 import { trackChangesPluginKey } from '@manuscripts/track-changes-plugin'
-import { isEqual } from 'lodash/isEqual'
+import isEqual from 'lodash/isEqual'
 import { Node, ResolvedPos } from 'prosemirror-model'
 import { NodeSelection, Plugin, Transaction } from 'prosemirror-state'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
