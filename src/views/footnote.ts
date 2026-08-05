@@ -18,7 +18,8 @@ import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import { isDeleted, isPendingInsert } from '@manuscripts/track-changes-plugin'
 import { FootnoteNode, ManuscriptNode, schema } from '@manuscripts/transform'
 
-import { isEqual } from 'lodash'
+import isEqual from 'lodash/isEqual'
+import xor from 'lodash/xor'
 import { NodeSelection, Transaction } from 'prosemirror-state'
 import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 
@@ -33,10 +34,13 @@ import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
 import { handleEnterKey } from '../lib/navigation-utils'
+import { isSelectionInsideNode } from '../lib/view'
 
 export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
   dialog: HTMLElement
   contextMenu: HTMLDivElement
+  isMenuShown: boolean = false
+  previousActionsLabels: string[] = []
 
   public initialise = () => {
     this.dom = document.createElement('div')
@@ -44,10 +48,14 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
     this.dom.tabIndex = 0
     this.contentDOM = document.createElement('div')
     this.contentDOM.classList.add('footnote-text')
-    this.dom.addEventListener('mousedown', (e) => this.handleClick(e, false))
     this.dom.addEventListener(
       'keydown',
-      handleEnterKey((e) => this.handleClick(e, true))
+      handleEnterKey(() => {
+        const actions = this.getContextMenuActions()
+        if (actions.length > 0) {
+          this.showContextMenu(actions, true)
+        }
+      })
     )
     this.updateContents()
   }
@@ -73,6 +81,29 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
     this.dom.innerHTML = ''
     this.dom.appendChild(marker)
     this.contentDOM && this.dom.appendChild(this.contentDOM)
+
+    const selectionInsideNode = isSelectionInsideNode(
+      this.view,
+      this.node,
+      this.getPos()
+    )
+
+    const actions = this.getContextMenuActions()
+    const hasActions = actions.length > 0
+    const currentLabels = actions.map(({ label }) => label)
+    const changedLabels = xor(currentLabels, this.previousActionsLabels)
+    if (
+      selectionInsideNode &&
+      hasActions &&
+      (!this.isMenuShown || changedLabels.length > 0)
+    ) {
+      this.showContextMenu(actions, false)
+      this.previousActionsLabels = actions.map(({ label }) => label)
+    } else if ((!hasActions || !selectionInsideNode) && this.isMenuShown) {
+      this.props.popper.destroy()
+      this.isMenuShown = false
+      this.previousActionsLabels = []
+    }
   }
 
   getFootnoteState() {
@@ -81,41 +112,20 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
     return { id, fn }
   }
 
-  showContextMenu(element: HTMLElement, autoFocus: boolean) {
+  showContextMenu(actions: ContextMenuProps['actions'], autoFocus: boolean) {
+    this.isMenuShown = true
     this.props.popper.destroy()
-
-    const can = this.props.getCapabilities()
-    const { id, fn } = this.getFootnoteState()
-
-    const componentProps: ContextMenuProps = {
-      actions: [],
-    }
-    if (!fn?.unusedFootnoteIDs.has(id)) {
-      componentProps.actions.push({
-        label: 'Go to footnote Refernce',
-        action: () => this.handleMarkerClick(),
-        icon: 'Scroll',
-      })
-    }
-    if (can.editArticle && !isDeleted(this.node)) {
-      componentProps.actions.push({
-        label: 'Delete',
-        action: () => this.handleDeleteClick(),
-        icon: 'Delete',
-      })
-    }
-
     this.contextMenu = ReactSubView(
       this.props,
       ContextMenu,
-      componentProps,
+      { actions },
       this.node,
       this.getPos,
       this.view,
-      ['context-menu', 'footnote-context-menu']
+      ['menu', 'footnote-context-menu']
     )
     this.props.popper.show(
-      element,
+      this.dom,
       this.contextMenu,
       'right-start',
       true,
@@ -124,12 +134,27 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
     )
   }
 
-  handleClick = (event: Event, fromKeyboard = false) => {
-    const element = event.target as HTMLElement
-    const item = element.closest('.footnote')
-    if (item) {
-      this.showContextMenu(item as HTMLElement, fromKeyboard)
+  getContextMenuActions() {
+    const can = this.props.getCapabilities()
+    const { id, fn } = this.getFootnoteState()
+    const actions: ContextMenuProps['actions'] = []
+
+    if (!fn?.unusedFootnoteIDs.has(id)) {
+      actions.push({
+        label: 'Go to footnote Reference',
+        action: () => this.handleMarkerClick(),
+        icon: 'Scroll',
+      })
     }
+    if (can.editArticle && !isDeleted(this.node)) {
+      actions.push({
+        label: 'Delete',
+        action: () => this.handleDeleteClick(),
+        icon: 'Delete',
+      })
+    }
+
+    return actions
   }
 
   handleMarkerClick = (e?: Event) => {

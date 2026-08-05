@@ -30,17 +30,30 @@ import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
 import ReactSubView from './ReactSubView'
 import { isDeleted, isPendingInsert } from '@manuscripts/track-changes-plugin'
+import { handleEnterKey } from '../lib/navigation-utils'
+import { isSelectionInsideNode } from '../lib/view'
 
 export class GeneralTableFootnoteView extends BaseNodeView<
   Trackable<GeneralTableFootnoteNode>
 > {
   dialog: HTMLElement
   contextMenu: HTMLDivElement
+  isMenuShown: boolean = false
 
   public initialise = () => {
     this.dom = document.createElement('div')
     this.dom.classList.add('footnote', 'general-table-footnote')
-    this.dom.addEventListener('mousedown', this.handleClick)
+    this.dom.tabIndex = 0
+    this.dom.addEventListener(
+      'keydown',
+      handleEnterKey(() => {
+        const can = this.props.getCapabilities()
+        const canShowMenu = can.editArticle && !isDeleted(this.node)
+        if (canShowMenu) {
+          this.showContextMenu(true)
+        }
+      })
+    )
     this.contentDOM = document.createElement('div')
     this.contentDOM.classList.add('footnote-text')
     this.updateContents()
@@ -50,32 +63,34 @@ export class GeneralTableFootnoteView extends BaseNodeView<
     super.updateContents()
     this.dom.innerHTML = ''
     this.contentDOM && this.dom.appendChild(this.contentDOM)
-  }
 
-  handleClick = (e: Event) => {
-    const element = e.target as HTMLElement
+    const selectionInsideNode = isSelectionInsideNode(
+      this.view,
+      this.node,
+      this.getPos()
+    )
     const can = this.props.getCapabilities()
-
-    if (can.editArticle) {
-      const item = element.closest('.general-table-footnote')
-      if (item) {
-        this.showContextMenu(item as HTMLElement)
-      }
+    const canShowMenu = can.editArticle && !isDeleted(this.node)
+    if (canShowMenu && selectionInsideNode && !this.isMenuShown) {
+      this.showContextMenu(false)
+    } else if ((!canShowMenu || !selectionInsideNode) && this.isMenuShown) {
+      this.props.popper.destroy()
+      this.isMenuShown = false
     }
   }
 
-  showContextMenu(element: HTMLElement) {
+  showContextMenu(autoFocus = false) {
+    this.isMenuShown = true
     this.props.popper.destroy()
 
     const componentProps: ContextMenuProps = {
-      actions: [],
-    }
-    if (!isDeleted(this.node)) {
-      componentProps.actions.push({
-        label: 'Delete',
-        action: () => this.handleDeleteClick(),
-        icon: 'Delete',
-      })
+      actions: [
+        {
+          label: 'Delete',
+          action: () => this.handleDeleteClick(),
+          icon: 'Delete',
+        },
+      ],
     }
 
     this.contextMenu = ReactSubView(
@@ -85,9 +100,16 @@ export class GeneralTableFootnoteView extends BaseNodeView<
       this.node,
       this.getPos,
       this.view,
-      ['context-menu', 'footnote-context-menu']
+      ['menu', 'footnote-context-menu']
     )
-    this.props.popper.show(element, this.contextMenu, 'right-start')
+    this.props.popper.show(
+      this.dom,
+      this.contextMenu,
+      'right-start',
+      false,
+      [],
+      autoFocus
+    )
   }
 
   handleDeleteClick = () => {
