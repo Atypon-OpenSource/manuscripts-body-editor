@@ -24,7 +24,7 @@ import {
   ManuscriptNode,
 } from '@manuscripts/transform'
 import * as Citeproc from 'citeproc'
-import { isEqual } from 'lodash'
+import isEqual from 'lodash/isEqual'
 import { EditorState, Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
