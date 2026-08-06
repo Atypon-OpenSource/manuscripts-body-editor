@@ -240,6 +240,10 @@ export class FigureEditableView extends FigureView {
   }
 
   public addTools() {
+    if (this.getPos() === undefined) {
+      return
+    }
+
     this.manageReactTools()
 
     const existingDragHandlers =
