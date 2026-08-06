@@ -17,6 +17,12 @@ import { BibliographyItemAttrs } from '@manuscripts/transform'
 import { EditorState, Transaction } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import React, { useReducer, useState } from 'react'
+import {
+  BibliographyItemAttrs,
+  generateNodeID,
+  schema,
+} from '@manuscripts/transform'
+import React, { useEffect, useReducer, useState } from 'react'
 
 import { attrsReducer } from '../../lib/array-reducer'
 import { cleanItemValues } from '../../lib/utils'
@@ -27,18 +33,25 @@ import { ReferencesModal, ReferencesModalProps } from './ReferencesModal'
 
 export type ReferencesEditorProps = Omit<
   ReferencesModalProps,
-  'isOpen' | 'onCancel'
->
+  'isOpen' | 'onCancel' | 'handleImport' | 'onSave'
+> & {
+  onSave: (item: BibliographyItemAttrs[]) => void
+}
 
 const itemsReducer = attrsReducer<BibliographyItemAttrs>()
 
 export const ReferencesEditor: React.FC<ReferencesEditorProps> = (props) => {
   const [isOpen, setOpen] = useState(true)
   const [items, dispatch] = useReducer(itemsReducer, props.items)
+  const [selectedItem, setSelectedItem] = useState(props.item)
+
+  useEffect(() => {
+    setSelectedItem(props.item)
+  }, [props.item])
 
   const handleSave = (item: BibliographyItemAttrs) => {
     const cleanedItem = cleanItemValues(item)
-    props.onSave(cleanedItem)
+    props.onSave([cleanedItem])
     dispatch({
       type: 'update',
       items: [cleanedItem],
@@ -53,14 +66,32 @@ export const ReferencesEditor: React.FC<ReferencesEditorProps> = (props) => {
     })
   }
 
+  const handleImport = (data: BibliographyItemAttrs[]) => {
+    const newItems = data.map((item) =>
+      cleanItemValues({
+        ...item,
+        id: generateNodeID(schema.nodes.bibliography_item),
+      })
+    )
+
+    props.onSave(newItems)
+
+    dispatch({
+      type: 'set',
+      state: [...items, ...newItems],
+    })
+  }
+
   return (
     <ReferencesModal
-      {...props}
       isOpen={isOpen}
       onCancel={() => setOpen(false)}
       items={items}
+      item={selectedItem}
+      citationCounts={props.citationCounts}
       onSave={handleSave}
       onDelete={handleDelete}
+      handleImport={handleImport}
     />
   )
 }

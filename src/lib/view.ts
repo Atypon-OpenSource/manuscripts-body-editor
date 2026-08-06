@@ -15,8 +15,10 @@
  */
 
 import {
+  BibliographyItemAttrs,
   ManuscriptEditorState,
   ManuscriptEditorView,
+  ManuscriptNode,
   ManuscriptNodeType,
   schema,
 } from '@manuscripts/transform'
@@ -98,6 +100,69 @@ export const deleteNode = (view: ManuscriptEditorView, id: string) => {
     const node = child.node
     view.dispatch(view.state.tr.delete(pos, pos + node.nodeSize))
   }
+}
+
+const createBibliographySection = (nodes: ManuscriptNode[]) =>
+  schema.nodes.bibliography_section.createAndFill({}, [
+    schema.nodes.section_title.create({}, schema.text('References')),
+    schema.nodes.bibliography_element.create({}, nodes),
+  ]) as ManuscriptNode
+
+export const insertBibliographyItems = (
+  view: ManuscriptEditorView,
+  items: BibliographyItemAttrs[]
+) => {
+  const { doc } = view.state
+  let tr = view.state.tr
+
+  const biblioSection = utils.findChildrenByType(
+    doc,
+    schema.nodes.bibliography_element,
+    true
+  )
+
+  if (biblioSection.length) {
+    let insertPos = biblioSection[0].pos + 1
+    for (const attrs of items) {
+      const node = schema.nodes.bibliography_item.create(attrs)
+      tr = tr.insert(insertPos, node)
+      insertPos += node.nodeSize
+    }
+  } else {
+    const backmatter = utils.findChildrenByType(
+      doc,
+      schema.nodes.backmatter,
+      true
+    )
+    const backmatterEnd = backmatter[0]
+      ? backmatter[0].node.nodeSize + backmatter[0].pos
+      : 0
+
+    const nodes = items.map((attrs) =>
+      schema.nodes.bibliography_item.create(attrs)
+    )
+    tr = tr.insert(
+      backmatterEnd ? backmatterEnd - 1 : tr.doc.content.size,
+      createBibliographySection(nodes)
+    )
+  }
+  view.dispatch(tr)
+}
+
+export const saveBibliographyItem = (
+  view: ManuscriptEditorView,
+  attrs: BibliographyItemAttrs[]
+) => {
+  if (attrs.length === 1) {
+    const item = attrs[0]
+
+    if (findChildByID(view, item.id)) {
+      updateNodeAttrs(view, schema.nodes.bibliography_item, item)
+      return
+    }
+  }
+
+  insertBibliographyItems(view, attrs)
 }
 
 export const isEmptyReferences = (state: ManuscriptEditorState) => {
