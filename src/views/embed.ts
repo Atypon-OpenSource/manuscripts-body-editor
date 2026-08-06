@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import { EmbedNode } from '@manuscripts/transform'
-import { isEqual } from 'lodash'
+import isEqual from 'lodash/isEqual'
 import { NodeSelection } from 'prosemirror-state'
 
 import {

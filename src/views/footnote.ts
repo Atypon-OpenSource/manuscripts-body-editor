@@ -18,7 +18,7 @@ import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import { isDeleted, isPendingInsert } from '@manuscripts/track-changes-plugin'
 import { FootnoteNode, ManuscriptNode, schema } from '@manuscripts/transform'
 
-import { isEqual } from 'lodash'
+import isEqual from 'lodash/isEqual'
 import { NodeSelection, Transaction } from 'prosemirror-state'
 import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 
