@@ -15,6 +15,7 @@
  */
 
 import {
+  ManuscriptEditorState,
   ManuscriptEditorView,
   ManuscriptNodeType,
   schema,
@@ -97,4 +98,19 @@ export const deleteNode = (view: ManuscriptEditorView, id: string) => {
     const node = child.node
     view.dispatch(view.state.tr.delete(pos, pos + node.nodeSize))
   }
+}
+
+export const isEmptyReferences = (state: ManuscriptEditorState) => {
+  const bibSection = utils.findChildrenByType(
+    state.doc,
+    schema.nodes.bibliography_section
+  )[0]
+  if (!bibSection) {
+    return true
+  }
+  const bibElement = utils.findChildrenByType(
+    bibSection.node,
+    schema.nodes.bibliography_element
+  )[0]
+  return !(bibElement && bibElement.node.nodeSize > 2)
 }

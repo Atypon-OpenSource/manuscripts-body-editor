@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 import { BibliographyItemAttrs } from '@manuscripts/transform'
+import { EditorState, Transaction } from 'prosemirror-state'
+import { EditorView } from 'prosemirror-view'
 import React, { useReducer, useState } from 'react'
 
 import { attrsReducer } from '../../lib/array-reducer'
 import { cleanItemValues } from '../../lib/utils'
-import { ReferencesModal, ReferencesModalProps } from './ReferencesModal'
-import { EditorState, Transaction } from 'prosemirror-state'
-import { EditorView } from 'prosemirror-view'
+import { deleteNode } from '../../lib/view'
 import { getEditorProps } from '../../plugins/editor-props'
 import ReactSubView from '../../views/ReactSubView'
-import { getBibliographyPluginState } from '../../plugins/bibliography'
+import { ReferencesModal, ReferencesModalProps } from './ReferencesModal'
 
 export type ReferencesEditorProps = Omit<
   ReferencesModalProps,
@@ -67,22 +67,22 @@ export const ReferencesEditor: React.FC<ReferencesEditorProps> = (props) => {
 
 export const openReferencesEditor = (
   state: EditorState,
-  dispatch?: (tr: Transaction) => void,
+  _?: (tr: Transaction) => void,
   view?: EditorView
 ) => {
   if (!view) {
-    return
+    return false
   }
 
   const props = getEditorProps(state)
   const onSave = () => {
-
+    //TODO:: will replace with the saveBibliographyItem from LEAN-5689
   }
   const componentProps: ReferencesEditorProps = {
     items: [],
     citationCounts: new Map<string, number>(),
-    // onSave: this.handleSave,
-    // onDelete: this.handleDelete,
+    onDelete: (item) => deleteNode(view, item.id),
+    onSave,
   }
 
   const referencesEditor = ReactSubView(
@@ -95,4 +95,5 @@ export const openReferencesEditor = (
   )
   view.focus()
   document.body.appendChild(referencesEditor)
+  return true
 }

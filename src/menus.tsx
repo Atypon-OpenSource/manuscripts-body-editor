@@ -65,6 +65,8 @@ import { isEditAllowed } from './lib/utils'
 import { getEditorProps } from './plugins/editor-props'
 import { useEditor } from './useEditor'
 import { openInsertAwardModal } from './components/awards/AwardModal'
+import { openReferencesEditor } from './components/references/ReferencesEditor'
+import { isEmptyReferences } from './lib/view'
 
 export const getEditorMenus = (
   editor: ReturnType<typeof useEditor>
@@ -658,10 +660,8 @@ export const getEditorMenus = (
           mac: 'Option+CommandOrControl+N',
           pc: 'CommandOrControl+Option+N',
         },
-        isEnabled:
-          isEditAllowed(state) &&
-          isCommandValid(canInsert(schema.nodes.cross_reference)),
-        run: doCommand(insertCrossReference),
+        isEnabled: isEditAllowed(state) && isCommandValid(isEmptyReferences),
+        run: doCommand(openReferencesEditor),
         isHidden: !templateAllows(state, schema.nodes.bibliography_item),
       },
       {
