@@ -587,7 +587,7 @@ span.comment-marker {
 .bib-item {
   display: flex;
   margin-bottom: 12px;
-  min-height: 80px;
+  min-height: 60px;
 }
 .bib-item:focus-visible {
   outline: 4px solid var(--focus-outline-color);
@@ -2161,6 +2161,9 @@ th:hover > .table-context-menu-button,
 .tracking-visible .ProseMirror .bib-item.inserted .uncited-reference-marker,
 .tracking-visible .ProseMirror .deleted.bib-item .uncited-reference-marker {
   text-decoration: none !important;
+}
+.tracking-visible .ProseMirror .bib-item.deleted {
+  display: block;
 }
 .ProseMirror .uncited-reference-marker {
   padding: 1px 6px 0 6px;

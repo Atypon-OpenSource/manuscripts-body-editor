@@ -356,6 +356,7 @@ const ReferenceButton = withNavigableListItem(styled.button`
   background: none;
   border: none;
   border-radius: 0;
+  text-align: inherit;
   
   padding: ${(props) => props.theme.grid.unit * 4}px 0;
   border-top: 1px solid transparent;
