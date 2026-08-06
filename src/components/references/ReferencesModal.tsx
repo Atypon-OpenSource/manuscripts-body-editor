@@ -346,10 +346,17 @@ const ReferencesInnerWrapper = withListNavigation(styled.div`
 
 const CitationCountIconStyled = styled(CitationCountIcon)``
 
-const ReferenceButton = withNavigableListItem(styled.div`
+const ReferenceButton = withNavigableListItem(styled.button`
   cursor: pointer;
   display: flex;
   justify-content: flex-start;
+  font: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+  background: none;
+  border: none;
+  border-radius: 0;
+  
   padding: ${(props) => props.theme.grid.unit * 4}px 0;
   border-top: 1px solid transparent;
   border-bottom: 1px solid transparent;
