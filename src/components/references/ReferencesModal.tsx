@@ -34,7 +34,7 @@ import {
 } from '@manuscripts/style-guide'
 import { BibliographyItemAttrs } from '@manuscripts/transform'
 import isEqual from 'lodash/isEqual'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, useMemo } from 'react'
 import styled from 'styled-components'
 
 import {

@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { BibliographyItemAttrs } from '@manuscripts/transform'
 import { EditorState, Transaction } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
-import React, { useReducer, useState } from 'react'
 import {
   BibliographyItemAttrs,
   generateNodeID,
