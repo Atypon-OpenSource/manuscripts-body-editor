@@ -21,7 +21,7 @@ import { Decoration, DecorationSet } from 'prosemirror-view'
 
 import { insertTransAbstract, insertTransGraphicalAbstract } from '../commands'
 import { EditorProps } from '../configs/ManuscriptsEditor'
-import { addAuthorIcon, translateIcon } from '../icons'
+import { addIcon, translateIcon } from '../icons'
 import { getLanguage, getLanguageLabel } from '../lib/languages'
 import { templateAllows } from '../lib/template'
 import {
@@ -137,7 +137,7 @@ export default (props: EditorProps) =>
                     $span.tabIndex = 0
                     $span.className = 'add-trans-abstract'
                     $span.title = 'Add translation'
-                    $span.innerHTML = `${addAuthorIcon} <span class="add-trans-abstract-text">Add translation</span>`
+                    $span.innerHTML = `${addIcon} <span class="add-trans-abstract-text">Add translation</span>`
 
                     const handleActivate = (event: Event) => {
                       event.preventDefault()

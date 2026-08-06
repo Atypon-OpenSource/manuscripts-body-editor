@@ -20,14 +20,14 @@ import { Decoration, DecorationSet } from 'prosemirror-view'
 import { v4 as uuidv4 } from 'uuid'
 
 import { EditorProps } from '../configs/ManuscriptsEditor'
-import { addAuthorIcon } from '../icons'
+import { addIcon } from '../icons'
 import { handleEnterKey } from '../lib/navigation-utils'
 import { findInsertionPosition } from '../lib/utils'
 
 const createAddSubtitleButton = (handler: () => void) => {
   const button = document.createElement('span')
   button.className = 'add-subtitle'
-  button.innerHTML = `${addAuthorIcon} <span class="add-subtitle-text">Add subtitle</span>`
+  button.innerHTML = `${addIcon} <span class="add-subtitle-text">Add subtitle</span>`
 
   button.tabIndex = 0
   const activate = (event: MouseEvent | KeyboardEvent) => {
@@ -72,23 +72,25 @@ export default (props: EditorProps) =>
             const titleEndPos = titlePos + titleNode.nodeSize
 
             return DecorationSet.create(state.doc, [
-              Decoration.widget(titleEndPos, (view: ManuscriptEditorView) => {
-                return createAddSubtitleButton(() => {
-                  const subtitlesNode = schema.nodes.subtitles.create(
-                    { id: uuidv4() },
-                    [schema.nodes.subtitle.create({ id: uuidv4() })]
-                  )
-                  const pos = findInsertionPosition(
-                    schema.nodes.subtitles,
-                    state.doc
-                  )
-                  const tr = view.state.tr.insert(pos, subtitlesNode)
-                  const subtitlePos = pos + 1
-                  tr.setSelection(TextSelection.create(tr.doc, subtitlePos))
+              Decoration.widget(
+                titleEndPos,
+                (view: ManuscriptEditorView) => {
+                  return createAddSubtitleButton(() => {
+                    const subtitlesNode = schema.nodes.subtitles.create(
+                      { id: uuidv4() },
+                      [schema.nodes.subtitle.create({ id: uuidv4() })]
+                    )
+                    const pos = findInsertionPosition(
+                      schema.nodes.subtitles,
+                      state.doc
+                    )
+                    const tr = view.state.tr.insert(pos, subtitlesNode)
+                    const subtitlePos = pos + 1
+                    tr.setSelection(TextSelection.create(tr.doc, subtitlePos))
 
-                  view.dispatch(tr)
-                  view.focus()
-                })
+                    view.dispatch(tr)
+                    view.focus()
+                  })
                 },
                 { side: -1 }
               ),
