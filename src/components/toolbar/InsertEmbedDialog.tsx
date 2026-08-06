@@ -93,8 +93,12 @@ export const InsertEmbedDialog: React.FC<InsertEmbedDialogProps> = ({
     () => {
       debounce(async () => {
         if (url && allowedHref(url)) {
-        const html = await getEditorProps(state).fetchOEmbedHtml(url, 368, 217)
-        setOEmbedHTML(html)
+          const html = await getEditorProps(state).fetchOEmbedHtml(
+            url,
+            368,
+            217
+          )
+          setOEmbedHTML(html)
         }
       })
     },

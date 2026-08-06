@@ -13,10 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {
-  Category,
-  Dialog,
-} from '@manuscripts/style-guide'
+import { Category, Dialog } from '@manuscripts/style-guide'
 import { ManuscriptEditorView, SupplementNode } from '@manuscripts/transform'
 import React, { useState } from 'react'
 
@@ -37,8 +34,8 @@ const DeleteSupplementDialog: React.FC<{
     <Dialog
       isOpen={isOpen}
       category={Category.confirmation}
-      header='Delete supplement'
-      message='Are you sure you want to delete &ldquo;{label}&rdquo;?'
+      header="Delete supplement"
+      message="Are you sure you want to delete &ldquo;{label}&rdquo;?"
       actions={{
         primary: {
           action: () => {

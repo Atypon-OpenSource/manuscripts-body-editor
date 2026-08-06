@@ -20,7 +20,10 @@ import {
   schema,
   SupplementNode,
 } from '@manuscripts/transform'
-import { findChildrenByType, findParentNodeClosestToPos } from 'prosemirror-utils'
+import {
+  findChildrenByType,
+  findParentNodeClosestToPos,
+} from 'prosemirror-utils'
 
 import { allowedHref } from './url'
 
@@ -29,10 +32,19 @@ export type NodeWeblink = {
   pos: number
 }
 
+export const getSupplementCaptionTitle = (node: SupplementNode): string => {
+  return node.firstChild?.textContent.trim() ?? ''
+}
+
 export const getSupplementDisplayLabel = (
   node: SupplementNode,
   files: { id: string; name: string }[]
 ): string => {
+  const captionTitle = getSupplementCaptionTitle(node)
+  if (captionTitle) {
+    return captionTitle
+  }
+
   const href = node.attrs.href
   if (allowedHref(href)) {
     return href

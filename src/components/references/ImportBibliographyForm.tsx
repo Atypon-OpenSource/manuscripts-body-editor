@@ -25,7 +25,7 @@ import {
 } from '@manuscripts/style-guide'
 import { BibliographyItemAttrs } from '@manuscripts/transform'
 import { useFormik } from 'formik'
-import { debounce } from 'lodash'
+import debounce from 'lodash/debounce'
 import React, {
   KeyboardEvent,
   useCallback,
