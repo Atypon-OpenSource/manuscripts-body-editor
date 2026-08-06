@@ -20,7 +20,6 @@ import {
   BibliographyItemAttrs,
   BibliographyItemNode,
   isCitationNode,
-  schema,
 } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 
@@ -33,13 +32,11 @@ import { handleEnterKey } from '../lib/navigation-utils'
 import { findNodeByID } from '../lib/doc'
 import { sanitize } from '../lib/dompurify'
 
-import { deleteNode, findChildByID, updateNodeAttrs } from '../lib/view'
 import {
   getBibliographyPluginState,
   PluginState,
 } from '../plugins/bibliography'
 import { deleteNode, findChildByID, saveBibliographyItem } from '../lib/view'
-import { getBibliographyPluginState } from '../plugins/bibliography'
 import { commentsKey, setCommentSelection } from '../plugins/comments'
 import { selectedSuggestionKey } from '../plugins/selected-suggestion'
 import { Trackable } from '../types'

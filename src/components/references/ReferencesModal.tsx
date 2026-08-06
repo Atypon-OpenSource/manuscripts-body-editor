@@ -33,16 +33,13 @@ import {
   withListNavigation,
   withNavigableListItem,
 } from '@manuscripts/style-guide'
-import { BibliographyItemAttrs } from '@manuscripts/transform'
 import isEqual from 'lodash/isEqual'
-import React, { useEffect, useRef, useState, useMemo } from 'react'
 import {
   BibliographyItemAttrs,
   generateNodeID,
   schema,
 } from '@manuscripts/transform'
-import { isEqual } from 'lodash'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, useMemo } from 'react'
 import styled from 'styled-components'
 
 import {
@@ -52,18 +49,6 @@ import {
 import { ReferenceLine } from './ReferenceLine'
 import { ImportBibliographyModal } from './ImportBibliographyModal'
 import { ImportSuccessPlaceholder } from './ImportSuccessPlaceholder'
-
-const ReferencesModalContainer = styled(ModalContainer)`
-  min-width: 960px;
-`
-
-const ReferencesSidebar = styled(ModalSidebar)`
-  width: 70%;
-`
-
-const ReferencesSidebarContent = styled(SidebarContent)`
-  overflow-y: auto;
-`
 
 const ImportFromFileFooter = styled.div`
   padding: 16px;
@@ -91,63 +76,6 @@ const ImportFromFileButton = styled.button`
 
   svg rect {
     fill: #6e6e6e;
-  }
-`
-
-const ReferencesInnerWrapper = withListNavigation(styled.div`
-  width: 100%;
-  padding: 12px 0;
-`)
-
-const ReferenceButton = withNavigableListItem(styled.div`
-  cursor: pointer;
-  display: flex;
-  justify-content: flex-start;
-  padding: ${(props) => props.theme.grid.unit * 4}px 0;
-  border-top: 1px solid transparent;
-  border-bottom: 1px solid transparent;
-
-  path {
-    fill: #c9c9c9;
-  }
-
-  &:hover {
-    background: ${(props) => props.theme.colors.background.info};
-  }
-
-  &.selected {
-    background: ${(props) => props.theme.colors.background.info};
-    border-top-color: #bce7f6;
-    border-bottom-color: #bce7f6;
-  }
-
-  .tooltip {
-    max-width: ${(props) => props.theme.grid.unit * 25}px;
-    padding: ${(props) => props.theme.grid.unit * 2}px;
-    border-radius: 6px;
-  }
-`)
-
-const IconContainer = styled.div`
-  padding-right: ${(props) => props.theme.grid.unit * 5}px;
-  position: relative;
-`
-
-const CitationCount = styled.div`
-  border-radius: 50%;
-  width: 12px;
-  height: 12px;
-  position: absolute;
-  color: #ffffff;
-  background-color: #bce7f6;
-  text-align: center;
-  vertical-align: top;
-  top: 0;
-  left: 16px;
-  font-size: 9px;
-
-  &.unused {
-    background-color: #fe8f1f;
   }
 `
 
@@ -333,15 +261,14 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
   }
 
   const hasChanged = () => {
-  const clearImportSuccess = () => setImportSuccessCount(null)
-
-  const handleItemClick = (item: BibliographyItemAttrs) => {
-    clearImportSuccess()
     const values = valuesRef.current
     return values && selection && !isEqual(values, normalize(selection))
   }
 
+  const clearImportSuccess = () => setImportSuccessCount(null)
+
   const handleItemClick = (item: BibliographyItemAttrs) => {
+    clearImportSuccess()
     if (hasChanged()) {
       setConfirm(true)
       return
@@ -359,10 +286,6 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
     setImporting(false)
     setSelection(undefined)
     setImportSuccessCount(data.length)
-  }
-
-  if (sortedItems.length <= 0) {
-    return <></>
   }
 
   return (
@@ -448,21 +371,35 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
                   ))}
                 </ReferencesInnerWrapper>
               </ReferencesSidebarContent>
+              <ImportFromFileFooter>
+                <ImportFromFileButton
+                  type="button"
+                  data-cy="import-from-file-button"
+                  onClick={() => setImporting(true)}
+                >
+                  <AddAuthorIcon />
+                  Import from file
+                </ImportFromFileButton>
+              </ImportFromFileFooter>
             </ReferencesSidebar>
             <ScrollableModalContent>
-              {selection && (
-                <ReferenceForm
-                  values={normalize(selection)}
-                  showDelete={
-                    !citationCounts.get(selection.id) &&
-                    isNewItem(selection, ['id', 'type']) // disable the delete button for the new citations
-                  }
-                  onChange={handleChange}
-                  onCancel={onCancel}
-                  onDelete={handleDelete}
-                  onSave={handleSave}
-                  actionsRef={actionsRef}
-                />
+              {importSuccessCount !== null ? (
+                <ImportSuccessPlaceholder count={importSuccessCount} />
+              ) : (
+                selection && (
+                  <ReferenceForm
+                    values={normalize(selection)}
+                    showDelete={
+                      !citationCounts.get(selection.id) &&
+                      isNewItem(selection, ['id', 'type']) // disable the delete button for the new citations
+                    }
+                    onChange={handleChange}
+                    onCancel={onCancel}
+                    onDelete={handleDelete}
+                    onSave={handleSave}
+                    actionsRef={actionsRef}
+                  />
+                )
               )}
             </ScrollableModalContent>
           </ModalBody>

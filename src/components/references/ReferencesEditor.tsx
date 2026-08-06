@@ -24,7 +24,7 @@ import React, { useEffect, useReducer, useState } from 'react'
 
 import { attrsReducer } from '../../lib/array-reducer'
 import { cleanItemValues } from '../../lib/utils'
-import { deleteNode } from '../../lib/view'
+import { deleteNode, saveBibliographyItem } from '../../lib/view'
 import { getEditorProps } from '../../plugins/editor-props'
 import ReactSubView from '../../views/ReactSubView'
 import { ReferencesModal, ReferencesModalProps } from './ReferencesModal'
@@ -104,14 +104,12 @@ export const openReferencesEditor = (
   }
 
   const props = getEditorProps(state)
-  const onSave = () => {
-    //TODO:: will replace with the saveBibliographyItem from LEAN-5689
-  }
+
   const componentProps: ReferencesEditorProps = {
     items: [],
     citationCounts: new Map<string, number>(),
     onDelete: (item) => deleteNode(view, item.id),
-    onSave,
+    onSave: (item) => saveBibliographyItem(view, item),
   }
 
   const referencesEditor = ReactSubView(
