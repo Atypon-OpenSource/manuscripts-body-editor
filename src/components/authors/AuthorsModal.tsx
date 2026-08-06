@@ -34,7 +34,9 @@ import {
   InspectorTabPanels,
 } from '@manuscripts/style-guide'
 import { generateNodeID, schema } from '@manuscripts/transform'
-import { cloneDeep, isEqual, omit } from 'lodash'
+import cloneDeep from 'lodash/cloneDeep'
+import isEqual from 'lodash/isEqual'
+import omit from 'lodash/omit'
 import React, {
   useCallback,
   useEffect,
