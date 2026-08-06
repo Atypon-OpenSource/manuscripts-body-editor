@@ -24,7 +24,7 @@ import {
   withFocusTrap,
 } from '@manuscripts/style-guide'
 import { BibliographyItemAttrs } from '@manuscripts/transform'
-import { debounce } from 'lodash'
+import debounce from 'lodash/debounce'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
