@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-import { isDeleted, skipTracking, skipSelect } from '@manuscripts/track-changes-plugin'
+import {
+  isDeleted,
+  skipTracking,
+  skipSelect,
+} from '@manuscripts/track-changes-plugin'
 import {
   AttachmentNode,
   AwardNode,
@@ -517,6 +521,48 @@ export const insertSupplement = (
   return true
 }
 
+export const insertSupplementWeblink = (
+  url: string,
+  title: string,
+  view: ManuscriptEditorView
+) => {
+  const supplement = schema.nodes.supplement.createAndFill(
+    {
+      id: generateNodeID(schema.nodes.supplement),
+      href: url,
+    },
+    createAndFillCaption()
+  ) as SupplementNode
+
+  const tr = view.state.tr
+  const { pos } = upsertSupplementsSection(tr, supplement)
+  tr.setSelection(NodeSelection.create(tr.doc, pos))
+  view.focus()
+  view.dispatch(tr.scrollIntoView())
+
+  return true
+}
+
+export const updateSupplementWeblink = (
+  pos: number,
+  url: string,
+  title: string,
+  view: ManuscriptEditorView
+) => {
+  const node = view.state.doc.nodeAt(pos)
+  if (!node) {
+    return false
+  }
+  const tr = view.state.tr
+  tr.setNodeMarkup(pos, undefined, {
+    ...node.attrs,
+    href: url,
+    title: title,
+  })
+  view.dispatch(tr)
+  return true
+}
+
 export const insertAttachment = (
   file: FileAttachment,
   state: ManuscriptEditorState,
@@ -740,21 +786,62 @@ export const insertInlineCitation = (
   return true
 }
 
+export const canInsertCrossReference = (
+  state: ManuscriptEditorState
+): boolean => {
+  if (!canInsert(schema.nodes.cross_reference)(state)) {
+    return false
+  }
+  const { from, to, empty, $from, $to } = state.selection
+  if (empty) {
+    return true
+  }
+  if (!$from.sameParent($to)) {
+    return false
+  }
+  let overlaps = false
+  state.doc.nodesBetween(from, to, (node) => {
+    if (node.isAtom && !node.isText) {
+      overlaps = true
+      return false
+    }
+    return !overlaps
+  })
+  return !overlaps
+}
+
 export const insertCrossReference = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
+  if (!canInsertCrossReference(state)) {
+    return false
+  }
+
+  const text = selectedText()
+
   const node = state.schema.nodes.cross_reference.create({
+    id: generateNodeID(schema.nodes.cross_reference),
     rids: [],
+    label: text,
   })
 
-  const pos = state.selection.to
+  const { tr } = state
+  let pos: number
+  const isWrap = !state.selection.empty
 
-  const tr = state.tr.insert(pos, node)
+  if (isWrap) {
+    pos = state.selection.from
+    tr.replaceSelectionWith(node)
+  } else {
+    pos = state.selection.to
+    tr.insert(pos, node)
+  }
 
   if (dispatch) {
     const selection = NodeSelection.create(tr.doc, pos)
-    dispatch(tr.setSelection(selection).scrollIntoView())
+    tr.setSelection(selection).scrollIntoView()
+    dispatch(isWrap ? skipTracking(tr) : tr)
   }
 
   return true
@@ -1482,10 +1569,7 @@ export const insertTransGraphicalAbstract =
         lang,
         category: category.id,
       },
-      [
-        schema.nodes.section_title.create(),
-        createAndFillFigureElement(state),
-      ]
+      [schema.nodes.section_title.create(), createAndFillFigureElement(state)]
     ) as TransGraphicalAbstractNode
 
     const tr = state.tr.insert(pos, node)

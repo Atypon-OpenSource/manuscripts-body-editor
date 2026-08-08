@@ -72,23 +72,25 @@ export default (props: EditorProps) =>
             const titleEndPos = titlePos + titleNode.nodeSize
 
             return DecorationSet.create(state.doc, [
-              Decoration.widget(titleEndPos, (view: ManuscriptEditorView) => {
-                return createAddSubtitleButton(() => {
-                  const subtitlesNode = schema.nodes.subtitles.create(
-                    { id: uuidv4() },
-                    [schema.nodes.subtitle.create({ id: uuidv4() })]
-                  )
-                  const pos = findInsertionPosition(
-                    schema.nodes.subtitles,
-                    state.doc
-                  )
-                  const tr = view.state.tr.insert(pos, subtitlesNode)
-                  const subtitlePos = pos + 1
-                  tr.setSelection(TextSelection.create(tr.doc, subtitlePos))
+              Decoration.widget(
+                titleEndPos,
+                (view: ManuscriptEditorView) => {
+                  return createAddSubtitleButton(() => {
+                    const subtitlesNode = schema.nodes.subtitles.create(
+                      { id: uuidv4() },
+                      [schema.nodes.subtitle.create({ id: uuidv4() })]
+                    )
+                    const pos = findInsertionPosition(
+                      schema.nodes.subtitles,
+                      state.doc
+                    )
+                    const tr = view.state.tr.insert(pos, subtitlesNode)
+                    const subtitlePos = pos + 1
+                    tr.setSelection(TextSelection.create(tr.doc, subtitlePos))
 
-                  view.dispatch(tr)
-                  view.focus()
-                })
+                    view.dispatch(tr)
+                    view.focus()
+                  })
                 },
                 { side: -1 }
               ),
