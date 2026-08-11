@@ -376,10 +376,7 @@ export class ContextMenu {
         this.createMenuSection((section: HTMLElement) => {
           let nodeName = nodeNames.get(type) || ''
           if (type === schema.nodes.section_title) {
-            const containerType = $pos.parent.type
-            nodeName =
-              nodeNames.get(containerType) ??
-              (nodeNames.get(schema.nodes.section) as string)
+            nodeName = nodeNames.get(schema.nodes.section) as string
           }
           section.appendChild(
             this.createMenuItem(`Delete ${nodeName}`, () => {
