@@ -1525,11 +1525,8 @@ export const insertTransAbstract = (
   )
 
   const abstracts = findAbstractsNode(state.doc)
-
-  const pos =
-    findInsertionPosition(schema.nodes.trans_abstract, abstracts.node) +
-    abstracts.pos +
-    1
+  // append at the end of the abstracts node, not just the first valid-but-earlier slot.
+  const pos = abstracts.node.content.size + abstracts.pos + 1
   const tr = state.tr.insert(pos, node)
 
   const selection = TextSelection.create(tr.doc, pos + 1)
@@ -1552,13 +1549,7 @@ export const insertTransGraphicalAbstract =
     const lang = state.doc.attrs.primaryLanguageCode || 'en'
 
     const abstracts = findAbstractsNode(state.doc)
-    const pos =
-      findInsertionPosition(
-        schema.nodes.trans_graphical_abstract,
-        abstracts.node
-      ) +
-      abstracts.pos +
-      1
+    const pos = abstracts.node.content.size + abstracts.pos + 1
 
     const node = schema.nodes.trans_graphical_abstract.createAndFill(
       {

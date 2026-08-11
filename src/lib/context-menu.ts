@@ -376,7 +376,7 @@ export class ContextMenu {
         this.createMenuSection((section: HTMLElement) => {
           let nodeName = nodeNames.get(type) || ''
           if (type === schema.nodes.section_title) {
-            const containerType = $pos.node($pos.depth - 1).type
+            const containerType = $pos.parent.type
             nodeName =
               nodeNames.get(containerType) ??
               (nodeNames.get(schema.nodes.section) as string)
