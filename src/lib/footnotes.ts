@@ -43,7 +43,9 @@ export const findFootnotesContainerNode = (
   )
 }
 
-export const findParentFootnote: (selection: Selection) => ContentNodeWithPos | undefined = findParentNodeOfType([
+export const findParentFootnote: (
+  selection: Selection
+) => ContentNodeWithPos | undefined = findParentNodeOfType([
   schema.nodes.footnote,
   schema.nodes.general_table_footnote,
 ])

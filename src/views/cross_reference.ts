@@ -17,10 +17,14 @@
 import {
   CrossReferenceNode,
   ManuscriptNodeView,
+  schema,
+  SupplementNode,
   Target,
 } from '@manuscripts/transform'
 
+import { findNodeByID } from '../lib/doc'
 import { handleEnterKey } from '../lib/navigation-utils'
+import { getSupplementDisplayLabel } from '../lib/supplements'
 import { objectsKey } from '../plugins/objects'
 import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
@@ -45,10 +49,20 @@ export class CrossReferenceView
     super.updateContents()
     const targets = objectsKey.getState(this.view.state) as Map<string, Target>
     const attrs = this.node.attrs
+    const target = attrs.rids.length ? targets.get(attrs.rids[0]) : undefined
 
-    const label = attrs.rids.length && targets.get(attrs.rids[0])?.label
-    // attrs.label contains custom text inserted at cross-reference creation time
-    this.dom.textContent = attrs.label || label || ''
+    let derivedLabel = target?.label || ''
+    if (target?.type === schema.nodes.supplement.name && target.href) {
+      const found = findNodeByID(this.view.state.doc, target.id)
+      if (found) {
+        derivedLabel = getSupplementDisplayLabel(
+          found.node as SupplementNode,
+          this.props.getFiles()
+        )
+      }
+    }
+
+    this.dom.textContent = attrs.label || derivedLabel
     this.dom.addEventListener('click', this.handleClick)
   }
 
