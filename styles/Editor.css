@@ -1372,3 +1372,14 @@
 .ProseMirror .supplement-item .drag-icon:active {
   cursor: grabbing;
 }
+
+.ProseMirror .selected-block-node::selection {
+  background: none;
+}
+
+.ProseMirror .selected-block-node > .block,
+.ProseMirror .table-footer.selected-block-node {
+  background: #f2fbfc !important;
+  z-index: 2;
+  pointer-events: none;
+}
