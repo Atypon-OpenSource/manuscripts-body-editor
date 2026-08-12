@@ -227,7 +227,6 @@ const validateFootnote: NodeValidator = (node, pos, context) => {
     : undefined
 
   const unused = footnoteState?.unusedFootnoteIDs?.has(node.attrs.id)
-
   if (unused) {
     const isTableFootnote = isChildOfNodeTypes(context.doc, pos, [
       schema.nodes.table_element,
