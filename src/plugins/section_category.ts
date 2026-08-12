@@ -15,7 +15,8 @@
  */
 import {
   getGroupCategories,
-  isSectionNodeType,
+  isAbstractNode,
+  isSectionNode,
   schema,
   SectionCategory,
 } from '@manuscripts/transform'
@@ -154,7 +155,8 @@ const buildPluginState = (
     if (node.type === schema.nodes.box_element) {
       return false
     }
-    if (isSectionNodeType(node.type)) {
+
+    if (isSectionNode(node) || isAbstractNode(node)) {
       const categoryID = node.attrs.category
       const category = categories.get(categoryID)
       const $pos = state.doc.resolve(pos)
