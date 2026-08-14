@@ -20,11 +20,10 @@ import {
   IconTextButton,
   PrimaryButton,
   SecondaryButton,
-  UploadIcon,
   withFocusTrap,
 } from '@manuscripts/style-guide'
 import { BibliographyItemAttrs } from '@manuscripts/transform'
-import { debounce } from 'lodash'
+import debounce from 'lodash/debounce'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
@@ -74,7 +73,6 @@ export const ReferenceSearch: React.FC<{
   sources: BibliographyItemSource[]
   items: BibliographyItemAttrs[]
   onAdd: () => void
-  onImport: () => void
   onCite: (items: BibliographyItemAttrs[]) => void
   onCancel: () => void
 }> = ({
@@ -82,7 +80,6 @@ export const ReferenceSearch: React.FC<{
   sources,
   items,
   onAdd,
-  onImport,
   onCite,
   onCancel,
 }) => {
@@ -145,10 +142,6 @@ export const ReferenceSearch: React.FC<{
           <IconTextButton onClick={onAdd}>
             <AddNewIcon />
             Add new
-          </IconTextButton>
-          <IconTextButton onClick={onImport}>
-            <UploadIcon />
-            Import new
           </IconTextButton>
         </AddReferenceActions>
         <ButtonGroup>

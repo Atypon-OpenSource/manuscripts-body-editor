@@ -60,7 +60,7 @@ export default () => {
             if (id) {
               const target = targets.get(id)
 
-              if (target) {
+              if (target && target.label) {
                 const caption = findChildren(
                   node,
                   (node) =>
@@ -115,11 +115,7 @@ export default () => {
  * Returns the position for a widget decoration when there is no caption.
  * Falls back to the end of the node.
  */
-const getDecorationPos = (
-  target: Target,
-  doc: ManuscriptNode,
-  pos: number
-) => {
+const getDecorationPos = (target: Target, doc: ManuscriptNode, pos: number) => {
   const $pos = doc.resolve(pos + 1)
   return $pos.end()
 }

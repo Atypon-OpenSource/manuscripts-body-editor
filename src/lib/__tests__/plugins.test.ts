@@ -34,6 +34,7 @@ import { defaultTheme } from '@manuscripts/style-guide'
 const userProfile: UserProfile = {
   _id: 'MPUserProfile:1',
   userID: 'MPUser:1',
+  connectID: 'connectID1'
 }
 
 const history = createMemoryHistory()

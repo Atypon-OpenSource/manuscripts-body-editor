@@ -18,7 +18,8 @@ import styled from 'styled-components'
 
 import { Option } from './TypeSelector'
 
-const TypeSelect: React.ComponentType<Props<Option, false, GroupBase<Option>>> = Select
+const TypeSelect: React.ComponentType<Props<Option, false, GroupBase<Option>>> =
+  Select
 
 export const StyledSelect = styled(TypeSelect)`
   .type-selector__control:hover {
