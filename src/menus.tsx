@@ -66,6 +66,8 @@ import { isEditAllowed } from './lib/utils'
 import { getEditorProps } from './plugins/editor-props'
 import { useEditor } from './useEditor'
 import { openInsertAwardModal } from './components/awards/AwardModal'
+import { isEmptyReferences } from './lib/view'
+import { openReferencesEditor } from './components/references/ReferencesEditor'
 
 export const getEditorMenus = (
   editor: ReturnType<typeof useEditor>
@@ -689,6 +691,17 @@ export const getEditorMenus = (
           isCommandValid(canInsert(schema.nodes.citation)),
         run: doCommand(insertInlineCitation),
         isHidden: !templateAllows(state, schema.nodes.citation),
+      },
+      {
+        id: 'insert-reference-section',
+        label: 'New reference',
+        shortcut: {
+          mac: 'Option+CommandOrControl+N',
+          pc: 'CommandOrControl+Option+N',
+        },
+        isEnabled: isEditAllowed(state) && isCommandValid(isEmptyReferences),
+        run: doCommand(openReferencesEditor),
+        isHidden: !templateAllows(state, schema.nodes.bibliography_item),
       },
       {
         id: 'insert-cross-reference',

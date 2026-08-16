@@ -336,10 +336,6 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
     setImportSuccessCount(data.length)
   }
 
-  if (sortedItems.length <= 0) {
-    return <></>
-  }
-
   return (
     <>
       {importing && (
