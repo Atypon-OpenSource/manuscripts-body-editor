@@ -100,7 +100,7 @@ export class GeneralTableFootnoteView extends BaseNodeView<
       this.node,
       this.getPos,
       this.view,
-      ['menu', 'footnote-context-menu']
+      ['context-menu', 'footnote-context-menu']
     )
     this.props.popper.show(
       this.dom,
@@ -108,7 +108,8 @@ export class GeneralTableFootnoteView extends BaseNodeView<
       'right-start',
       false,
       [],
-      autoFocus
+      autoFocus,
+      false
     )
   }
 

@@ -122,7 +122,7 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
       this.node,
       this.getPos,
       this.view,
-      ['menu', 'footnote-context-menu']
+      ['context-menu', 'footnote-context-menu']
     )
     this.props.popper.show(
       this.dom,
@@ -130,7 +130,8 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
       'right-start',
       true,
       [],
-      autoFocus
+      autoFocus,
+      false
     )
   }
 
