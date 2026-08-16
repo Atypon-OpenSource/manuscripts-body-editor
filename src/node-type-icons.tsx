@@ -69,6 +69,7 @@ const icons: Map<
   [nodes.paragraph, OutlineParagraphIcon],
   [nodes.pullquote_element, OutlinePullQuoteIcon],
   [nodes.section, OutlineSectionIcon],
+  [nodes.abstract, OutlineSectionIcon],
   [nodes.table_element, OutlineTableIcon],
   [nodes.graphical_abstract_section, OutlineSectionIcon],
   [nodes.trans_graphical_abstract, OutlineSectionIcon],
