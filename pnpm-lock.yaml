@@ -39,8 +39,8 @@ importers:
         specifier: 2.4.0
         version: 2.4.0
       '@manuscripts/transform':
-        specifier: 4.5.1
-        version: 4.5.1(prosemirror-state@1.4.3)
+        specifier: 4.5.2-LEAN-5807.3
+        version: 4.5.2-LEAN-5807.3(prosemirror-state@1.4.3)
       '@popperjs/core':
         specifier: 2.11.8
         version: 2.11.8
@@ -874,8 +874,8 @@ packages:
     resolution: {integrity: sha512-I+KDqXvKRtmRWcqxtjEVLK7GR55pSzwFCoIouZ4wE2d72MXg0l3yUYXL/73FdUE2xwIzVneW65Q3RjHlvL8Ekg==}
     engines: {node: '>=22'}
 
-  '@manuscripts/transform@4.5.1':
-    resolution: {integrity: sha512-EC4tPaCcGTgdiZUj956v+xyWKdlarALFRN/PPp0i7VuLVPi7aGudZj5pErlqFCiCibO8BQCN/UMaOJrzBfJkgg==}
+  '@manuscripts/transform@4.5.2-LEAN-5807.3':
+    resolution: {integrity: sha512-kN5r60soL9OzGVFU0BiCDoanNaA9qoWpZnwiyZv12fS0zIYsC+Z8klK8TxAX62dyXnV70BZd+VHeawTRhYDj3A==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/transform/-/@manuscripts/transform-4.5.2-LEAN-5807.3.tgz}
     engines: {node: '>=22'}
 
   '@napi-rs/wasm-runtime@1.1.6':
@@ -5617,7 +5617,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@manuscripts/transform@4.5.1(prosemirror-state@1.4.3)':
+  '@manuscripts/transform@4.5.2-LEAN-5807.3(prosemirror-state@1.4.3)':
     dependencies:
       citeproc: 2.4.63
       jszip: 3.10.1
