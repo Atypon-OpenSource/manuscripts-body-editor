@@ -48,6 +48,16 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
     this.dom.tabIndex = 0
     this.contentDOM = document.createElement('div')
     this.contentDOM.classList.add('footnote-text')
+    if (!this.view.editable) {
+      // when the editor is in the viewing mode we can't depend on the selection to show context-menu so we use mousedown
+      // as in that case will not have the same listener from prosemirror-view to interfere with it
+      const actions = this.getContextMenuActions()
+      if (actions.length > 0) {
+        this.dom.addEventListener('mousedown', () =>
+          this.showContextMenu(actions, true)
+        )
+      }
+    }
     this.dom.addEventListener(
       'keydown',
       handleEnterKey(() => {
