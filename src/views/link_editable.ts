@@ -91,12 +91,12 @@ export class LinkEditableView extends LinkView {
           icon: 'Edit',
         },
         {
-          label: 'Convert to web link',
+          label: 'Convert to Weblink',
           action: this.handleConvertToWebLink,
           icon: 'ConvertToWebLink',
         },
         {
-          label: 'Open link',
+          label: 'Open Link',
           action: this.handleOpenLink,
           icon: 'ExternalLink',
           disabled: !allowedHref(href),
