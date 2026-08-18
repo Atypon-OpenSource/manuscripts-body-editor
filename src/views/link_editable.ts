@@ -61,13 +61,8 @@ export class LinkEditableView extends LinkView {
   }
 
   public selectNode = () => {
-    if (isDeleted(this.node)) {
-      return
-    }
-    if (!this.node.attrs.href) {
+    if (!isDeleted(this.node) && !this.node.attrs.href) {
       this.showForm()
-    } else {
-      this.showContextMenu()
     }
   }
 
@@ -83,6 +78,8 @@ export class LinkEditableView extends LinkView {
     if (!this.props.getCapabilities().editArticle) {
       return
     }
+
+    this.closeForm()
 
     const href = this.node.attrs.href
 
@@ -172,9 +169,15 @@ export class LinkEditableView extends LinkView {
   }
 
   private handleClick = (e: Event) => {
-    if (this.props.getCapabilities().editArticle) {
-      e.preventDefault()
+    if (!this.props.getCapabilities().editArticle) {
+      return
     }
+    e.preventDefault()
+
+    if (isDeleted(this.node) || !this.node.attrs.href) {
+      return
+    }
+    this.showContextMenu()
   }
 
   private handleCancel = () => {
