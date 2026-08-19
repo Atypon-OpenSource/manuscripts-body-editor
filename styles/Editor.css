@@ -291,7 +291,8 @@
   cursor: pointer;
 }
 .ProseMirror .citation:focus-visible,
-.ProseMirror .cross-reference:focus-visible {
+.ProseMirror .cross-reference:focus-visible,
+.ProseMirror .MathJax:focus-visible {
   outline: 4px solid var(--focus-outline-color);
   outline-offset: var(--focus-outline-offset);
   border-radius: var(--focus-outline-radius);
