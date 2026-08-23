@@ -23,6 +23,8 @@ import { ThemeProvider } from 'styled-components'
 import { EditorProps } from '../configs/ManuscriptsEditor'
 import { Trackable } from '../types'
 
+export type SubViewContainer = HTMLDivElement & { unmount?: () => void }
+
 export interface ReactViewComponentProps<NodeT extends ManuscriptNode> {
   nodeAttrs: NodeT['attrs']
   setNodeAttrs: (nextAttrs: Partial<NodeT['attrs']>) => void
@@ -31,7 +33,7 @@ export interface ReactViewComponentProps<NodeT extends ManuscriptNode> {
     getPos: () => number
     node: ManuscriptNode | Trackable<ManuscriptNode>
   }
-  container: HTMLDivElement
+  container: SubViewContainer
 }
 /*
   This is to render components that affect the Prosemirror Document indirectly. Such as dropdown buttons, inputs, advanced UX elements etc.
@@ -46,7 +48,8 @@ function createSubView<T extends Trackable<ManuscriptNode>>(
   view: ManuscriptEditorView,
   classNames: string[] = []
 ): HTMLDivElement {
-  const container = document.createElement('div')
+  const container = document.createElement('div') as SubViewContainer
+  container.unmount = () => root.unmount()
   const Wrapped = createView<T>(
     props,
     Component,

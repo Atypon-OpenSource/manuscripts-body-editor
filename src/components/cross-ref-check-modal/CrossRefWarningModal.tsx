@@ -18,17 +18,19 @@ import { ManuscriptNode } from '@manuscripts/transform'
 import React, { useState } from 'react'
 
 import {
-  AttentionOrangeIcon,
-  CloseButton,
+  ArrowUpIcon,
+  AttentionRedIcon,
+  ButtonGroup,
+  IconButton,
   ModalContainer,
-  ModalHeader,
   PrimaryButton,
+  RadioButton,
   StyledModal,
   TertiaryButton,
-  TextButton,
+  withFocusTrap,
 } from '@manuscripts/style-guide'
 import { ResolvedPos } from 'prosemirror-model'
-import { startCase } from 'lodash'
+import { findChildren } from 'prosemirror-utils'
 import styled from 'styled-components'
 
 export type XrefGroup = {
@@ -37,17 +39,40 @@ export type XrefGroup = {
   xrefs: [ManuscriptNode, ResolvedPos][]
 }
 
+export type DeleteOption = 'delete-without-ref' | 'delete-with-ref'
+
 export const CrossRefWarningModal: React.FC<{
   onClose: () => void
   xrefs: XrefGroup[]
-  onConfirm: () => void
+  onConfirm: (deleteOption: DeleteOption) => void
   selectAndScrollTo: ($pos: ResolvedPos) => void
 }> = ({ onClose, xrefs, onConfirm, selectAndScrollTo }) => {
   const [isOpen, setIsOpen] = useState(true)
+  const [deleteOption, setDeleteOption] =
+    useState<DeleteOption>('delete-without-ref')
+
   const handleClose = () => {
     setIsOpen(false)
     onClose()
   }
+
+  const [showRef, setShowRef] = useState(true)
+
+  const toggleReferenceList = () => setShowRef(!showRef)
+
+  const onChangeDeleteOption = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target
+    setDeleteOption(value as DeleteOption)
+  }
+
+  const references = xrefs.flatMap((xrefGroup) =>
+    xrefGroup.xrefs.map((xref) => [...xref, xrefGroup.label])
+  ) as [ManuscriptNode, ResolvedPos, string][]
+
+  const elementLabel =
+    xrefs.length === 1 ? xrefs[0].label : `${xrefs.length} elements`
+  const locationWord = references.length === 1 ? 'location' : 'locations'
+  const pronoun = xrefs.length === 1 ? 'it' : 'them'
 
   return (
     <Modal
@@ -57,28 +82,62 @@ export const CrossRefWarningModal: React.FC<{
       hideOverlay={true}
     >
       <Container data-cy="cross-reference-warning-modal">
-        <ModalHeader>
-          <CloseButton
-            onClick={() => handleClose()}
-            data-cy="modal-close-button"
-          />
-        </ModalHeader>
         <Body>
           <Title>
-            <AttentionOrangeIcon width={24} height={22} /> Delete referenced
-            content?
+            <AttentionRedIcon width={24} height={24} />
+            Confirm deletion?
           </Title>
-          <p>You are deleting content referenced elsewhere in the document:</p>
-          <ScrolableItems>
-            {xrefs.map((group, i) => (
-              <XrefGroupDisplay
-                key={i}
-                group={group}
-                selectAndScrollTo={selectAndScrollTo}
-              />
-            ))}
-          </ScrolableItems>
-          <Actions>
+          <p>
+            <b>{elementLabel}</b> {xrefs.length === 1 ? 'is' : 'are'} actively
+            referenced in{' '}
+            <b>
+              {references.length} {locationWord}
+            </b>{' '}
+            in your document. Deleting {pronoun} will break the following
+            cross-references:
+          </p>
+          {/*<XrefGroupDisplay*/}
+          {/*  references={references}*/}
+          {/*  selectAndScrollTo={selectAndScrollTo}*/}
+          {/*/>*/}
+          <div>
+            <ToggleHeader>
+              <SecondaryBoldHeading>Hide locations</SecondaryBoldHeading>
+              <ToggleButton onClick={toggleReferenceList}>
+                <ArrowUpIcon />
+              </ToggleButton>
+            </ToggleHeader>
+            {showRef && (
+              <ListWrapper>
+                {xrefs.map((group, i) => (
+                  <XrefGroupDisplay
+                    key={i}
+                    group={group}
+                    selectAndScrollTo={selectAndScrollTo}
+                  />
+                ))}
+              </ListWrapper>
+            )}
+          </div>
+          <SelectorContainer>
+            <RadioButton
+              name={'delete-option'}
+              id={'delete-without-ref-option'}
+              value={'delete-without-ref'}
+              label={'Delete but keep referenced text'}
+              checked={deleteOption === 'delete-without-ref'}
+              onChange={onChangeDeleteOption}
+            />
+            <RadioButton
+              name={'delete-option'}
+              id={'delete-with-ref-option'}
+              value={'delete-with-ref'}
+              label={'Delete & remove references'}
+              checked={deleteOption === 'delete-with-ref'}
+              onChange={onChangeDeleteOption}
+            />
+          </SelectorContainer>
+          <ButtonGroup>
             <TertiaryButton type="button" onClick={() => handleClose()}>
               Cancel
             </TertiaryButton>
@@ -86,13 +145,13 @@ export const CrossRefWarningModal: React.FC<{
               $danger={true}
               type="button"
               onClick={() => {
-                onConfirm()
+                onConfirm(deleteOption)
                 setIsOpen(false)
               }}
             >
-              Delete & remove citation
+              Delete
             </PrimaryButton>
-          </Actions>
+          </ButtonGroup>
         </Body>
       </Container>
     </Modal>
@@ -103,21 +162,67 @@ const XrefGroupDisplay: React.FC<{
   group: XrefGroup
   selectAndScrollTo: ($pos: ResolvedPos) => void
 }> = ({ group, selectAndScrollTo }) => {
+  const [showRef, setShowRef] = useState(true)
+
+  const toggleReferenceList = () => setShowRef(!showRef)
+
   return (
-    <div>
-      <h3>{group.label}</h3>
-      <ReferencesList>
-        {group.xrefs.map(([, pos], i) => {
-          return (
-            <li key={i}>
-              <TextButton onClick={() => selectAndScrollTo(pos)}>
-                {`${startCase(pos.parent.type.name)} - ${pos.parent.textContent}`}
-              </TextButton>
-            </li>
-          )
-        })}
-      </ReferencesList>
-    </div>
+    <NestedListWrapper>
+      <SecondaryToggleHeader>
+        <SecondaryHeading>{group.label}</SecondaryHeading>
+        <ToggleButton onClick={toggleReferenceList}>
+          <ArrowUpIcon />
+        </ToggleButton>
+      </SecondaryToggleHeader>
+      {showRef && (
+        <ReferencesList>
+          {group.xrefs.map(([xrefNode, pos], i) => {
+            const xrefPos = findChildren(
+              pos.node(),
+              (child) => child.attrs.id === xrefNode.attrs.id
+            )[0]
+
+            const content = pos.node().content
+            const MAX_LENGTH = 40
+
+            const nodeStart = xrefPos.pos
+            const nodeEnd = xrefPos.pos + xrefNode.nodeSize
+
+            const leftHandText = content.textBetween(
+              nodeStart > MAX_LENGTH ? nodeStart - MAX_LENGTH : 0,
+              nodeStart
+            )
+            const rightHandText = content.textBetween(
+              nodeEnd,
+              Math.min(nodeEnd + MAX_LENGTH, content.size)
+            )
+
+            const derivedLabel =
+              xrefNode.attrs.label || group.label || '[cross-ref]'
+
+            return (
+              <ListItem key={i}>
+                <XRefTextContainer>
+                  <XRefAdjacentText direction={'rtl'}>
+                    {leftHandText}
+                  </XRefAdjacentText>
+                  <XRefLabel>{derivedLabel}</XRefLabel>
+                  <XRefAdjacentText direction={'ltr'}>
+                    {rightHandText}
+                  </XRefAdjacentText>
+                </XRefTextContainer>
+                <ScrollButton
+                  $mini={true}
+                  onClick={() => selectAndScrollTo(pos)}
+                >
+                  Show
+                </ScrollButton>
+              </ListItem>
+            )
+          })}
+        </ReferencesList>
+      )}
+    </NestedListWrapper>
   )
 }
 
@@ -129,7 +234,7 @@ const Container = styled(ModalContainer)`
   max-height: calc(50vh - 2rem);
   min-height: 280px;
   transform: translate(-50%, 0);
-  max-width: 480px;
+  max-width: 556px;
   transition:
     top 0.2s,
     transform 0.2s;
@@ -173,11 +278,11 @@ const Modal = styled(StyledModal)`
   }
 `
 
-const Body = styled.div`
+const Body = withFocusTrap(styled.div`
   margin: 1.5rem;
   display: flex;
   flex-flow: column;
-`
+`)
 
 const Title = styled.h2`
   font-size: 18px;
@@ -187,37 +292,125 @@ const Title = styled.h2`
   color: #353535;
   svg {
     vertical-align: text-top;
+    margin-right: 8px;
   }
 `
 
-const ReferencesList = styled.ul`
-  padding: 8px;
-  margin-left: 0;
-  list-style: none;
-  background: #f2f2f2;
+const ToggleHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 3px 6px 8px;
+  border-radius: 4px 4px 0 0;
   border: 1px solid #e2e2e2;
-  border-radius: 3px;
-
-  ${TextButton} {
-    margin-left: 0;
-    text-decoration: underline;
-    &:hover {
-      text-decoration: none;
-    }
-    display: block;
-    max-width: 100%;
-    overflow: hidden;
-    color: #353535;
-    text-overflow: ellipsis;
-  }
+  background: #f2f2f2;
 `
 
-const Actions = styled.footer`
-  text-align: right;
-  padding-top: 1rem;
-`
-const ScrolableItems = styled.div`
+const ListWrapper = styled.div`
+  border: 1px solid #e2e2e2;
+  border-top: none;
   max-height: 16vh;
   min-height: 100px;
   overflow-y: auto;
+`
+
+const NestedListWrapper = styled.div`
+  padding: 2px 10px;
+`
+
+const SecondaryToggleHeader = styled(ToggleHeader)`
+  padding: 0;
+  border: none;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e2e2;
+`
+
+const ToggleButton = styled(IconButton)`
+  height: 24px;
+  &&:not([disabled]):focus-visible {
+    outline: 2px solid ${(props) => props.theme.colors.outline.focus};
+    outline-offset: 2px;
+  }
+  svg {
+    width: 12px;
+    height: 7px;
+  }
+`
+
+const SecondaryHeading = styled.div`
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 24px;
+  color: #6e6e6e;
+  user-select: none;
+`
+
+const SecondaryBoldHeading = styled(SecondaryHeading)`
+  font-weight: 700;
+  color: #6e6e6e;
+`
+
+const ReferencesList = styled.ul`
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+  padding: 12px;
+  margin: 0;
+  list-style: none;
+`
+
+const ListItem = styled.li`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  border-bottom: solid 1px #e2e2e2;
+  &:last-child {
+    border-bottom: none;
+    padding: 0;
+  }
+`
+
+const ScrollButton = styled(TertiaryButton)`
+  margin: 0;
+  padding: 4px;
+  font-size: 14px;
+  line-height: 24px;
+  text-decoration-line: underline;
+`
+
+const XRefTextContainer = styled.div`
+  display: flex;
+  color: #6e6e6e;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 16px;
+`
+
+const XRefLabel = styled.span`
+  border-radius: 4px;
+  border: 1px solid #fe8f1f;
+  background: #fff9e5;
+  mix-blend-mode: darken;
+`
+
+const XRefAdjacentText = styled.span<{ direction: 'rtl' | 'ltr' }>`
+  display: block;
+  max-width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  direction: ${(props) => props.direction};
+`
+
+const SelectorContainer = styled.div`
+  display: flex;
+  gap: 24px;
+  padding: 8px 12px 4px 12px;
+  margin: 24px 0;
+  border-radius: 4px;
+  border: 1px solid #fe8f1f;
+  background: #fff9e5;
 `
