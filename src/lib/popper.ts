@@ -27,6 +27,7 @@ export class PopperManager {
   private handleDocumentClick?: (e: Event) => void
   private triggerElement?: Element
   private container?: HTMLElement
+  private destructionListener?: (i: Instance) => void
 
   public show(
     target: Element,
@@ -35,7 +36,8 @@ export class PopperManager {
     showArrow = true,
     modifiers: Array<Partial<StrictModifiers>> = [],
     autoFocus = true,
-    autoCloseOnOutsideClick = true
+    autoCloseOnOutsideClick = true,
+    onDestroy: ((i: Instance) => void) | undefined = undefined
   ) {
     // destroy any existing popper first
     // checking activePopper is in destroy() method
@@ -43,6 +45,7 @@ export class PopperManager {
 
     // Store the trigger element to return focus later
     this.triggerElement = target
+    this.destructionListener = onDestroy
 
     window.requestAnimationFrame(() => {
       const container = document.createElement('div')
@@ -127,6 +130,8 @@ export class PopperManager {
       this.removeContainerClass(
         this.activePopper.state.elements.reference as Element
       )
+      this.destructionListener?.(this.activePopper)
+      this.destructionListener = undefined
       this.activePopper.destroy()
       this.activePopper.state.elements.popper.remove()
       if (this.handleDocumentClick) {
@@ -144,6 +149,18 @@ export class PopperManager {
 
   public update() {
     if (this.activePopper) {
+      this.activePopper.update()
+    }
+  }
+
+  public replaceContent(newContent: HTMLElement) {
+    if (this.container && this.activePopper) {
+      const arrow = this.container.querySelector('.popper-arrow')
+      this.container.innerHTML = ''
+      if (arrow) {
+        this.container.appendChild(arrow)
+      }
+      this.container.appendChild(newContent)
       this.activePopper.update()
     }
   }

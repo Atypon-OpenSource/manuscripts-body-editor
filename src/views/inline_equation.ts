@@ -20,6 +20,7 @@ import { renderMath } from '../lib/math'
 import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
+import { handleEnterKey } from '../lib/navigation-utils'
 
 export class InlineEquationView
   extends BaseNodeView<Trackable<InlineEquationNode>>
@@ -28,6 +29,10 @@ export class InlineEquationView
   public initialise() {
     this.createDOM()
     this.updateContents()
+    this.dom.addEventListener(
+      'keydown',
+      handleEnterKey(() => this.selectNode())
+    )
   }
 
   public updateContents() {
