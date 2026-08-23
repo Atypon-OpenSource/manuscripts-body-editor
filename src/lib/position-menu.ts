@@ -261,6 +261,7 @@ export class HorizontalPositionMenu {
           false,
           [],
           true,
+          true,
           () => {
             this.menuOpen = false
           }
