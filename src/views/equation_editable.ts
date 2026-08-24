@@ -38,6 +38,9 @@ export class EquationEditableView extends EquationView {
         Esc: () => {
           this.props.popper.destroy()
           this.view.focus()
+          const tabbableView =
+            this.dom.querySelector<HTMLElement>('[tabindex="0"]')
+          tabbableView?.focus()
         },
       },
     })
