@@ -36,6 +36,7 @@ export class PopperManager {
     showArrow = true,
     modifiers: Array<Partial<StrictModifiers>> = [],
     autoFocus = true,
+    autoCloseOnOutsideClick = true,
     onDestroy: ((i: Instance) => void) | undefined = undefined
   ) {
     // destroy any existing popper first
@@ -114,9 +115,10 @@ export class PopperManager {
       // add EventListener for checking if click was done outside of editor
       // only if popper has class 'context-menu'
       if (
-        contents.classList.contains('context-menu') ||
-        contents.classList.contains('language') ||
-        contents.classList.contains('section-category')
+        (contents.classList.contains('context-menu') ||
+          contents.classList.contains('language') ||
+          contents.classList.contains('section-category')) &&
+        autoCloseOnOutsideClick
       ) {
         window.addEventListener('click', this.handleDocumentClick)
       }
