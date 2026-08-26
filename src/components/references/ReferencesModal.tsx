@@ -261,121 +261,121 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
 
   return (
     <>
-    {importing && (
+      {importing && (
         <ImportBibliographyModal
           onCancel={() => setImporting(false)}
           onSave={handleImportSave}
         />
       )}
-    <StyledModal isOpen={isOpen} onRequestClose={onCancel}>
-      <Dialog
-        isOpen={confirm}
-        category={Category.confirmation}
-        header="You've made changes to this option"
-        message="Would you like to save or discard your changes?"
-        actions={{
-          secondary: {
-            action: () => reset(),
-            title: 'Discard',
-          },
-          primary: {
-            action: () => handleSave(valuesRef.current),
-            title: 'Save',
-          },
-        }}
-      />
-      <ReferencesModalContainer data-cy={'references-editor'}>
-        <ModalHeader>
-          <CloseButton onClick={onCancel} />
-        </ModalHeader>
-        <ModalBody>
-          <ReferencesSidebar>
-            <ModalSidebarHeader>
-              <ModalSidebarTitle>References</ModalSidebarTitle>
-            </ModalSidebarHeader>
-            <ReferencesSidebarContent ref={ref}>
-              <NewReferenceButton
-                onClick={() => {
-                  if (hasChanged()) {
-                    setConfirm(true)
-                    return
-                  }
-                  setIsNew(true)
-                  setSelection({
-                    id: generateNodeID(schema.nodes.bibliography_item),
-                    type: 'article-journal',
-                  })
-                }}
-                className={isNew ? 'selected' : ''}
-                disabled={isNew}
-              >
-                <AddIcon />
-                <span>New Reference</span>
-              </NewReferenceButton>
-              <ReferencesInnerWrapper>
-                <ExistingReferencesHeading>
-                  Existing References
-                </ExistingReferencesHeading>
-                {sortedItems.slice(startIndex, endIndex + 1).map((item) => (
-                  <ReferenceButton
-                    key={item.id}
-                    id={item.id}
-                    className={isSelected(item) ? 'selected' : ''}
-                    onClick={() => handleItemClick(item)}
-                    ref={isSelected(item) ? selectionRef : null}
-                  >
-                    <IconContainer>
-                      <CitationCountIconStyled />
-                      {(citationCounts.get(item.id) || 0) > 0 ? (
-                        <CitationCount data-tooltip-content="Number of times used in the document">
-                          {citationCounts.get(item.id)}
-                        </CitationCount>
-                      ) : (
-                        <CitationCount className="unused">0</CitationCount>
-                      )}
-                    </IconContainer>
-                    <ReferenceLine
-                      showUncited={!citationCounts.get(item.id)}
-                      item={item}
-                    />
-                  </ReferenceButton>
-                ))}                
-              </ReferencesInnerWrapper>
-            </ReferencesSidebarContent>
-            <ImportFromFileFooter>
-              <ImportFromFileButton
-                type="button"
-                data-cy="import-from-file-button"
-                onClick={() => setImporting(true)}
-              >
-                <AddAuthorIcon />
-                Import from file
-              </ImportFromFileButton>
-            </ImportFromFileFooter>
-          </ReferencesSidebar>
-          <ScrollableModalContent>
-            {importSuccessCount !== null ? (
-              <ImportSuccessPlaceholder count={importSuccessCount} />
-            ) : (
-              selection && (
-                <ReferenceForm
-                  values={normalize(selection)}
-                  showDelete={
-                    !citationCounts.get(selection.id) &&
-                    isNewItem(selection, ['id', 'type']) // disable the delete button for the new citations
-                  }
-                  onChange={handleChange}
-                  onCancel={onCancel}
-                  onDelete={handleDelete}
-                  onSave={handleSave}
-                  actionsRef={actionsRef}
-                />
-              )
-            )}
-          </ScrollableModalContent>
-        </ModalBody>
-      </ReferencesModalContainer>
-    </StyledModal>
+      <StyledModal isOpen={isOpen} onRequestClose={onCancel}>
+        <Dialog
+          isOpen={confirm}
+          category={Category.confirmation}
+          header="You've made changes to this option"
+          message="Would you like to save or discard your changes?"
+          actions={{
+            secondary: {
+              action: () => reset(),
+              title: 'Discard',
+            },
+            primary: {
+              action: () => handleSave(valuesRef.current),
+              title: 'Save',
+            },
+          }}
+        />
+        <ReferencesModalContainer data-cy={'references-editor'}>
+          <ModalHeader>
+            <CloseButton onClick={onCancel} />
+          </ModalHeader>
+          <ModalBody>
+            <ReferencesSidebar>
+              <ModalSidebarHeader>
+                <ModalSidebarTitle>References</ModalSidebarTitle>
+              </ModalSidebarHeader>
+              <ReferencesSidebarContent ref={ref}>
+                <NewReferenceButton
+                  onClick={() => {
+                    if (hasChanged()) {
+                      setConfirm(true)
+                      return
+                    }
+                    setIsNew(true)
+                    setSelection({
+                      id: generateNodeID(schema.nodes.bibliography_item),
+                      type: 'article-journal',
+                    })
+                  }}
+                  className={isNew ? 'selected' : ''}
+                  disabled={isNew}
+                >
+                  <AddIcon />
+                  <span>New Reference</span>
+                </NewReferenceButton>
+                <ReferencesInnerWrapper>
+                  <ExistingReferencesHeading>
+                    Existing References
+                  </ExistingReferencesHeading>
+                  {sortedItems.slice(startIndex, endIndex + 1).map((item) => (
+                    <ReferenceButton
+                      key={item.id}
+                      id={item.id}
+                      className={isSelected(item) ? 'selected' : ''}
+                      onClick={() => handleItemClick(item)}
+                      ref={isSelected(item) ? selectionRef : null}
+                    >
+                      <IconContainer>
+                        <CitationCountIconStyled />
+                        {(citationCounts.get(item.id) || 0) > 0 ? (
+                          <CitationCount data-tooltip-content="Number of times used in the document">
+                            {citationCounts.get(item.id)}
+                          </CitationCount>
+                        ) : (
+                          <CitationCount className="unused">0</CitationCount>
+                        )}
+                      </IconContainer>
+                      <ReferenceLine
+                        showUncited={!citationCounts.get(item.id)}
+                        item={item}
+                      />
+                    </ReferenceButton>
+                  ))}                
+                </ReferencesInnerWrapper>
+              </ReferencesSidebarContent>
+              <ImportFromFileFooter>
+                <ImportFromFileButton
+                  type="button"
+                  data-cy="import-from-file-button"
+                  onClick={() => setImporting(true)}
+                >
+                  <AddAuthorIcon />
+                  Import from file
+                </ImportFromFileButton>
+              </ImportFromFileFooter>
+            </ReferencesSidebar>
+            <ScrollableModalContent>
+              {importSuccessCount !== null ? (
+                <ImportSuccessPlaceholder count={importSuccessCount} />
+              ) : (
+                selection && (
+                  <ReferenceForm
+                    values={normalize(selection)}
+                    showDelete={
+                      !citationCounts.get(selection.id) &&
+                      isNewItem(selection, ['id', 'type']) // disable the delete button for the new citations
+                    }
+                    onChange={handleChange}
+                    onCancel={onCancel}
+                    onDelete={handleDelete}
+                    onSave={handleSave}
+                    actionsRef={actionsRef}
+                  />
+                )
+              )}
+            </ScrollableModalContent>
+          </ModalBody>
+        </ReferencesModalContainer>
+      </StyledModal>
     </>
   )
 }
