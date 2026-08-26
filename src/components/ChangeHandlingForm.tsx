@@ -17,8 +17,10 @@ import { Form, useFormikContext } from 'formik'
 import React, { MutableRefObject, PropsWithChildren, useEffect } from 'react'
 import styled from 'styled-components'
 
-export interface ChangeHandlingFormProps<Values>
-  extends Omit<React.FormHTMLAttributes<HTMLFormElement>, 'onChange'> {
+export interface ChangeHandlingFormProps<Values> extends Omit<
+  React.FormHTMLAttributes<HTMLFormElement>,
+  'onChange'
+> {
   onChange: (values: Values) => void
   id?: string
   formRef?: MutableRefObject<HTMLFormElement | null>

@@ -24,6 +24,7 @@ import {
   ToolbarBoldIcon,
   ToolbarBoxedTextIcon,
   ToolbarCitationIcon,
+  ToolbarCrossReferenceIcon,
   ToolbarEquationIcon,
   ToolbarFigureIcon,
   ToolbarIndentIcon,
@@ -47,9 +48,11 @@ import {
   addInlineComment,
   blockActive,
   canInsert,
+  canInsertCrossReference,
   Dispatch,
   insertBlock,
   insertBoxElement,
+  insertCrossReference,
   insertEmbed,
   insertInlineCitation,
   insertLink,
@@ -178,6 +181,12 @@ export const toolbar: ToolbarConfig = {
       content: <AddCommentIcon />,
       isEnabled: isEnabled(canInsert(schema.nodes.highlight_marker)), // TODO: check both ends of selection
       run: addInlineComment,
+    },
+    cross_reference: {
+      title: 'Insert cross-reference',
+      content: <ToolbarCrossReferenceIcon />,
+      isEnabled: isEnabled(canInsertCrossReference),
+      run: insertCrossReference,
     },
     citation: {
       title: 'Insert citation',
