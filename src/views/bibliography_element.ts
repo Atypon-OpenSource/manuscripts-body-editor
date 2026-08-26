@@ -19,6 +19,7 @@ import {
   BibliographyElementNode,
   BibliographyItemAttrs,
   BibliographyItemNode,
+  isCitationNode,
 } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 
