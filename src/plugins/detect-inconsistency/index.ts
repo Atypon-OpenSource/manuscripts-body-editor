@@ -35,11 +35,13 @@ export default (props: EditorProps) => {
     key: detectInconsistencyKey,
     state: {
       init: (_, state) => buildPluginState(state, props, false),
-      apply: (tr, value, newState) => {
+      apply: (tr, value, _, newState) => {
+        const metaValue = tr.getMeta(detectInconsistencyKey)
         const showDecorations =
-          tr.getMeta(detectInconsistencyKey) !== undefined
-            ? tr.getMeta(detectInconsistencyKey)
-            : value.showDecorations
+          metaValue !== undefined ? metaValue : value.showDecorations
+        if (!tr.docChanged && metaValue === undefined) {
+          return value
+        }
         return buildPluginState(newState, props, showDecorations)
       },
     },
