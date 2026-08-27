@@ -339,7 +339,7 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
                         item={item}
                       />
                     </ReferenceButton>
-                  ))}                
+                  ))}
                 </ReferencesInnerWrapper>
               </ReferencesSidebarContent>
               <ImportFromFileFooter>
@@ -402,6 +402,7 @@ const CitationCountIconStyled = styled(CitationCountIcon)``
 const ReferenceButton = withNavigableListItem(styled.button`
   cursor: pointer;
   display: flex;
+  width: 100%;
   justify-content: flex-start;
   font: inherit;
   appearance: none;
@@ -410,7 +411,7 @@ const ReferenceButton = withNavigableListItem(styled.button`
   border: none;
   border-radius: 0;
   text-align: inherit;
-  
+
   padding: ${(props) => props.theme.grid.unit * 4}px 0;
   border-top: 1px solid transparent;
   border-bottom: 1px solid transparent;
@@ -499,4 +500,4 @@ const ImportFromFileButton = styled.button`
   svg rect {
     fill: #6e6e6e;
   }
-    `
+`
