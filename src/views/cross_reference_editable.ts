@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-import { skipTracking } from '@manuscripts/track-changes-plugin'
-import { schema, Target } from '@manuscripts/transform'
+import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
+import { isDeleted, skipTracking } from '@manuscripts/track-changes-plugin'
+import { schema, SupplementNode, Target } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 
 import { CrossReferenceItems } from '../components/views/CrossReferenceItems'
+import { handleComment } from '../lib/comments'
+import { findNodeByID } from '../lib/doc'
+import { getSupplementDisplayLabel } from '../lib/supplements'
 import { objectsKey } from '../plugins/objects'
 import { createEditableNodeView } from './creators'
 import { CrossReferenceView } from './cross_reference'
@@ -26,6 +30,7 @@ import ReactSubView from './ReactSubView'
 
 export class CrossReferenceEditableView extends CrossReferenceView {
   protected popperContainer: HTMLDivElement
+  protected contextMenu: HTMLElement
 
   public selectNode = () => {
     const { getCapabilities } = this.props
@@ -37,12 +42,20 @@ export class CrossReferenceEditableView extends CrossReferenceView {
       return
     }
 
+    this.showPicker()
+  }
+
+  public showPicker = () => {
+    const rids = this.node.attrs.rids
+
     const componentProps = {
       handleSelect: this.handleSelect,
       targets: this.getTargets(),
+      files: this.props.getFiles(),
       handleCancel: this.handleCancel,
       currentTargetId: rids[0],
       currentCustomLabel: this.node.attrs.label,
+      isEdit: rids.length > 0,
     }
 
     this.popperContainer = ReactSubView(
@@ -51,8 +64,7 @@ export class CrossReferenceEditableView extends CrossReferenceView {
       componentProps,
       this.node,
       this.getPos,
-      this.view,
-      ['cross-reference-editor']
+      this.view
     )
     this.popperContainer.setAttribute('tabindex', '0')
     this.props.popper.show(this.dom, this.popperContainer, 'auto')
@@ -68,13 +80,28 @@ export class CrossReferenceEditableView extends CrossReferenceView {
   }
 
   public getTargets = () => {
-    const excludedTypes = [schema.nodes.image_element.name]
-
     const targets = objectsKey.getState(this.view.state) as Map<string, Target>
+    const files = this.props.getFiles()
+    const fileMap = new Map(files.map((f) => [f.id, f.name]))
+    const excludedTypes = [schema.nodes.image_element.name]
+    const supplement = schema.nodes.supplement.name
 
-    return Array.from(targets.values()).filter(
-      (t) => !excludedTypes.includes(t.type)
-    )
+    return Array.from(targets.values()).reduce<Target[]>((acc, t) => {
+      if (excludedTypes.includes(t.type)) {
+        return acc
+      }
+      // Prefer caption title, then URL / file name for supplements and weblinks.
+      if (t.type === supplement && t.href) {
+        const found = findNodeByID(this.view.state.doc, t.id)
+        const label = found
+          ? getSupplementDisplayLabel(found.node as SupplementNode, files)
+          : (fileMap.get(t.href) ?? t.href)
+        acc.push({ ...t, label, caption: '' })
+      } else {
+        acc.push(t)
+      }
+      return acc
+    }, [])
   }
 
   public handleCancel = () => {
@@ -82,7 +109,17 @@ export class CrossReferenceEditableView extends CrossReferenceView {
       const { state } = this.view
 
       const pos = this.getPos()
-      const tr = state.tr.delete(pos, pos + this.node.nodeSize)
+      if (pos === undefined) {
+        return
+      }
+      const label = this.node.attrs.label
+      const tr = label
+        ? state.tr.replaceWith(
+            pos,
+            pos + this.node.nodeSize,
+            state.schema.text(label)
+          )
+        : state.tr.delete(pos, pos + this.node.nodeSize)
       tr.setSelection(TextSelection.create(tr.doc, pos))
       skipTracking(tr)
       this.view.dispatch(tr)
@@ -107,6 +144,81 @@ export class CrossReferenceEditableView extends CrossReferenceView {
     this.view.dispatch(tr.setSelection(selection))
 
     this.destroy()
+  }
+
+  public handleClick = () => {
+    if (isDeleted(this.node)) {
+      return
+    }
+    if (!this.node.attrs.rids.length) {
+      return
+    }
+    this.showContextMenu()
+  }
+
+  public showContextMenu = () => {
+    this.props.popper.destroy()
+
+    const can = this.props.getCapabilities()
+
+    const targets = objectsKey.getState(this.view.state) as Map<string, Target>
+    const rid = this.node.attrs.rids[0]
+    const isOrphaned = !targets?.get(rid)
+
+    const actions: ContextMenuProps['actions'] = [
+      {
+        label: 'Comment',
+        icon: 'AddComment',
+        action: () => {
+          this.props.popper.destroy()
+          handleComment(this.node, this.view)
+        },
+      },
+      {
+        label: 'Go to content',
+        icon: 'Scroll',
+        action: () => this.navigateToTarget(),
+        disabled: isOrphaned,
+      },
+    ]
+
+    if (can?.editArticle) {
+      actions.unshift({
+        label: 'Edit',
+        icon: 'Edit',
+        action: () => this.handleEdit(),
+        disabled: isOrphaned,
+      })
+    }
+
+    this.contextMenu = ReactSubView(
+      this.props,
+      ContextMenu,
+      { actions },
+      this.node,
+      this.getPos,
+      this.view,
+      ['context-menu']
+    )
+
+    this.props.popper.show(this.dom, this.contextMenu, 'right-start', false)
+  }
+
+  private navigateToTarget = () => {
+    this.props.popper.destroy()
+    const rids = this.node.attrs.rids
+    if (!rids.length) {
+      return
+    }
+    this.props.navigate({
+      pathname: this.props.location.pathname,
+      hash: '#' + rids[0],
+    })
+  }
+
+  private handleEdit = () => {
+    this.props.popper.destroy()
+    this.showPicker()
   }
 }
 

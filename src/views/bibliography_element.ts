@@ -20,7 +20,6 @@ import {
   BibliographyItemAttrs,
   BibliographyItemNode,
   isCitationNode,
-  schema,
 } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 
@@ -33,7 +32,7 @@ import { handleEnterKey } from '../lib/navigation-utils'
 import { findNodeByID } from '../lib/doc'
 import { sanitize } from '../lib/dompurify'
 
-import { deleteNode, findChildByID, updateNodeAttrs } from '../lib/view'
+import { deleteNode, findChildByID, saveBibliographyItem } from '../lib/view'
 import {
   getBibliographyPluginState,
   PluginState,
@@ -326,21 +325,8 @@ export class BibliographyElementBlockView extends BlockView<
     this.dom.appendChild(this.container)
   }
 
-  private handleSave = (attrs: BibliographyItemAttrs) => {
-    let found = false
-    this.node.descendants((node, pos) => {
-      if (node.attrs.id == attrs.id) {
-        found = true
-      }
-    })
-
-    if (!found) {
-      const newBibItem = schema.nodes.bibliography_item.create(attrs)
-      const tr = this.view.state.tr
-      this.view.dispatch(tr.insert(this.getPos() + 1, newBibItem))
-    } else {
-      updateNodeAttrs(this.view, schema.nodes.bibliography_item, attrs)
-    }
+  private handleSave = (attrs: BibliographyItemAttrs[]) => {
+    saveBibliographyItem(this.view, attrs)
   }
 
   private handleDelete = (item: BibliographyItemAttrs) => {
