@@ -49,42 +49,13 @@ import {
 import { ReferenceLine } from './ReferenceLine'
 import { ImportBibliographyModal } from './ImportBibliographyModal'
 import { ImportSuccessPlaceholder } from './ImportSuccessPlaceholder'
+import { normalizeBlblioItem } from '../../lib/normalize'
 
 const selectionTopOffset = 10 // to be able to place the selected item in the middle and allow for some scroll at the top
 const pageSize = 12
 const topTrigger = 0.2 // says: notify when x% of the offsetHeight remains hidden at the top
 const bottomTrigger = 0.8 // says: notify when x% of the offsetHeight remains hidden at the bottom
 const dropLimit = 36 // basically maximum amount of items that can exist at the same time
-
-const normalize = (item: BibliographyItemAttrs) => ({
-  id: item.id,
-  type: item.type,
-  author: item.author || [],
-  editor: item.editor || [],
-  issued: item.issued,
-  ['container-title']: item['container-title'] || '',
-  ['collection-title']: item['collection-title'] || '',
-  DOI: item.DOI || '',
-  URL: item.URL || '',
-  volume: item.volume || '',
-  issue: item.issue || '',
-  supplement: item.supplement || '',
-  edition: item.edition || '',
-  page: item.page || '',
-  ['number-of-pages']: item['number-of-pages'] || '',
-  title: item.title || '',
-  literal: item.literal || '',
-  std: item.std || '',
-  publisher: item.publisher || '',
-  ['publisher-place']: item['publisher-place'] || '',
-  event: item.event || '',
-  ['event-place']: item['event-place'] || '',
-  ['event-date']: item['event-date'],
-  institution: item.institution || '',
-  locator: item.locator || '',
-  accessed: item.accessed,
-  comment: item.comment || '',
-})
 
 export interface ReferencesModalProps {
   isOpen: boolean
@@ -233,7 +204,9 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
 
   const hasChanged = () => {
     const values = valuesRef.current
-    return values && selection && !isEqual(values, normalize(selection))
+    return (
+      values && selection && !isEqual(values, normalizeBlblioItem(selection))
+    )
   }
 
   const clearImportSuccess = () => setImportSuccessCount(null)
@@ -359,7 +332,7 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
               ) : (
                 selection && (
                   <ReferenceForm
-                    values={normalize(selection)}
+                    values={normalizeBlblioItem(selection)}
                     showDelete={
                       !citationCounts.get(selection.id) &&
                       isNewItem(selection, ['id', 'type']) // disable the delete button for the new citations
