@@ -28,6 +28,7 @@ import * as utils from 'prosemirror-utils'
 
 import { isHidden } from './track-changes-utils'
 import { sanitizeAttrsChange } from '@manuscripts/track-changes-plugin'
+import { EditorView } from 'prosemirror-view'
 
 const metaNodeTypes = [
   schema.nodes.bibliography_item,
@@ -163,6 +164,22 @@ export const saveBibliographyItem = (
   }
 
   insertBibliographyItems(view, attrs)
+}
+
+export const isSelectionInsideNode = (
+  view: EditorView,
+  node: ManuscriptNode,
+  pos: number
+) => {
+  const { from, to, empty } = view.state.selection
+  const end = pos + node.nodeSize
+
+  // Treat a cursor as "inside" only when it is strictly within the node range.
+  if (empty) {
+    return from > pos && from < end
+  }
+
+  return from >= pos && to <= end
 }
 
 export const isEmptyReferences = (state: ManuscriptEditorState) => {
