@@ -19,12 +19,11 @@ import {
   FormContainer,
   FormRow,
   Label,
-  PrimaryButton,
-  SecondaryButton,
   TextField,
   InputErrorText,
   withFocusTrap,
 } from '@manuscripts/style-guide'
+import { Button } from '@manuscripts/style-guide/mui'
 import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 
@@ -46,7 +45,7 @@ const ActionGroup = styled.span`
   }
 `
 
-const RemoveButton = styled(SecondaryButton)`
+const RemoveButton = styled(Button)`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -201,17 +200,17 @@ export const LinkForm: React.FC<LinkFormProps> = ({
 
         <Actions>
           <ActionGroup>
-            <RemoveButton type={'button'} onClick={onRemove}>
+            <RemoveButton variant="secondary" type={'button'} onClick={onRemove}>
               <DeleteIcon />
               <span>Remove Link</span>
             </RemoveButton>
           </ActionGroup>
 
           <ActionGroup>
-            <SecondaryButton type={'button'} onClick={onCancel}>
+            <Button variant="secondary" type={'button'} onClick={onCancel}>
               Cancel
-            </SecondaryButton>
-            <PrimaryButton type={'submit'}>Save</PrimaryButton>
+            </Button>
+            <Button type={'submit'}>Save</Button>
           </ActionGroup>
         </Actions>
       </FormContainer>

@@ -17,12 +17,11 @@ import {
   DotsIcon,
   DropdownList,
   getFileIcon,
-  IconButton,
-  IconTextButton,
   TriangleCollapsedIcon,
   UploadIcon,
   useDropdown,
 } from '@manuscripts/style-guide'
+import { Button, IconButton } from '@manuscripts/style-guide/mui'
 import { FigureNode } from '@manuscripts/transform'
 import { Node as ManuscriptNode } from 'prosemirror-model'
 import React, { SyntheticEvent, useCallback, useEffect, useRef } from 'react'
@@ -140,6 +139,7 @@ function getOtherFiles(
 
 type WrappedProps = FigureOptionsProps & ReactViewComponentProps<FigureNode>
 
+// TODO: To be refactored with the new dropdown component
 export const FigureOptions: React.FC<WrappedProps> = ({
   can,
   getDoc,
@@ -221,7 +221,7 @@ export const FigureOptions: React.FC<WrappedProps> = ({
           ref={dropdownRef}
         >
           {showReplace && isEmbedMode && (
-            <ListItemButton onClick={() => onReplaceEmbed && onReplaceEmbed()}>
+            <ListItemButton variant="tertiary" onClick={() => onReplaceEmbed && onReplaceEmbed()}>
               Edit Link
             </ListItemButton>
           )}
@@ -236,6 +236,7 @@ export const FigureOptions: React.FC<WrappedProps> = ({
                   {getSupplements(getFiles, getDoc, groupFiles, isEmbed).map(
                     (file, index) => (
                       <ListItemButton
+                        variant="tertiary"
                         key={file.id}
                         id={index.toString()}
                         onClick={() => onReplace && onReplace(file, true)}
@@ -248,6 +249,7 @@ export const FigureOptions: React.FC<WrappedProps> = ({
                   {getOtherFiles(getFiles, getDoc, groupFiles, isEmbed).map(
                     (file, index) => (
                       <ListItemButton
+                        variant="tertiary"
                         key={file.id}
                         id={index.toString()}
                         onClick={() => onReplace && onReplace(file)}
@@ -258,7 +260,7 @@ export const FigureOptions: React.FC<WrappedProps> = ({
                     )
                   )}
                   {showUpload && (
-                    <UploadButton onClick={onUpload} disabled={!showUpload}>
+                    <UploadButton variant="tertiary" onClick={onUpload} disabled={!showUpload}>
                       <UploadIcon /> Upload new...
                     </UploadButton>
                   )}
@@ -267,17 +269,17 @@ export const FigureOptions: React.FC<WrappedProps> = ({
             />
           )}
           {showDownload && (
-            <ListItemButton onClick={onDownload} disabled={!showDownload}>
+            <ListItemButton variant="tertiary" onClick={onDownload} disabled={!showDownload}>
               Download
             </ListItemButton>
           )}
           {showDetach && (
-            <ListItemButton onClick={onDetach} disabled={!showDetach}>
+            <ListItemButton variant="tertiary" onClick={onDetach} disabled={!showDetach}>
               Detach
             </ListItemButton>
           )}
           {showDelete() && (
-            <ListItemButton onClick={onDelete}>Delete</ListItemButton>
+            <ListItemButton variant="tertiary" onClick={onDelete}>Delete</ListItemButton>
           )}
         </OptionsDropdownList>
       )}
@@ -315,6 +317,7 @@ const NestedDropdown: React.FC<{
   return (
     <DropdownWrapper ref={wrapperRef}>
       <NestedListButton
+        variant="tertiary"
         className="nested-list-button"
         onClick={toggleOpen}
         disabled={disabled}
@@ -352,26 +355,15 @@ const OptionsDropdownList = styled(DropdownList)`
   right: 4%;
 `
 
-const OptionsButton = styled(IconButton)`
-  border: 1px solid #e2e2e2 !important;
-  box-sizing: border-box;
-  border-radius: 50%;
-  width: ${(props) => props.theme.grid.unit * 6}px;
-  height: ${(props) => props.theme.grid.unit * 6}px;
-  margin: ${(props) => props.theme.grid.unit}px;
-  visibility: hidden;
-  background: #ffffff;
-
-  &:hover {
-    background: #f2fbfc !important;
-    border: 1px solid #e2e2e2 !important;
+const OptionsButton = styled(IconButton).attrs({ size: 'small', bordered: true })`
+  && {
+    margin: ${(props) => props.theme.grid.unit}px;
+    visibility: hidden;
+    background: #ffffff;
   }
 
   &:active,
   &:focus {
-    background: #f2fbfc !important;
-    border: 1px solid #e2e2e2 !important;
-
     circle {
       fill: #1a9bc7;
     }
@@ -382,14 +374,12 @@ const OptionsButton = styled(IconButton)`
   }
 `
 
-const ListItemButton = styled(IconTextButton)`
-  padding: 16px 14px;
-  justify-content: space-between;
-  align-items: center;
-
-  &:hover,
-  &:focus-visible {
-    background: #f2fbfc;
+const ListItemButton = styled(Button)`
+  && {
+    padding: 16px 14px;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
   }
 
   &:is([disabled]) {
@@ -423,12 +413,12 @@ const NestedListDropdownList = styled(DropdownList)<{ $moveLeft?: boolean }>`
   ${(props) => (props.$moveLeft && 'right: 30%;') || 'left: 100%;'}
 `
 
-const UploadButton = styled(IconTextButton)`
-  border-top: 1px solid #f2f2f2;
-  padding: ${(props) => props.theme.grid.unit * 4}px;
-  justify-content: flex-start;
-
-  &:focus-visible {
-    background: #f2fbfc;
+const UploadButton = styled(Button)`
+  && {
+    border-top: 1px solid #f2f2f2;
+    padding: ${(props) => props.theme.grid.unit * 4}px;
+    justify-content: flex-start;
+    width: 100%;
+    border-radius: 0;
   }
 `
