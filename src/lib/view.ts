@@ -16,6 +16,7 @@
 
 import {
   BibliographyItemAttrs,
+  ManuscriptEditorState,
   ManuscriptEditorView,
   ManuscriptNode,
   ManuscriptNodeType,
@@ -179,4 +180,19 @@ export const isSelectionInsideNode = (
   }
 
   return from >= pos && to <= end
+}
+
+export const isEmptyReferences = (state: ManuscriptEditorState) => {
+  const bibSection = utils.findChildrenByType(
+    state.doc,
+    schema.nodes.bibliography_section
+  )[0]
+  if (!bibSection) {
+    return true
+  }
+  const bibElement = utils.findChildrenByType(
+    bibSection.node,
+    schema.nodes.bibliography_element
+  )[0]
+  return !(bibElement && bibElement.node.nodeSize > 2)
 }
