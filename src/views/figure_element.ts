@@ -18,7 +18,7 @@ import { schema } from '@manuscripts/transform'
 import { Node } from 'prosemirror-model'
 import { TextSelection } from 'prosemirror-state'
 
-import { addAuthorIcon } from '../icons'
+import { addIcon } from '../icons'
 import { handleEnterKey } from '../lib/navigation-utils'
 import { createNodeView } from './creators'
 import { FigureEditableView } from './figure_editable'
@@ -59,7 +59,7 @@ export class FigureElementView extends ImageElementView {
     if (this.props.getCapabilities()?.editArticle) {
       this.addFigureBtn = Object.assign(document.createElement('button'), {
         className: 'add-button',
-        innerHTML: addAuthorIcon,
+        innerHTML: addIcon,
         title: 'Add figure',
       })
       this.addFigureBtn.addEventListener('click', () => this.addFigure())

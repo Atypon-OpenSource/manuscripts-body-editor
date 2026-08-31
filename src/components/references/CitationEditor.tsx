@@ -37,7 +37,7 @@ import { cleanItemValues } from '../../lib/utils'
 import { BibliographyItemSource } from './BibliographyItemSource'
 import { CitedItem, CitedItems } from './CitationViewer'
 import { ReferenceLine } from './ReferenceLine'
-import { ReferenceSearch } from './ReferenceSearch'
+import { InsertCitationModal } from './InsertCitationModal'
 import { ReferencesModal } from './ReferencesModal'
 
 const Container = withFocusTrap(styled.div``)
@@ -212,9 +212,10 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
   }
   if (searching) {
     return (
-      <ReferenceSearch
+      <InsertCitationModal
         sources={sources}
         items={items}
+        citationCounts={citationCounts}
         onAdd={handleAdd}
         onCite={(items) => {
           setSearching(false)
@@ -226,10 +227,11 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
   }
   if (!rids.length) {
     return (
-      <ReferenceSearch
+      <InsertCitationModal
         query={query}
         sources={sources}
         items={items}
+        citationCounts={citationCounts}
         onAdd={handleAdd}
         onCite={handleCite}
         onCancel={onCancel}

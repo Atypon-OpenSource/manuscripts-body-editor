@@ -239,6 +239,10 @@
   width: 600px;
 }
 
+.popper .citation-editor:empty {
+  border: none;
+}
+
 .popper .footnote-editor {
   width: 600px;
 }
