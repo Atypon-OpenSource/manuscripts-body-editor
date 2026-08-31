@@ -18,8 +18,9 @@ import { getFileIcon } from '@manuscripts/style-guide'
 import { SupplementNode } from '@manuscripts/transform'
 import { renderToStaticMarkup } from 'react-dom/server'
 
-import { draggableIcon } from '../icons'
+import { draggableIcon, webLinkIcon } from '../icons'
 import { findNodeByID } from '../lib/doc'
+import { allowedHref } from '../lib/url'
 import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
@@ -28,13 +29,12 @@ export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
   private supplementInfoEl: HTMLDivElement
   private static currentDragSupplementId: string | null = null
   private dragIcon: HTMLDivElement | undefined
-
+  private dragAndDropInitialized = false
   public ignoreMutation = () => true
 
   public initialise() {
     this.createElement()
     this.updateContents()
-    this.setupDragAndDrop()
   }
 
   public createElement = () => {
@@ -56,6 +56,20 @@ export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
   public updateContents() {
     super.updateContents()
     this.refreshFileInfo()
+    const can = this.props.getCapabilities()
+    this.dom.draggable = can.editArticle
+    if (can.editArticle) {
+      if (!this.dragAndDropInitialized) {
+        this.setupDragAndDrop()
+        this.dragAndDropInitialized = true
+      }
+      if (!this.dragIcon) {
+        this.addDragIcon()
+      }
+    } else {
+      this.dragIcon?.remove()
+      this.dragIcon = undefined
+    }
   }
 
   private getDropSide(element: Element, clientY: number): 'before' | 'after' {
@@ -175,9 +189,32 @@ export class SupplementView extends BaseNodeView<Trackable<SupplementNode>> {
     this.supplementInfoEl.classList.add('supplement-file-info')
     this.supplementInfoEl.contentEditable = 'false'
 
+    const href = this.node.attrs.href
+
+    if (allowedHref(href)) {
+      const iconElement = document.createElement('span')
+      iconElement.classList.add('supplement-file-icon')
+      iconElement.innerHTML = webLinkIcon
+      this.supplementInfoEl.appendChild(iconElement)
+
+      const urlLink = document.createElement('a')
+      urlLink.classList.add('supplement-weblink-url')
+      urlLink.textContent = href
+      if (allowedHref(href)) {
+        urlLink.href = href
+        urlLink.target = '_blank'
+        urlLink.rel = 'noopener noreferrer'
+      }
+      urlLink.addEventListener('mousedown', (e) => e.stopPropagation())
+      this.supplementInfoEl.appendChild(urlLink)
+
+      this.dom.appendChild(this.supplementInfoEl)
+      return
+    }
+
     // Get the file from the file management system
     const files = this.props.getFiles()
-    const file = files.find((f) => f.id === this.node.attrs.href)
+    const file = files.find((f) => f.id === href)
 
     if (file) {
       const iconElement = document.createElement('span')

@@ -1,0 +1,198 @@
+/*!
+ * © 2026 Atypon Systems LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+import { ManuscriptNode } from '@manuscripts/transform'
+import { EditorView } from 'prosemirror-view'
+
+import { findNodeByID } from './doc'
+import { NodeSelection } from 'prosemirror-state'
+
+interface DragDropContext {
+  view: EditorView
+  node: ManuscriptNode
+  pos: number
+}
+
+interface DragDropConfig {
+  element: HTMLElement
+  getContext: () => DragDropContext
+  restrictToParent?: boolean
+  disabled?: boolean
+}
+
+export class DragDropManager {
+  private static currentNodeId: string | null = null
+
+  private element: HTMLElement
+  private restrictToParent: boolean
+  private getContext: () => DragDropContext
+
+  setup(config: DragDropConfig) {
+    const { element, restrictToParent = true, getContext, disabled } = config
+    if (disabled) {
+      return
+    }
+
+    this.element = element
+    this.element.draggable = true
+    this.restrictToParent = restrictToParent
+    this.getContext = getContext
+
+    const abortController = new AbortController()
+    const signal = abortController.signal
+
+    element.addEventListener('dragstart', this.handleDragStart, { signal })
+    element.addEventListener('dragend', this.handleDragEnd, { signal })
+    element.addEventListener('dragover', this.handleDragOver, { signal })
+    element.addEventListener('dragleave', this.handleDragLeave, { signal })
+    element.addEventListener('drop', this.handleDrop, { signal })
+
+    return () => {
+      DragDropManager.currentNodeId = null
+      this.clearDropClasses()
+      this.element.classList.remove('dragging')
+      abortController.abort()
+    }
+  }
+
+  private handleDragStart = () => {
+    DragDropManager.currentNodeId = this.getContext().node.attrs.id
+    this.element.classList.add('dragging')
+  }
+
+  private handleDragEnd = () => {
+    DragDropManager.currentNodeId = null
+    this.element.classList.remove('dragging')
+    this.clearDropClasses()
+  }
+
+  private handleDragOver = (e: DragEvent) => {
+    const draggedId = DragDropManager.currentNodeId
+    const nodeId = this.getContext().node.attrs.id
+    if (
+      DragDropManager.currentNodeId === null ||
+      draggedId === null ||
+      draggedId === nodeId
+    ) {
+      return
+    }
+
+    e.preventDefault()
+    e.stopPropagation()
+
+    const movePosition = this.getMovePosition(e)
+    if (movePosition) {
+      const { noActualMove, side, fromPos, targetPos } = movePosition
+      if (!noActualMove && this.canMoveOutsideParent(fromPos, targetPos)) {
+        this.element.classList.add(
+          side === 'before' ? 'drop-target-above' : 'drop-target-below'
+        )
+      }
+    }
+  }
+
+  private handleDragLeave = (e: DragEvent) => {
+    if (!this.element.contains(e.relatedTarget as Node)) {
+      this.clearDropClasses()
+    }
+  }
+
+  private handleDrop = (e: DragEvent) => {
+    if (DragDropManager.currentNodeId === null) {
+      return
+    }
+
+    e.preventDefault()
+    e.stopPropagation()
+
+    const movePosition = this.getMovePosition(e)
+    if (movePosition) {
+      const { noActualMove, fromPos, targetPos, fromNode } = movePosition
+      if (!noActualMove && this.canMoveOutsideParent(fromPos, targetPos)) {
+        this.moveNode(fromNode, fromPos, targetPos)
+      }
+    }
+    this.clearDropClasses()
+  }
+
+  private clearDropClasses() {
+    this.element.classList.remove('drop-target-above', 'drop-target-below')
+  }
+
+  private getMovePosition(e: DragEvent) {
+    if (!DragDropManager.currentNodeId) {
+      return
+    }
+
+    const { view, node, pos: toPos } = this.getContext()
+    const currentView = findNodeByID(
+      view.state.doc,
+      DragDropManager.currentNodeId
+    )
+    if (!currentView) {
+      return
+    }
+
+    const side = this.getDropSide(this.element, e.clientY)
+    const targetPos = side === 'before' ? toPos : toPos + node.nodeSize
+
+    const { node: fromNode, pos: fromPos } = currentView
+    return {
+      // No-move if dropping at the node’s start or end position
+      noActualMove:
+        targetPos === fromPos || targetPos === fromPos + fromNode.nodeSize,
+      side,
+      fromNode,
+      fromPos,
+      targetPos,
+    }
+  }
+
+  private getDropSide(
+    element: HTMLElement,
+    clientY: number
+  ): 'before' | 'after' {
+    const { top, bottom } = element.getBoundingClientRect()
+    const middleY = (top + bottom) / 2
+    return clientY > middleY ? 'after' : 'before'
+  }
+
+  private moveNode(
+    fromNode: ManuscriptNode,
+    fromPos: number,
+    targetPos: number
+  ) {
+    const view = this.getContext().view
+    const { state } = view
+    const { tr } = state
+    tr.insert(targetPos, fromNode)
+    const mappedFrom = tr.mapping.map(fromPos, -1)
+    tr.delete(mappedFrom, mappedFrom + fromNode.nodeSize)
+    tr.setSelection(
+      NodeSelection.near(tr.doc.resolve(tr.mapping.map(targetPos, -1)))
+    )
+    view.dispatch(tr)
+  }
+
+  private canMoveOutsideParent(from: number, to: number) {
+    if (!this.restrictToParent) {
+      return true
+    }
+    const { view } = this.getContext()
+    const $fromPos = view.state.doc.resolve(from)
+    const $toPos = view.state.doc.resolve(to)
+    return $fromPos.sameParent($toPos)
+  }
+}

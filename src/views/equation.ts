@@ -20,6 +20,7 @@ import { renderMath } from '../lib/math'
 import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
+import { handleEnterKey } from '../lib/navigation-utils'
 
 export class EquationView
   extends BaseNodeView<Trackable<EquationNode>>
@@ -33,6 +34,10 @@ export class EquationView
   public createDOM = () => {
     this.dom = document.createElement('div')
     this.dom.classList.add('equation')
+    this.dom.addEventListener(
+      'keydown',
+      handleEnterKey(() => this.selectNode())
+    )
   }
 
   public updateContents() {

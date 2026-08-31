@@ -283,6 +283,7 @@ const getDecorationPos = (node: ManuscriptNode, pos: number) => {
     case schema.nodes.contributors:
     case schema.nodes.hero_image:
     case schema.nodes.supplements:
+    case schema.nodes.headshot_grid:
       return pos
     case schema.nodes.keywords:
       return pos + 2

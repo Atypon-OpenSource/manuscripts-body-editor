@@ -36,7 +36,6 @@ import { arrayReducer, attrsReducer } from '../../lib/array-reducer'
 import { cleanItemValues } from '../../lib/utils'
 import { BibliographyItemSource } from './BibliographyItemSource'
 import { CitedItem, CitedItems } from './CitationViewer'
-import { ImportBibliographyModal } from './ImportBibliographyModal'
 import { ReferenceLine } from './ReferenceLine'
 import { InsertCitationModal } from './InsertCitationModal'
 import { ReferencesModal } from './ReferencesModal'
@@ -92,7 +91,7 @@ export interface CitationEditorProps {
   sources: BibliographyItemSource[]
   onCite: (items: BibliographyItemAttrs[]) => void
   onUncite: (id: string) => void
-  onSave: (item: BibliographyItemAttrs) => void
+  onSave: (item: BibliographyItemAttrs[]) => void
   onDelete: (item: BibliographyItemAttrs) => void
   onCancel: () => void
   canEdit: boolean
@@ -118,7 +117,7 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
   const [rids, dispatchRids] = useReducer(ridsReducer, $rids)
   const handleSave = (item: BibliographyItemAttrs) => {
     const cleanedItem = cleanItemValues(item)
-    onSave(cleanedItem)
+    onSave([cleanedItem])
     dispatchItems({
       type: 'update',
       items: [cleanedItem],
@@ -163,7 +162,6 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
   })
 
   const [searching, setSearching] = useState(false)
-  const [importing, setImporting] = useState(false)
 
   const handleAdd = () => {
     setSearching(false)
@@ -178,12 +176,19 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
     setEditingForm({ show: true, item: item })
   }
 
-  const handleSaveImport = (data: BibliographyItemAttrs[]) => {
-    data.forEach((item) => {
-      const newItem = { ...item }
-      newItem.id = generateNodeID(schema.nodes.bibliography_item)
-      handleSave(newItem)
-      handleCite([newItem])
+  const handleImport = (data: BibliographyItemAttrs[]) => {
+    const newItems = data.map((item) =>
+      cleanItemValues({
+        ...item,
+        id: generateNodeID(schema.nodes.bibliography_item),
+      })
+    )
+
+    onSave(newItems)
+
+    dispatchItems({
+      type: 'set',
+      state: [...items, ...newItems],
     })
   }
 
@@ -201,15 +206,7 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
         item={editingForm.item}
         onSave={handleSave}
         onDelete={handleDelete}
-      />
-    )
-  }
-
-  if (importing) {
-    return (
-      <ImportBibliographyModal
-        onCancel={() => setImporting(false)}
-        onSave={handleSaveImport}
+        handleImport={handleImport}
       />
     )
   }

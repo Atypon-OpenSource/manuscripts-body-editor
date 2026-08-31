@@ -18,6 +18,7 @@ import {
   AlertIcon,
   ArrowDownCircleIcon,
   ArrowUpIcon,
+  CameraIcon,
   DeleteIcon,
   DraggableIcon,
   EditIcon,
@@ -28,12 +29,18 @@ import {
   ImageRightIcon,
   LinkIcon,
   LockIcon,
+  LeadingHalfLeftIcon,
+  LeadingHeroImageIcon,
+  LeadingLargeFloatIcon,
+  LeadingSmallFloatIcon,
+  LeadingWallpaperIcon,
   ORCIDIcon as ORCID,
   PlusIcon,
   ScrollIcon,
   SectionCategoryIcon,
   TickIcon,
   TranslateIcon,
+  WebLinkIcon,
 } from '@manuscripts/style-guide'
 import React, { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
@@ -44,6 +51,7 @@ export const addIcon = renderIcon(AddAuthorIcon)
 export const arrowDown = renderIcon(ArrowDownCircleIcon)
 export const arrowUp = renderIcon(ArrowUpIcon)
 export const alertIcon = renderIcon(AlertIcon)
+export const cameraIcon = renderIcon(CameraIcon)
 export const deleteIcon = renderIcon(DeleteIcon)
 export const editIcon = renderIcon(EditIcon)
 export const sectionCategoryIcon = renderIcon(SectionCategoryIcon)
@@ -57,6 +65,12 @@ export const fileCorruptedIcon = renderIcon(FileCorruptedIcon)
 export const draggableIcon = renderIcon(DraggableIcon)
 export const translateIcon = renderIcon(TranslateIcon)
 export const linkIcon = renderIcon(LinkIcon)
+export const leadingHeroImageIcon = renderIcon(LeadingHeroImageIcon)
+export const leadingSmallFloatIcon = renderIcon(LeadingSmallFloatIcon)
+export const leadingLargeFloatIcon = renderIcon(LeadingLargeFloatIcon)
+export const leadingWallpaperIcon = renderIcon(LeadingWallpaperIcon)
+export const leadingHalfLeftIcon = renderIcon(LeadingHalfLeftIcon)
 export const fileMainDocumentIcon = renderIcon(FileMainDocumentIcon)
 export const tickIcon = renderIcon(TickIcon)
 export const ORCIDIcon = renderIcon(ORCID)
+export const webLinkIcon = renderIcon(WebLinkIcon)

@@ -15,9 +15,11 @@
  */
 
 import {
+  AvatarIcon,
   FileDocumentIcon,
   SupplementsIcon,
   FileImageIcon,
+  FileHeadshotGridIcon,
   OutlineBlockQuoteIcon,
   OutlineEmbedIcon,
   OutlineEquationIcon,
@@ -35,6 +37,14 @@ import { NodeType } from 'prosemirror-model'
 import React from 'react'
 
 const { nodes } = schema
+
+const OutlineHeadshotGridIcon: React.FC = () => (
+  <FileHeadshotGridIcon width="12" height="12" />
+)
+
+const OutlineHeadshotElementIcon: React.FC = () => (
+  <AvatarIcon width="16" height="16" />
+)
 
 const OutlineImageIcon: React.FC = () => (
   <FileImageIcon width="11" height="14" />
@@ -67,6 +77,8 @@ const icons: Map<
   [nodes.hero_image, OutlineImageIcon],
   [nodes.supplements, OutlineSupplementsIcon],
   [nodes.attachments, OutlineMainDocumentIcon],
+  [nodes.headshot_grid, OutlineHeadshotGridIcon],
+  [nodes.headshot_element, OutlineHeadshotElementIcon],
 ])
 
 export const nodeTypeIcon = (nodeType: NodeType, listType?: string) => {
