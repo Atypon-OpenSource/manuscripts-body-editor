@@ -19,13 +19,11 @@ import {
   AddIcon,
   AddNewIcon,
   ButtonGroup,
-  IconTextButton,
-  PrimaryButton,
-  SecondaryButton,
   withFocusTrap,
   withListNavigation,
   withNavigableListItem,
 } from '@manuscripts/style-guide'
+import { Button } from '@manuscripts/style-guide/mui'
 import { isDeleted } from '@manuscripts/track-changes-plugin'
 import { FootnoteNode, InlineFootnoteNode } from '@manuscripts/transform'
 import React, { useState } from 'react'
@@ -131,19 +129,20 @@ export const FootnotesSelector: React.FC<FootnotesSelectorProps> = ({
       </NotesContainer>
       <Actions>
         <AddNewFootnote>
-          <IconTextButton onClick={onAdd}>
-            <AddNewIcon />
+          <Button variant="tertiary" onClick={onAdd} startIcon={<AddNewIcon />}>
             Add new
-          </IconTextButton>
+          </Button>
         </AddNewFootnote>
         <ButtonGroup>
-          <SecondaryButton onClick={onCancel}>Cancel</SecondaryButton>
-          <PrimaryButton
+          <Button variant="secondary" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button
             onClick={handleClick}
             disabled={selections.size === 0 && !inlineFootnote}
           >
             {inlineFootnote ? 'Update' : 'Insert'}
-          </PrimaryButton>
+          </Button>
         </ButtonGroup>
       </Actions>
     </Container>

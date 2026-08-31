@@ -19,11 +19,9 @@ import {
   DeleteSolidIcon,
   Dialog,
   EditIcon,
-  IconButton,
-  PrimaryButton,
-  SecondaryButton,
   withFocusTrap,
 } from '@manuscripts/style-guide'
+import { Button, IconButton } from '@manuscripts/style-guide/mui'
 import {
   BibliographyItemAttrs,
   generateNodeID,
@@ -46,35 +44,6 @@ const CitedItemActions = styled.div`
   display: flex;
   align-items: center;
   margin-left: 12px;
-
-  svg.remove-icon {
-    color: #6e6e6e;
-  }
-`
-
-const ActionButton = styled(IconButton).attrs({
-  $size: 24,
-})`
-  &:disabled {
-    background-color: transparent !important;
-    border-color: transparent !important;
-    color: rgb(255, 255, 255);
-    path,
-    g {
-      fill: ${(props) => props.theme.colors.background.tertiary} !important;
-    }
-  }
-  &:not(:disabled):focus,
-  &:not(:disabled):hover {
-    path,
-    g {
-      fill: ${(props) => props.theme.colors.brand.medium} !important;
-    }
-  }
-`
-
-const EditReferenceButton = styled(ActionButton)`
-  margin-right: ${(props) => props.theme.grid.unit * 3}px;
 `
 
 const Actions = styled(ButtonGroup)`
@@ -264,28 +233,30 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
           <CitedItem key={item.id}>
             <ReferenceLine item={item} />
             <CitedItemActions>
-              <EditReferenceButton
+              <IconButton
                 value={item.id}
                 disabled={!canEdit}
                 onClick={() => setEditingForm({ show: true, item: item })}
               >
-                <EditIcon />
-              </EditReferenceButton>
-              <ActionButton
+                <EditIcon fill={'currentColor'} />
+              </IconButton>
+              <IconButton
                 disabled={!canEdit}
                 onClick={() => setDeleteDialog({ show: true, id: item.id })}
               >
-                <DeleteSolidIcon className={'remove-icon'} />
-              </ActionButton>
+                <DeleteSolidIcon fill={'currentColor'} />
+              </IconButton>
             </CitedItemActions>
           </CitedItem>
         ))}
       </CitedItems>
       <Actions>
-        <SecondaryButton onClick={onCancel}>Done</SecondaryButton>
-        <PrimaryButton disabled={!canEdit} onClick={() => setSearching(true)}>
+        <Button variant="secondary" onClick={onCancel}>
+          Done
+        </Button>
+        <Button disabled={!canEdit} onClick={() => setSearching(true)}>
           Add Citation
-        </PrimaryButton>
+        </Button>
       </Actions>
     </Container>
   )
