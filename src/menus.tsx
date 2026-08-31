@@ -38,6 +38,7 @@ import {
   insertBoxElement,
   insertContributors,
   insertCrossReference,
+  canInsertCrossReference,
   insertEmbed,
   insertGraphicalAbstract,
   insertHeadshotGrid,
@@ -659,8 +660,7 @@ export const getEditorMenus = (
           pc: 'CommandOrControl+Option+R',
         },
         isEnabled:
-          isEditAllowed(state) &&
-          isCommandValid(canInsert(schema.nodes.cross_reference)),
+          isEditAllowed(state) && isCommandValid(canInsertCrossReference),
         run: doCommand(insertCrossReference),
         isHidden: !templateAllows(state, schema.nodes.cross_reference),
       },
