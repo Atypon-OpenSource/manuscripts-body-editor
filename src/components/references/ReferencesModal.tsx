@@ -259,7 +259,7 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
         />
         <ReferencesModalContainer data-cy={'references-editor'}>
           <ModalHeader>
-            <CloseButton onClick={onCancel} />
+            <CloseButton data-cy="modal-close-button" onClick={onCancel} />
           </ModalHeader>
           <ModalBody>
             <ReferencesSidebar>
