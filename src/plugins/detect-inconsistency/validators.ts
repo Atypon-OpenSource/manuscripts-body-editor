@@ -259,7 +259,7 @@ const validateFootnote: NodeValidator = (node, pos, context) => {
 }
 
 const normalizeDuplicateValue = (value: string | undefined) =>
-  (value ?? '').trim().replace(/\s+/g, ' ').toLocaleLowerCase()
+  (value ?? '').trim().replace(/\s+/g, ' ').toLowerCase()
 
 const isDuplicateAffiliation = (
   affiliation: AffiliationAttrs,
