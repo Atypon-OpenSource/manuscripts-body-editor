@@ -543,6 +543,40 @@ export const insertSupplementWeblink = (
   return true
 }
 
+export const convertLinkToSupplementWeblink = (
+  pos: number,
+  node: ManuscriptNode,
+  view: ManuscriptEditorView
+) => {
+  const href = node.attrs.href
+  if (!href) {
+    return false
+  }
+
+  const text = node.textContent.trim()
+  const id = generateNodeID(schema.nodes.supplement)
+
+  const supplement = schema.nodes.supplement.createAndFill(
+    { id, href },
+    createAndFillCaption()
+  ) as SupplementNode
+
+  const crossReference = schema.nodes.cross_reference.create({
+    id: generateNodeID(schema.nodes.cross_reference),
+    rids: [id],
+    label: text,
+  })
+
+  const tr = view.state.tr
+  tr.replaceWith(pos, pos + node.nodeSize, crossReference)
+  upsertSupplementsSection(tr, supplement)
+  tr.setSelection(TextSelection.create(tr.doc, pos))
+
+  view.focus()
+  view.dispatch(tr)
+  return true
+}
+
 export const updateSupplementWeblink = (
   pos: number,
   url: string,

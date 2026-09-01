@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
+import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
+import { isDeleted } from '@manuscripts/track-changes-plugin'
 import { schema } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 
+import { convertLinkToSupplementWeblink } from '../commands'
 import {
   LinkForm,
   LinkFormProps,
@@ -26,7 +29,6 @@ import { allowedHref } from '../lib/url'
 import { createEditableNodeView } from './creators'
 import { LinkView } from './link'
 import ReactSubView from './ReactSubView'
-import { isDeleted } from '@manuscripts/track-changes-plugin'
 
 export class LinkEditableView extends LinkView {
   protected popperContainer: HTMLDivElement
@@ -59,7 +61,7 @@ export class LinkEditableView extends LinkView {
   }
 
   public selectNode = () => {
-    if (!isDeleted(this.node)) {
+    if (!isDeleted(this.node) && !this.node.attrs.href) {
       this.showForm()
     }
   }
@@ -69,6 +71,67 @@ export class LinkEditableView extends LinkView {
   }
 
   public deselectNode = () => {
+    this.closeForm()
+  }
+
+  private showContextMenu = () => {
+    if (!this.props.getCapabilities().editArticle) {
+      return
+    }
+
+    this.closeForm()
+
+    const href = this.node.attrs.href
+
+    const componentProps: ContextMenuProps = {
+      actions: [
+        {
+          label: 'Edit',
+          action: this.handleEdit,
+          icon: 'Edit',
+        },
+        {
+          label: 'Convert to Weblink',
+          action: this.handleConvertToWebLink,
+          icon: 'ConvertToWebLink',
+        },
+        {
+          label: 'Open Link',
+          action: this.handleOpenLink,
+          icon: 'ExternalLink',
+          disabled: !allowedHref(href),
+        },
+      ],
+    }
+
+    this.popperContainer = ReactSubView(
+      this.props,
+      ContextMenu,
+      componentProps,
+      this.node,
+      this.getPos,
+      this.view,
+      ['context-menu', 'link-context-menu']
+    )
+
+    this.props.popper.show(this.dom, this.popperContainer, 'bottom')
+  }
+
+  private handleEdit = () => {
+    this.closeForm()
+    this.showForm()
+  }
+
+  private handleConvertToWebLink = () => {
+    this.closeForm()
+    convertLinkToSupplementWeblink(this.getPos(), this.node, this.view)
+  }
+
+  private handleOpenLink = () => {
+    const href = this.node.attrs.href
+    if (allowedHref(href)) {
+      window.open(href, '_blank', 'noopener,noreferrer')
+    }
     this.closeForm()
   }
 
@@ -106,9 +169,15 @@ export class LinkEditableView extends LinkView {
   }
 
   private handleClick = (e: Event) => {
-    if (this.props.getCapabilities().editArticle) {
-      e.preventDefault()
+    if (!this.props.getCapabilities().editArticle) {
+      return
     }
+    e.preventDefault()
+
+    if (isDeleted(this.node) || !this.node.attrs.href) {
+      return
+    }
+    this.showContextMenu()
   }
 
   private handleCancel = () => {
