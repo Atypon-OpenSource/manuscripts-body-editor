@@ -33,8 +33,8 @@ importers:
         specifier: 1.1.2
         version: 1.1.2
       '@manuscripts/style-guide':
-        specifier: 3.7.2
-        version: 3.7.2(@types/hoist-non-react-statics@3.3.7(@types/react@19.2.17))(@types/node@20.17.46)(@types/react@19.2.17)(css-to-react-native@3.2.0)
+        specifier: 3.7.3-LEAN-5909.0
+        version: 3.7.3-LEAN-5909.0(@types/hoist-non-react-statics@3.3.7(@types/react@19.2.17))(@types/node@20.17.46)(@types/react@19.2.17)(css-to-react-native@3.2.0)
       '@manuscripts/track-changes-plugin':
         specifier: 2.4.0
         version: 2.4.0
@@ -866,8 +866,8 @@ packages:
       eslint-plugin-simple-import-sort: '>= 8'
       typescript: '*'
 
-  '@manuscripts/style-guide@3.7.2':
-    resolution: {integrity: sha512-SmXZuCWfoHHUhcSPQFhDYFB+p2I01CRXmd4PTjyZXgV6TYhuxanazs0c5wODtUONEPY9B++U6bHit5t8PZBXqA==}
+  '@manuscripts/style-guide@3.7.3-LEAN-5909.0':
+    resolution: {integrity: sha512-hmD8znkzMcEwTj4ZXUJJ09wCbAiC5EPlX9pK5+lzi/RJn9zQaJ2KPUVbnDP9K98daBGTqMRMM82MK+U0Vjg+wA==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/style-guide/-/@manuscripts/style-guide-3.7.3-LEAN-5909.0.tgz}
     engines: {node: '>=22'}
 
   '@manuscripts/track-changes-plugin@2.4.0':
@@ -5579,7 +5579,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@manuscripts/style-guide@3.7.2(@types/hoist-non-react-statics@3.3.7(@types/react@19.2.17))(@types/node@20.17.46)(@types/react@19.2.17)(css-to-react-native@3.2.0)':
+  '@manuscripts/style-guide@3.7.3-LEAN-5909.0(@types/hoist-non-react-statics@3.3.7(@types/react@19.2.17))(@types/node@20.17.46)(@types/react@19.2.17)(css-to-react-native@3.2.0)':
     dependencies:
       '@headlessui/react': 2.2.10(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       formik: 2.4.9(@types/react@19.2.17)(react@19.2.6)
