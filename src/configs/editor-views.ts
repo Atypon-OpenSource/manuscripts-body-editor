@@ -137,6 +137,7 @@ export default (
     headshot_element: headshotElement(props, dispatch),
     headshot_image: headshotImage(props, dispatch),
     abstracts: abstracts(props),
+    abstract: section(props),
     trans_abstract: transAbstract(props),
     trans_graphical_abstract: transGraphicalAbstract(props),
     attachment: attachment(props, dispatch),
