@@ -17,6 +17,7 @@
 import {
   CrossReferenceNode,
   ManuscriptNodeView,
+  schema,
   Target,
 } from '@manuscripts/transform'
 
@@ -47,7 +48,12 @@ export class CrossReferenceView
     const attrs = this.node.attrs
     const target = attrs.rids.length ? targets.get(attrs.rids[0]) : undefined
 
-    this.dom.textContent = attrs.label || target?.caption || target?.label || ''
+    const isSupplement = target?.type === schema.nodes.supplement.name;
+    const derivedLabel = isSupplement
+      ? target?.caption || target?.label || ''
+      : target?.label || ''
+
+    this.dom.textContent = attrs.label || derivedLabel
     this.dom.addEventListener('click', this.handleClick)
   }
 
