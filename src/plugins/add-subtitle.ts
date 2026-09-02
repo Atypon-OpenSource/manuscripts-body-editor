@@ -20,14 +20,14 @@ import { Decoration, DecorationSet } from 'prosemirror-view'
 import { v4 as uuidv4 } from 'uuid'
 
 import { EditorProps } from '../configs/ManuscriptsEditor'
-import { addAuthorIcon } from '../icons'
+import { addIcon } from '../icons'
 import { handleEnterKey } from '../lib/navigation-utils'
 import { findInsertionPosition } from '../lib/utils'
 
 const createAddSubtitleButton = (handler: () => void) => {
   const button = document.createElement('span')
   button.className = 'add-subtitle'
-  button.innerHTML = `${addAuthorIcon} <span class="add-subtitle-text">Add subtitle</span>`
+  button.innerHTML = `${addIcon} <span class="add-subtitle-text">Add subtitle</span>`
 
   button.tabIndex = 0
   const activate = (event: MouseEvent | KeyboardEvent) => {
