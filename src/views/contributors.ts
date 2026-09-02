@@ -329,7 +329,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       this.view
     )
 
-    this.container.appendChild(this.popper)
+    document.body.appendChild(this.popper)
   }
 
   public destroy() {

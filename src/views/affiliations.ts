@@ -181,7 +181,7 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
       this.getPos,
       this.view
     )
-    this.container.appendChild(this.popper)
+    document.body.appendChild(this.popper)
   }
 
   public showGroupContextMenu = (): HTMLElement | undefined => {
