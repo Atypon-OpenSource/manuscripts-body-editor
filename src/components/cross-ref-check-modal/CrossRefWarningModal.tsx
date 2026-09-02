@@ -46,7 +46,6 @@ export const CrossRefWarningModal: React.FC<{
   const [isOpen, setIsOpen] = useState(true)
   const handleClose = () => {
     setIsOpen(false)
-    onClose()
   }
 
   return (
@@ -55,6 +54,7 @@ export const CrossRefWarningModal: React.FC<{
       onRequestClose={() => handleClose()}
       shouldCloseOnOverlayClick={false}
       hideOverlay={true}
+      onExited={() => onClose()}
     >
       <Container data-cy="cross-reference-warning-modal">
         <ModalHeader>

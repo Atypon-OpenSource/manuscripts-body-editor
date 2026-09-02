@@ -182,6 +182,7 @@ const normalize = (item: BibliographyItemAttrs) => ({
 export interface ReferencesModalProps {
   isOpen: boolean
   onCancel: () => void
+  onClose?: () => void
   items: BibliographyItemAttrs[]
   item?: BibliographyItemAttrs
   citationCounts: Map<string, number>
@@ -199,6 +200,7 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
   onSave,
   onDelete,
   handleImport,
+  onClose,
 }) => {
   const [importing, setImporting] = useState(false)
   const [importSuccessCount, setImportSuccessCount] = useState<number | null>(
@@ -348,7 +350,11 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
           onSave={handleImportSave}
         />
       )}
-      <StyledModalContent isOpen={isOpen} onRequestClose={onCancel}>
+      <StyledModalContent
+        isOpen={isOpen}
+        onRequestClose={onCancel}
+        onExited={() => onClose?.()}
+      >
         <Dialog
           isOpen={confirm}
           category={Category.confirmation}

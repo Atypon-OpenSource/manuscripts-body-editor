@@ -71,8 +71,6 @@ export interface AffiliationsModalProps {
   openAuthorsModal?: () => void
 }
 
-const MODAL_ON_CLOSE_NOTIFY_DELAY_MS = 220
-
 function makeAuthorItems(authors: ContributorAttrs[]) {
   return authors.map((author) => ({
     id: author.id,
@@ -136,18 +134,6 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     setAffiliationDetailsUnsavedContinue,
   ] = useState(false)
   const [affiliationTabIndex, setAffiliationTabIndex] = useState(0)
-
-  const prevIsOpenRef = useRef(true)
-  useEffect(() => {
-    if (prevIsOpenRef.current && !isOpen) {
-      prevIsOpenRef.current = isOpen
-      const id = window.setTimeout(() => {
-        onClose?.()
-      }, MODAL_ON_CLOSE_NOTIFY_DELAY_MS)
-      return () => window.clearTimeout(id)
-    }
-    prevIsOpenRef.current = isOpen
-  }, [isOpen, onClose])
 
   useEffect(() => {
     if (isDisableSave) {
@@ -468,6 +454,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
       isOpen={isOpen}
       onRequestClose={() => handleClose()}
       shouldCloseOnOverlayClick={true}
+      onExited={() => onClose?.()}
     >
       <ModalContainer data-cy="affiliations-modal">
         <ModalHeader>

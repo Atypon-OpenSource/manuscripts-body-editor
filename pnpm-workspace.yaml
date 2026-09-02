@@ -1,2 +1,2 @@
-onlyBuiltDependencies:
-  - unrs-resolver
+overrides:
+  '@manuscripts/style-guide': link:../../../Library/pnpm/global/5/node_modules/@manuscripts/style-guide

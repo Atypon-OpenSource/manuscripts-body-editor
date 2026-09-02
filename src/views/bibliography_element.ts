@@ -64,6 +64,7 @@ export class BibliographyElementBlockView extends BlockView<
       item: bib.bibliographyItems.get(id),
       onSave: this.handleSave,
       onDelete: this.handleDelete,
+      onClose: () => this.editor?.remove(),
     }
 
     this.editor = ReactSubView(
@@ -76,7 +77,7 @@ export class BibliographyElementBlockView extends BlockView<
       ['references-editor']
     )
 
-    this.props.popper.show(this.dom, this.editor, 'right')
+    document.body.appendChild(this.editor)
   }
 
   public stopEvent = () => true

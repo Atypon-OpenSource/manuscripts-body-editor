@@ -81,6 +81,7 @@ export const AwardModal: React.FC<AwardModalProps> = ({
       isOpen={isOpen}
       onRequestClose={handleClose}
       shouldCloseOnOverlayClick={true}
+      onExited={() => onClose()}
     >
       <ModalContainer data-cy="award-modal">
         <ModalHeader>

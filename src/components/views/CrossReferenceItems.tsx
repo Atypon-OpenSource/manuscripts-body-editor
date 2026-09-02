@@ -195,7 +195,7 @@ const GROUP_LABELS: Record<string, string> = {
   supplement: 'Supplementary files',
 }
 
-interface Props {
+export interface CrossReferenceItemsProps {
   targets: Target[]
   files: FileAttachment[]
   handleSelect: (id: string, customLabel?: string) => void
@@ -203,9 +203,10 @@ interface Props {
   currentTargetId?: string
   currentCustomLabel?: string
   isEdit?: boolean
+  onClose: () => void
 }
 
-export const CrossReferenceItems: React.FC<Props> = ({
+export const CrossReferenceItems: React.FC<CrossReferenceItemsProps> = ({
   targets,
   files,
   handleSelect,
@@ -213,6 +214,7 @@ export const CrossReferenceItems: React.FC<Props> = ({
   currentTargetId,
   currentCustomLabel,
   isEdit = false,
+  onClose,
 }) => {
   const [isOpen, setIsOpen] = useState(true)
   const [selectedItem, setSelectedItem] = useState<string>('')
@@ -237,6 +239,7 @@ export const CrossReferenceItems: React.FC<Props> = ({
   return (
     <StyledModalContent
       isOpen={isOpen}
+      onExited={onClose}
       onRequestClose={close}
       shouldCloseOnOverlayClick={true}
     >

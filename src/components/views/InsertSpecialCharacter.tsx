@@ -59,7 +59,8 @@ const generateCharacters = (start: number, end: number) =>
 
 const InsertSpecialCharacterDialog: React.FC<{
   view: EditorView
-}> = ({ view }) => {
+  onClose: () => void
+}> = ({ view, onClose }) => {
   const [isOpen, setOpen] = useState(true)
   const [range, setRange] = useState(unicodeRanges[0].value)
 
@@ -81,6 +82,7 @@ const InsertSpecialCharacterDialog: React.FC<{
       isOpen={isOpen}
       onRequestClose={handleClose}
       shouldCloseOnOverlayClick={true}
+      onExited={onClose}
     >
       <Container data-cy="special-characters-modal">
         <ModalHeader>
@@ -144,6 +146,27 @@ const OptionComponent: React.FC<OptionProps<OptionType, false>> = ({
       {data.label}
     </OptionWrapper>
   )
+}
+
+export const openInsertSpecialCharacterDialog = (view?: EditorView) => {
+  let dialog: HTMLDivElement | null = null
+  if (!view) {
+    return
+  }
+
+  const { state } = view
+  const props = getEditorProps(state)
+
+  dialog = ReactSubView(
+    props,
+    InsertSpecialCharacterDialog,
+    { view, onClose: () => dialog?.remove() },
+    state.doc,
+    () => 0,
+    view
+  )
+
+  document.body.appendChild(dialog)
 }
 
 const Container = styled(ModalContainer)`
@@ -223,23 +246,3 @@ const Character = withNavigableListItem(styled(IconButton)`
     outline-offset: 2px;
   }
 `)
-
-export const openInsertSpecialCharacterDialog = (view?: EditorView) => {
-  if (!view) {
-    return
-  }
-
-  const { state } = view
-  const props = getEditorProps(state)
-
-  const dialog = ReactSubView(
-    props,
-    InsertSpecialCharacterDialog,
-    { view },
-    state.doc,
-    () => 0,
-    view
-  )
-
-  document.body.appendChild(dialog)
-}

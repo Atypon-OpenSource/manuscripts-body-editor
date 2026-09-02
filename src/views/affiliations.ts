@@ -169,6 +169,7 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
       view: this.view,
       affiliation,
       addNewAffiliation: addNew,
+      onClose: () => this.popper?.remove(),
     }
 
     this.popper?.remove()

@@ -20,12 +20,11 @@ import {
   StyledModalContent,
 } from '@manuscripts/style-guide'
 import { generateNodeID, schema } from '@manuscripts/transform'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
 
 import { AffiliationAttrs, ContributorAttrs } from '../../lib/authors'
 import { normalizeAuthor } from '../../lib/normalize'
 import {
-  MODAL_ON_CLOSE_NOTIFY_DELAY_MS,
   FormTitle,
   StyledModalBody,
   StyledScrollableModalContent,
@@ -62,19 +61,6 @@ export const CreateAuthorModal: React.FC<CreateAuthorModalProps> = ({
     []
   )
 
-  // Wait for the close animation to finish before calling onClose.
-  const prevIsOpenRef = useRef(true)
-  useEffect(() => {
-    if (prevIsOpenRef.current && !isOpen) {
-      prevIsOpenRef.current = isOpen
-      const id = window.setTimeout(() => {
-        onClose()
-      }, MODAL_ON_CLOSE_NOTIFY_DELAY_MS)
-      return () => window.clearTimeout(id)
-    }
-    prevIsOpenRef.current = isOpen
-  }, [isOpen, onClose])
-
   const { selectedAffiliations } = useManageAffiliations(
     selection,
     $affiliations
@@ -109,6 +95,7 @@ export const CreateAuthorModal: React.FC<CreateAuthorModalProps> = ({
       isOpen={isOpen}
       onRequestClose={() => setIsOpen(false)}
       shouldCloseOnOverlayClick={true}
+      onExited={() => onClose()}
     >
       <ModalContainer data-cy="create-author-modal">
         <ModalHeader>
