@@ -48,11 +48,13 @@ export interface AwardFormData {
 export interface AwardModalProps {
   initialData: AwardAttrs
   onSaveAward: (data: AwardFormData) => void
+  onClose: () => void
 }
 
 export const AwardModal: React.FC<AwardModalProps> = ({
   initialData,
   onSaveAward,
+  onClose,
 }) => {
   const [isOpen, setOpen] = useState(true)
   const valuesRef = useRef<AwardAttrs>(undefined)
@@ -64,7 +66,9 @@ export const AwardModal: React.FC<AwardModalProps> = ({
       handleClose()
     }
   }
-  const handleClose = () => setOpen(false)
+  const handleClose = () => {
+    setOpen(false)
+  }
   const handleChange = (values: AwardAttrs) => (valuesRef.current = values)
 
   const normalizedValues = React.useMemo(
@@ -96,25 +100,33 @@ export const AwardModal: React.FC<AwardModalProps> = ({
   )
 }
 
-export const openInsertAwardModal = (view?: EditorView) => {
-  if (!view) {
-    return
-  }
+export const openInsertAwardModal = () => {
+  let dialog: HTMLDivElement | null
+  return (view?: EditorView) => {
+    if (!view) {
+      return
+    }
 
-  const { state, dispatch } = view
-  const props = getEditorProps(state)
-  const onSaveAward = (attrs: AwardAttrs) => {
-    insertAward(attrs)(state, dispatch, view)
-  }
-  const initialData = schema.nodes.award.create().attrs
-  const dialog = ReactSubView(
-    props,
-    AwardModal,
-    { initialData, onSaveAward },
-    state.doc,
-    () => 0,
-    view
-  )
+    const { state, dispatch } = view
+    const props = getEditorProps(state)
+    const onSaveAward = (attrs: AwardAttrs) => {
+      insertAward(attrs)(state, dispatch, view)
+    }
+    const initialData = schema.nodes.award.create().attrs as AwardAttrs
+    const modalProps: AwardModalProps = {
+      initialData,
+      onSaveAward,
+      onClose: () => dialog?.remove(),
+    }
+    dialog = ReactSubView(
+      props,
+      AwardModal,
+      modalProps,
+      state.doc,
+      () => 0,
+      view
+    )
 
-  document.body.appendChild(dialog)
+    document.body.appendChild(dialog)
+  }
 }

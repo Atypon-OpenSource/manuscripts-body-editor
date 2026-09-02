@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  style-guide: link:../../../Library/pnpm/global/5/node_modules/@manuscrtips/style-guide
+
 importers:
 
   .:
@@ -131,6 +134,9 @@ importers:
       react-select:
         specifier: 5.10.2
         version: 5.10.2(@types/react@19.2.17)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+      style-guide:
+        specifier: link:../../../Library/pnpm/global/5/node_modules/@manuscrtips/style-guide
+        version: link:../../../Library/pnpm/global/5/node_modules/@manuscrtips/style-guide
       styled-components:
         specifier: 6.4.2
         version: 6.4.2(css-to-react-native@3.2.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)

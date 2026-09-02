@@ -31,8 +31,7 @@ import { isDeleted } from '@manuscripts/track-changes-plugin'
 
 export type AwardAttrs = TrackableAttributes<AwardNode>
 export class AwardView extends BlockView<Trackable<AwardNode>> {
-  protected popperContainer: HTMLDivElement
-  private dialog: HTMLElement
+  protected modalContainer: HTMLDivElement
   contextMenu: HTMLElement
 
   public ignoreMutation = () => true
@@ -138,14 +137,14 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
   }
 
   showAwardModal = (award: AwardNode) => {
-    this.dialog?.remove()
-    this.popperContainer?.remove()
+    this.modalContainer?.remove()
 
     const componentProps: AwardModalProps = {
       initialData: award?.attrs || ({} as AwardAttrs),
       onSaveAward: this.handleSaveAward,
+      onClose: () => this.modalContainer?.remove(),
     }
-    this.popperContainer = ReactSubView(
+    this.modalContainer = ReactSubView(
       this.props,
       AwardModal,
       componentProps,
@@ -154,16 +153,15 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
       this.view,
       ['award-editor']
     )
-    this.props.popper.show(this.dom, this.popperContainer, 'auto', false)
+    document.body.appendChild(this.modalContainer)
   }
 
   showDeleteAwardDialog = () => {
-    this.dialog?.remove()
     const componentProps: DeleteAwardDialogProps = {
       handleDelete: this.handleDeleteAward,
     }
 
-    this.popperContainer = ReactSubView(
+    this.modalContainer = ReactSubView(
       this.props,
       DeleteAwardDialog,
       componentProps,
@@ -172,7 +170,7 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
       this.view,
       ['award-editor']
     )
-    this.props.popper.show(this.dom, this.popperContainer, 'auto', false)
+    document.body.appendChild(this.modalContainer)
   }
 
   handleSaveAward = (award: AwardAttrs) => {
@@ -188,6 +186,7 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
       const to = pos + award.nodeSize
       this.view.dispatch(tr.delete(from, to))
     }
+    this.modalContainer?.remove()
   }
 }
 

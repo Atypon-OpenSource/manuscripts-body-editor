@@ -67,7 +67,7 @@ export class CrossReferenceEditableView extends CrossReferenceView {
       this.view
     )
     this.popperContainer.setAttribute('tabindex', '0')
-    this.props.popper.show(this.dom, this.popperContainer, 'auto')
+    document.body.appendChild(this.popperContainer)
   }
 
   public destroy = () => {
