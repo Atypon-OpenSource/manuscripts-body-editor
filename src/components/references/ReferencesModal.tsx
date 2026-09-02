@@ -27,7 +27,7 @@ import {
   ModalSidebarTitle,
   ScrollableModalContent,
   SidebarContent,
-  StyledModal,
+  StyledModalContent,
   useScrollDetection,
   withListNavigation,
   withNavigableListItem,
@@ -348,7 +348,7 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
           onSave={handleImportSave}
         />
       )}
-      <StyledModal isOpen={isOpen} onRequestClose={onCancel}>
+      <StyledModalContent isOpen={isOpen} onRequestClose={onCancel}>
         <Dialog
           isOpen={confirm}
           category={Category.confirmation}
@@ -432,7 +432,7 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
             </ScrollableModalContent>
           </ModalBody>
         </ReferencesModalContainer>
-      </StyledModal>
+      </StyledModalContent>
     </>
   )
 }

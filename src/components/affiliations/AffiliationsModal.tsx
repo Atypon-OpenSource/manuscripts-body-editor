@@ -29,7 +29,7 @@ import {
   ModalSidebarTitle,
   ScrollableModalContent,
   SidebarContent,
-  StyledModal,
+  StyledModalContent,
 } from '@manuscripts/style-guide'
 import { generateNodeID, schema } from '@manuscripts/transform'
 import isEqual from 'lodash/isEqual'
@@ -464,7 +464,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
   }
 
   return (
-    <StyledModal
+    <StyledModalContent
       isOpen={isOpen}
       onRequestClose={() => handleClose()}
       shouldCloseOnOverlayClick={true}
@@ -599,7 +599,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
           }
         />
       </ModalContainer>
-    </StyledModal>
+    </StyledModalContent>
   )
 }
 

@@ -18,7 +18,7 @@ import {
   ModalCardBody,
   ModalContainer,
   ModalHeader,
-  StyledModal,
+  StyledModalContent,
 } from '@manuscripts/style-guide'
 import { BibliographyItemAttrs } from '@manuscripts/transform'
 import React, { useState } from 'react'
@@ -49,7 +49,7 @@ export const ImportBibliographyModal: React.FC<
   }
 
   return (
-    <StyledModal isOpen={isOpen} onRequestClose={onCancel}>
+    <StyledModalContent isOpen={isOpen} onRequestClose={onCancel}>
       <ModalContainer
         data-cy={
           isConfirming
@@ -78,6 +78,6 @@ export const ImportBibliographyModal: React.FC<
           )}
         </ModalCardBody>
       </ModalContainer>
-    </StyledModal>
+    </StyledModalContent>
   )
 }

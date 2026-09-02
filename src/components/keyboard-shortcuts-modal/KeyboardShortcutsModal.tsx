@@ -27,7 +27,7 @@ import {
   ModalSidebarTitle,
   PrimaryButton,
   SidebarContent,
-  StyledModal,
+  StyledModalContent,
   useFocusCycle,
 } from '@manuscripts/style-guide'
 import { EditorView } from 'prosemirror-view'
@@ -64,7 +64,7 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
 
   return (
     <ThemeProvider theme={editorProps.theme}>
-      <StyledModal
+      <StyledModalContent
         isOpen={isOpen}
         onRequestClose={onClose}
         shouldCloseOnOverlayClick={true}
@@ -124,7 +124,7 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
             </StyledModalSidebar>
           </StyledModalBody>
         </ModalContainer>
-      </StyledModal>
+      </StyledModalContent>
     </ThemeProvider>
   )
 }

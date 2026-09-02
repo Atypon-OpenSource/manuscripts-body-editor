@@ -26,7 +26,7 @@ import {
   ModalSidebarTitle,
   PrimaryButton,
   SidebarContent,
-  StyledModal,
+  StyledModalContent,
   withNavigableListItem,
   withListNavigation,
 } from '@manuscripts/style-guide'
@@ -77,7 +77,7 @@ const InsertSpecialCharacterDialog: React.FC<{
     )
 
   return (
-    <StyledModal
+    <StyledModalContent
       isOpen={isOpen}
       onRequestClose={handleClose}
       shouldCloseOnOverlayClick={true}
@@ -123,7 +123,7 @@ const InsertSpecialCharacterDialog: React.FC<{
           </StyledModalSidebar>
         </StyledModalBody>
       </Container>
-    </StyledModal>
+    </StyledModalContent>
   )
 }
 

@@ -19,7 +19,7 @@ import {
   ModalContainer,
   ModalHeader,
   ModalTitle,
-  StyledModal,
+  StyledModalContent,
 } from '@manuscripts/style-guide'
 import React, { useRef, useState } from 'react'
 import { schema } from '@manuscripts/transform'
@@ -73,7 +73,7 @@ export const AwardModal: React.FC<AwardModalProps> = ({
   )
 
   return (
-    <StyledModal
+    <StyledModalContent
       isOpen={isOpen}
       onRequestClose={handleClose}
       shouldCloseOnOverlayClick={true}
@@ -92,7 +92,7 @@ export const AwardModal: React.FC<AwardModalProps> = ({
           />
         </ModalCardBody>
       </ModalContainer>
-    </StyledModal>
+    </StyledModalContent>
   )
 }
 

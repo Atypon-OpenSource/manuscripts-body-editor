@@ -22,7 +22,7 @@ import {
   PrimaryButton,
   PrimarySmallText,
   SecondaryButton,
-  StyledModal,
+  StyledModalContent,
   TextArea,
   Label,
   FormRow,
@@ -108,7 +108,7 @@ export const InsertEmbedDialog: React.FC<InsertEmbedDialogProps> = ({
   const operation = pos !== undefined && attrs?.href ? 'Update' : 'Insert'
 
   return (
-    <StyledModal isOpen={isOpen} onRequestClose={() => setOpen(false)}>
+    <StyledModalContent isOpen={isOpen} onRequestClose={() => setOpen(false)}>
       <DialogContainer data-cy="media-editor">
         <HeaderContainer>{operation} external media</HeaderContainer>
 
@@ -163,7 +163,7 @@ export const InsertEmbedDialog: React.FC<InsertEmbedDialogProps> = ({
           </PrimaryButton>
         </ButtonGroup>
       </DialogContainer>
-    </StyledModal>
+    </StyledModalContent>
   )
 }
 

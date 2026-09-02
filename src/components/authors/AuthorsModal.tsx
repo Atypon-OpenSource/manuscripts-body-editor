@@ -28,10 +28,10 @@ import {
   outlineStyle,
   ScrollableModalContent,
   SidebarContent,
-  StyledModal,
   InspectorTabs,
   InspectorTabPanel,
   InspectorTabPanels,
+  StyledModalContent,
 } from '@manuscripts/style-guide'
 import { generateNodeID, schema } from '@manuscripts/transform'
 import cloneDeep from 'lodash/cloneDeep'
@@ -404,7 +404,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       !showRequiredFieldConfirmationDialog)
 
   return (
-    <StyledModal
+    <StyledModalContent
       isOpen={isOpen}
       onRequestClose={() => close()}
       shouldCloseOnOverlayClick={true}
@@ -561,7 +561,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
           }
         />
       </ModalContainer>
-    </StyledModal>
+    </StyledModalContent>
   )
 }
 

@@ -23,7 +23,7 @@ import {
   ModalContainer,
   ModalHeader,
   PrimaryButton,
-  StyledModal,
+  StyledModalContent,
   TertiaryButton,
   TextButton,
 } from '@manuscripts/style-guide'
@@ -138,7 +138,7 @@ const Container = styled(ModalContainer)`
 // since we need to scroll inside the editor when this dialog is active, we can't use dialog.showModal()
 // so we recreate the appearance using classic position:fixed/after approach.
 // While showModal doesn't block scrolling - it doesn't allow to focus on the editor and that kills the scrollIntoView
-const Modal = styled(StyledModal)`
+const Modal = styled(StyledModalContent)`
   position: fixed;
   top: 0;
   left: 0;

@@ -23,11 +23,11 @@ import {
   FileUnknownIcon,
   getFileIcon,
   ArrowDownIcon,
-  StyledModal,
   ModalContainer,
   ModalHeader,
   ModalBody,
   WebLinkIcon,
+  StyledModalContent,
 } from '@manuscripts/style-guide'
 import { Target, schema } from '@manuscripts/transform'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
@@ -235,7 +235,7 @@ export const CrossReferenceItems: React.FC<Props> = ({
   }, {})
 
   return (
-    <StyledModal
+    <StyledModalContent
       isOpen={isOpen}
       onRequestClose={close}
       shouldCloseOnOverlayClick={true}
@@ -321,6 +321,6 @@ export const CrossReferenceItems: React.FC<Props> = ({
           }
         />
       </ModalContainer>
-    </StyledModal>
+    </StyledModalContent>
   )
 }

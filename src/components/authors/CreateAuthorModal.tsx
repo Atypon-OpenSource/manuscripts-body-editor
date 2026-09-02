@@ -17,7 +17,7 @@ import {
   CloseButton,
   ModalContainer,
   ModalHeader,
-  StyledModal,
+  StyledModalContent,
 } from '@manuscripts/style-guide'
 import { generateNodeID, schema } from '@manuscripts/transform'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
@@ -105,7 +105,7 @@ export const CreateAuthorModal: React.FC<CreateAuthorModalProps> = ({
   }
 
   return (
-    <StyledModal
+    <StyledModalContent
       isOpen={isOpen}
       onRequestClose={() => setIsOpen(false)}
       shouldCloseOnOverlayClick={true}
@@ -146,7 +146,7 @@ export const CreateAuthorModal: React.FC<CreateAuthorModalProps> = ({
           }
         />
       </ModalContainer>
-    </StyledModal>
+    </StyledModalContent>
   )
 }
 
