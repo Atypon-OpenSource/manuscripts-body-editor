@@ -33,8 +33,8 @@ import { createDecoration, Inconsistency } from './detect-inconsistency-utils'
 export type ValidatorContext = {
   pluginStates: {
     affiliations: Map<string, number> | undefined
-    affiliationEntries: AffiliationAttrs[] | undefined
-    contributors: ContributorAttrs[] | undefined
+    affiliationElements: AffiliationAttrs[] | undefined
+    affiliationContributors: ContributorAttrs[] | undefined
     bibliography: Map<string, BibliographyItemAttrs> | undefined
     objects: Map<string, Target> | undefined
     footnotes: Map<string, string> | undefined
@@ -66,14 +66,8 @@ const createWarning = (
 ): Inconsistency => {
   const nodeDescription = customNodeDescription || getNodeDescription(node)
   const message = (() => {
-    if (category === 'duplicate') {
-      switch (node.type) {
-        case schema.nodes.affiliation:
-          return 'Two or more affiliation entries appear to represent the same institution.'
-        case schema.nodes.contributor:
-          return 'Two or more author entries appear to represent the same person.'
-      }
-    }
+    const defaultMessage =
+      category === 'empty-content' ? 'Is empty' : 'Has no linked reference'
 
     switch (node.type) {
       case schema.nodes.figure_element:
@@ -86,11 +80,15 @@ const createWarning = (
       case schema.nodes.footnote:
         return 'Is not used'
       case schema.nodes.affiliation:
-        return 'Is not corresponding to any Author'
+        return category === 'duplicate'
+          ? 'Two or more affiliation entries appear to represent the same institution.'
+          : 'Is not corresponding to any Author'
+      case schema.nodes.contributor:
+        return category === 'duplicate'
+          ? 'Two or more author entries appear to represent the same person.'
+          : defaultMessage
       default:
-        return category === 'empty-content'
-          ? 'Is empty'
-          : 'Has no linked reference'
+        return defaultMessage
     }
   })()
 
@@ -312,7 +310,7 @@ const validateAffiliation: NodeValidator = (node, pos, context) => {
 
   const isDuplicate = isDuplicateAffiliation(
     node.attrs as AffiliationAttrs,
-    context.pluginStates.affiliationEntries
+    context.pluginStates.affiliationElements
   )
 
   if (unused || isDuplicate) {
@@ -342,7 +340,7 @@ const validateAffiliation: NodeValidator = (node, pos, context) => {
 const validateContributor: NodeValidator = (node, pos, context) => {
   const isDuplicate = isDuplicateAuthor(
     node.attrs as ContributorAttrs,
-    context.pluginStates.contributors
+    context.pluginStates.affiliationContributors
   )
 
   return isDuplicate

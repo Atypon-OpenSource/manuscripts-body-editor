@@ -72,12 +72,11 @@ export const buildPluginState = (
     selectedPos = selection.from
   }
 
-  const affiliationsState = affiliationsKey.getState(state)
   const context: ValidatorContext = {
     pluginStates: {
-      affiliations: affiliationsState?.indexedAffiliationIds,
-      affiliationEntries: affiliationsState?.affiliations,
-      contributors: affiliationsState?.contributors,
+      affiliations: affiliationsKey.getState(state)?.indexedAffiliationIds,
+      affiliationElements: affiliationsKey.getState(state)?.affiliations,
+      affiliationContributors: affiliationsKey.getState(state)?.contributors,
       bibliography: getBibliographyPluginState(state)?.bibliographyItems,
       objects: objectsKey.getState(state),
       footnotes: footnotesKey.getState(state)?.footnotesElementIDs,
