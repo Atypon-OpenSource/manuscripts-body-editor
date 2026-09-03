@@ -187,7 +187,7 @@ export class CitationEditableView extends CitationView {
         ['citation-editor']
       )
     }
-    this.props.popper.show(this.dom, this.editor, 'auto')
+    document.body.append(this.editor)
   }
 
   private handleEdit = () => {

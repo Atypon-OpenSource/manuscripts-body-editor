@@ -21,13 +21,17 @@ import React, { useState } from 'react'
 import { getEditorProps } from '../../plugins/editor-props'
 import ReactSubView from '../../views/ReactSubView'
 
-const DeleteEmbedDialog: React.FC<{
+export interface DeleteEmbedDialogProps {
   deleteNode: () => void
-}> = ({ deleteNode }) => {
+  onClose: () => void
+}
+const DeleteEmbedDialog: React.FC<DeleteEmbedDialogProps> = ({ deleteNode, onClose }) => {
   const [isOpen, setOpen] = useState(true)
 
   return (
     <Dialog
+      onExited={onClose}
+      portaled={false}
       isOpen={isOpen}
       actions={{
         primary: {
@@ -63,17 +67,24 @@ export const openDeleteEmbedDialog = (
 ) => {
   const { state, dispatch } = view
   const props = getEditorProps(state)
+  let dialog: HTMLDivElement | null = null
 
-  const dialog = ReactSubView(
-    props,
-    DeleteEmbedDialog,
-    {
+  const dialogProps: DeleteEmbedDialogProps = {
       deleteNode: () => {
         const from = pos
         const to = from + node.nodeSize
         dispatch(state.tr.delete(from, to))
       },
-    },
+      onClose: () => {
+        dialog?.remove()
+        dialog = null
+      }
+    }
+
+  dialog = ReactSubView(
+    props,
+    DeleteEmbedDialog,
+    dialogProps,
     state.doc,
     () => 0,
     view

@@ -31,7 +31,7 @@ import { isDeleted } from '@manuscripts/track-changes-plugin'
 
 export type AwardAttrs = TrackableAttributes<AwardNode>
 export class AwardView extends BlockView<Trackable<AwardNode>> {
-  protected modalContainer: HTMLDivElement
+  protected modalContainer: HTMLDivElement | null
   contextMenu: HTMLElement
 
   public ignoreMutation = () => true
@@ -159,6 +159,10 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
   showDeleteAwardDialog = () => {
     const componentProps: DeleteAwardDialogProps = {
       handleDelete: this.handleDeleteAward,
+      onClose: () => {
+        this.modalContainer?.remove()
+        this.modalContainer = null
+      },
     }
 
     this.modalContainer = ReactSubView(
