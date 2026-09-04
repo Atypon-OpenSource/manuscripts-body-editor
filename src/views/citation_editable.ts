@@ -195,8 +195,6 @@ export class CitationEditableView extends CitationView {
   }
 
   private handleCancel = () => {
-    console.log('CANCEL CALLED')
-    console.log(new Error().stack)
     // move the cursor after this node
     const selection = TextSelection.create(
       this.view.state.tr.doc,
