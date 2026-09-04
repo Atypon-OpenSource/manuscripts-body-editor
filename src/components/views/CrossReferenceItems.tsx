@@ -30,7 +30,7 @@ import {
   StyledModalContent,
 } from '@manuscripts/style-guide'
 import { Target, schema } from '@manuscripts/transform'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 import { FileAttachment } from '../../lib/files'
