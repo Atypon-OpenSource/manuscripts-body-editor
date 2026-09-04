@@ -226,10 +226,7 @@ export const CrossReferenceItems: React.FC<CrossReferenceItemsProps> = ({
     }
   }, [currentTargetId])
 
-  const close = useCallback(() => {
-    setIsOpen(false)
-    handleCancel()
-  }, [handleCancel])
+  const close = () => setIsOpen(false)
 
   const grouped = targets.reduce<Record<string, Target[]>>((acc, t) => {
     ;(acc[t.type] ??= []).push(t)
@@ -239,7 +236,11 @@ export const CrossReferenceItems: React.FC<CrossReferenceItemsProps> = ({
   return (
     <StyledModalContent
       isOpen={isOpen}
-      onExited={onClose}
+      onExited={() => {
+        onClose()
+        console.log('exited')
+        handleCancel()
+      }}
       onRequestClose={close}
       shouldCloseOnOverlayClick={true}
     >

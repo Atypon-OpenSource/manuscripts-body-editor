@@ -176,7 +176,10 @@ export class BibliographyElementBlockView extends BlockView<
   }
 
   public updateContents() {
-    this.props.popper.destroy() // destroy the old context menu
+    if (this.contextMenu) {
+      this.props.popper.destroy()
+      this.contextMenu = null as unknown as HTMLDivElement
+    }
     const bib = getBibliographyPluginState(this.view.state)
     if (!bib) {
       return

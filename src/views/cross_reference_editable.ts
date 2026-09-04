@@ -32,7 +32,7 @@ import { CrossReferenceView } from './cross_reference'
 import ReactSubView from './ReactSubView'
 
 export class CrossReferenceEditableView extends CrossReferenceView {
-  protected popperContainer: HTMLDivElement
+  protected popperContainer: HTMLDivElement | null
   protected contextMenu: HTMLElement
 
   public selectNode = () => {
@@ -59,7 +59,10 @@ export class CrossReferenceEditableView extends CrossReferenceView {
       currentTargetId: rids[0],
       currentCustomLabel: this.node.attrs.label,
       isEdit: rids.length > 0,
-      onClose: () => this.popperContainer?.remove(),
+      onClose: () => {
+        this.popperContainer?.remove()
+        this.popperContainer = null
+      },
     }
 
     this.popperContainer = ReactSubView(
@@ -127,8 +130,6 @@ export class CrossReferenceEditableView extends CrossReferenceView {
       tr.setSelection(TextSelection.create(tr.doc, pos))
       skipTracking(tr)
       this.view.dispatch(tr)
-    } else {
-      this.destroy()
     }
   }
 

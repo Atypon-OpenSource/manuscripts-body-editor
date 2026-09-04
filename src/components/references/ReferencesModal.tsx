@@ -350,27 +350,27 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
           onSave={handleImportSave}
         />
       )}
+      <Dialog
+        isOpen={confirm}
+        category={Category.confirmation}
+        header="You've made changes to this option"
+        message="Would you like to save or discard your changes?"
+        actions={{
+          secondary: {
+            action: () => reset(),
+            title: 'Discard',
+          },
+          primary: {
+            action: () => handleSave(valuesRef.current),
+            title: 'Save',
+          },
+        }}
+      />
       <StyledModalContent
         isOpen={isOpen}
         onRequestClose={onCancel}
         onExited={() => onClose?.()}
       >
-        <Dialog
-          isOpen={confirm}
-          category={Category.confirmation}
-          header="You've made changes to this option"
-          message="Would you like to save or discard your changes?"
-          actions={{
-            secondary: {
-              action: () => reset(),
-              title: 'Discard',
-            },
-            primary: {
-              action: () => handleSave(valuesRef.current),
-              title: 'Save',
-            },
-          }}
-        />
         <ReferencesModalContainer data-cy={'references-editor'}>
           <ModalHeader>
             <CloseButton data-cy="modal-close-button" onClick={onCancel} />

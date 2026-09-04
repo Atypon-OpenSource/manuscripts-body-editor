@@ -113,6 +113,8 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
   onCancel,
   canEdit,
 }) => {
+  console.log('Citation editor opened')
+
   const [items, dispatchItems] = useReducer(itemsReducer, $items)
   const [rids, dispatchRids] = useReducer(ridsReducer, $rids)
   const handleSave = (item: BibliographyItemAttrs) => {
@@ -236,6 +238,7 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
       />
     )
   }
+
   return (
     <Container>
       <Dialog

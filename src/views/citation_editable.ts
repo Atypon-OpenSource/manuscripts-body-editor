@@ -37,7 +37,7 @@ import { createEditableNodeView } from './creators'
 import ReactSubView from './ReactSubView'
 
 export class CitationEditableView extends CitationView {
-  private editor: HTMLElement
+  private editor: HTMLElement | null
   private contextMenu: HTMLElement
   private can = this.props.getCapabilities()
 
@@ -187,7 +187,7 @@ export class CitationEditableView extends CitationView {
         ['citation-editor']
       )
     }
-    document.body.append(this.editor)
+    this.props.popper.show(this.dom, this.editor, 'auto')
   }
 
   private handleEdit = () => {
@@ -195,6 +195,8 @@ export class CitationEditableView extends CitationView {
   }
 
   private handleCancel = () => {
+    console.log('CANCEL CALLED')
+    console.log(new Error().stack)
     // move the cursor after this node
     const selection = TextSelection.create(
       this.view.state.tr.doc,
@@ -203,6 +205,7 @@ export class CitationEditableView extends CitationView {
     this.view.dispatch(this.view.state.tr.setSelection(selection))
 
     this.props.popper.destroy()
+    this.editor = null
   }
 
   private handleSave = (attrs: BibliographyItemAttrs[]) => {
@@ -226,6 +229,7 @@ export class CitationEditableView extends CitationView {
 
     this.view.dispatch(tr)
     this.props.popper.destroy()
+    this.editor = null
   }
 
   private handleCite = (items: BibliographyItemAttrs[]) => {
@@ -256,7 +260,7 @@ export class CitationEditableView extends CitationView {
     tr.setNodeAttribute(pos, 'rids', rids)
 
     this.view.dispatch(tr)
-    this.handleCancel()
+    // this.handleCancel()
   }
 
   private handleDelete = (item: BibliographyItemAttrs) => {
