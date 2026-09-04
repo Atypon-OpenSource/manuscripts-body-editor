@@ -19,7 +19,10 @@ import { isDeleted, skipTracking } from '@manuscripts/track-changes-plugin'
 import { schema, SupplementNode, Target } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 
-import { CrossReferenceItems } from '../components/views/CrossReferenceItems'
+import {
+  CrossReferenceItems,
+  CrossReferenceItemsProps,
+} from '../components/views/CrossReferenceItems'
 import { handleComment } from '../lib/comments'
 import { findNodeByID } from '../lib/doc'
 import { getSupplementDisplayLabel } from '../lib/supplements'
@@ -29,7 +32,7 @@ import { CrossReferenceView } from './cross_reference'
 import ReactSubView from './ReactSubView'
 
 export class CrossReferenceEditableView extends CrossReferenceView {
-  protected popperContainer: HTMLDivElement
+  protected popperContainer: HTMLDivElement | null
   protected contextMenu: HTMLElement
 
   public selectNode = () => {
@@ -48,7 +51,7 @@ export class CrossReferenceEditableView extends CrossReferenceView {
   public showPicker = () => {
     const rids = this.node.attrs.rids
 
-    const componentProps = {
+    const componentProps: CrossReferenceItemsProps = {
       handleSelect: this.handleSelect,
       targets: this.getTargets(),
       files: this.props.getFiles(),
@@ -56,6 +59,10 @@ export class CrossReferenceEditableView extends CrossReferenceView {
       currentTargetId: rids[0],
       currentCustomLabel: this.node.attrs.label,
       isEdit: rids.length > 0,
+      onClose: () => {
+        this.popperContainer?.remove()
+        this.popperContainer = null
+      },
     }
 
     this.popperContainer = ReactSubView(
@@ -67,7 +74,7 @@ export class CrossReferenceEditableView extends CrossReferenceView {
       this.view
     )
     this.popperContainer.setAttribute('tabindex', '0')
-    this.props.popper.show(this.dom, this.popperContainer, 'auto')
+    document.body.appendChild(this.popperContainer)
   }
 
   public destroy = () => {
@@ -123,8 +130,6 @@ export class CrossReferenceEditableView extends CrossReferenceView {
       tr.setSelection(TextSelection.create(tr.doc, pos))
       skipTracking(tr)
       this.view.dispatch(tr)
-    } else {
-      this.destroy()
     }
   }
 

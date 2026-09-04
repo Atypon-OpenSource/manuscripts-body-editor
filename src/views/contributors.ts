@@ -42,7 +42,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   contextMenu: HTMLElement
   container: HTMLElement
   inner: HTMLElement
-  popper?: HTMLElement
+  dialog?: HTMLElement
   version: string
 
   public ignoreMutation = () => true
@@ -316,11 +316,12 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       view: this.view,
       author,
       addNewAuthor: addNew,
+      onClose: () => this.dialog?.remove(),
     }
 
-    this.popper?.remove()
+    this.dialog?.remove()
 
-    this.popper = ReactSubView(
+    this.dialog = ReactSubView(
       this.props,
       AuthorsAndAffiliationsModals,
       componentProps,
@@ -329,7 +330,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       this.view
     )
 
-    this.container.appendChild(this.popper)
+    document.body.appendChild(this.dialog)
   }
 
   public destroy() {

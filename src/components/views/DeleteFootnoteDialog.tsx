@@ -20,12 +20,14 @@ export interface DeleteFootnoteDialogProps {
   header: string
   message: string
   handleDelete: () => void
+  onClose: () => void
 }
 
 export const DeleteFootnoteDialog: React.FC<DeleteFootnoteDialogProps> = ({
   header,
   message,
   handleDelete,
+  onClose
 }) => {
   const [isOpen, setOpen] = useState(true)
 
@@ -33,6 +35,7 @@ export const DeleteFootnoteDialog: React.FC<DeleteFootnoteDialogProps> = ({
     <Dialog
       className="delete-footnote-dialog"
       isOpen={isOpen}
+      onExited={onClose}
       actions={{
         primary: {
           action: () => {
@@ -49,6 +52,7 @@ export const DeleteFootnoteDialog: React.FC<DeleteFootnoteDialogProps> = ({
       category={Category.confirmation}
       header={header}
       message={message}
+      portaled={false}
     />
   )
 }

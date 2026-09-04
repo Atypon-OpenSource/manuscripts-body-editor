@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 import { Category, Dialog } from '@manuscripts/style-guide'
-import { ManuscriptEditorView, SupplementNode } from '@manuscripts/transform'
+import { ManuscriptEditorView } from '@manuscripts/transform'
 import React, { useState } from 'react'
 
 import {
-  getSupplementDisplayLabel,
   performDeleteSupplement,
 } from '../../lib/supplements'
 import { getEditorProps } from '../../plugins/editor-props'
 import ReactSubView from '../../views/ReactSubView'
 
-const DeleteSupplementDialog: React.FC<{
-  label: string
+interface DeleteSupplementDialogProps {
   onDelete: () => void
-}> = ({ label, onDelete }) => {
+  onClose: () => void
+}
+const DeleteSupplementDialog: React.FC<DeleteSupplementDialogProps> = ({ onDelete, onClose }) => {
   const [isOpen, setOpen] = useState(true)
 
   return (
@@ -36,6 +36,7 @@ const DeleteSupplementDialog: React.FC<{
       category={Category.confirmation}
       header="Delete supplement"
       message="Are you sure you want to delete &ldquo;{label}&rdquo;?"
+      onExited={onClose}
       actions={{
         primary: {
           action: () => {
@@ -49,6 +50,7 @@ const DeleteSupplementDialog: React.FC<{
           title: 'Cancel',
         },
       }}
+      portaled={false}
     />
   )
 }
@@ -62,20 +64,22 @@ export const openDeleteSupplementDialog = (
     return
   }
 
+  let dialog: HTMLDivElement | null = null
+
   const { state } = view
   const props = getEditorProps(state)
-  const label = getSupplementDisplayLabel(
-    node as SupplementNode,
-    props.getFiles()
-  )
 
-  const dialog = ReactSubView(
+  const dialogProps: DeleteSupplementDialogProps = {
+      onDelete: () => performDeleteSupplement(view, pos),
+      onClose: () => {
+        dialog?.remove()
+        dialog = null
+      }
+    }
+   dialog = ReactSubView(
     props,
     DeleteSupplementDialog,
-    {
-      label,
-      onDelete: () => performDeleteSupplement(view, pos),
-    },
+    dialogProps,
     state.doc,
     () => 0,
     view

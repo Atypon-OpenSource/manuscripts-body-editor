@@ -27,7 +27,7 @@ import {
   ModalSidebarTitle,
   PrimaryButton,
   SidebarContent,
-  StyledModal,
+  StyledModalContent,
   useFocusCycle,
 } from '@manuscripts/style-guide'
 import { EditorView } from 'prosemirror-view'
@@ -44,36 +44,36 @@ import { EDITOR_KEYBOARD_SHORTCUT_TABS } from './keyboard-shortcuts'
 
 const TAB_LABELS = EDITOR_KEYBOARD_SHORTCUT_TABS.map((t) => t.label)
 const KEYBOARD_SHORTCUTS_MODAL_TITLE_ID = 'keyboard-shortcuts-modal-title'
-export const KEYBOARD_SHORTCUTS_MODAL_ID = 'keyboard-shortcuts-modal'
 
 export type KeyboardShortcutsModalProps = {
   editorProps: EditorProps
-  isOpen: boolean
   onClose: () => void
 }
 
 export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
   editorProps,
-  isOpen,
   onClose,
 }) => {
   const [tabIndex, setTabIndex] = useState(0)
+  const [isOpen, setIsOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
+
+  const close = () => setIsOpen(false)
 
   useFocusCycle(containerRef, isOpen)
 
   return (
     <ThemeProvider theme={editorProps.theme}>
-      <StyledModal
+      <StyledModalContent
         isOpen={isOpen}
-        onRequestClose={onClose}
+        onRequestClose={close}
         shouldCloseOnOverlayClick={true}
+        onExited={() => onClose()}
         ariaLabelledby={KEYBOARD_SHORTCUTS_MODAL_TITLE_ID}
-        id={KEYBOARD_SHORTCUTS_MODAL_ID}
       >
         <ModalContainer ref={containerRef}>
           <ModalHeader>
-            <CloseButton onClick={onClose} data-cy="modal-close-button" />
+            <CloseButton onClick={close} data-cy="modal-close-button" />
           </ModalHeader>
           <StyledModalBody>
             <StyledModalSidebar>
@@ -119,12 +119,12 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
                 </ShortcutTabs>
               </StyledSidebarContent>
               <ButtonsContainer>
-                <PrimaryButton onClick={onClose}>Close</PrimaryButton>
+                <PrimaryButton onClick={close}>Close</PrimaryButton>
               </ButtonsContainer>
             </StyledModalSidebar>
           </StyledModalBody>
         </ModalContainer>
-      </StyledModal>
+      </StyledModalContent>
     </ThemeProvider>
   )
 }
@@ -249,15 +249,8 @@ export async function openKeyboardShortcuts(view?: EditorView): Promise<void> {
 
   const cleanup = () => {
     if (dialog) {
-      dialog.remove()
+      dialog?.remove()
       dialog = null
-    }
-    // modals are rendered outside tools-panel (dialog) because of react-modal,
-    // so we need to remove them manually
-    //@TODO The implementation in the body editor is incorrect and needs to be fixed.
-    const modal = document.getElementById(KEYBOARD_SHORTCUTS_MODAL_ID)
-    if (modal) {
-      modal.remove()
     }
     // Restore editor focus at the existing selection after the dialog is torn down.
     requestAnimationFrame(() => {
@@ -265,14 +258,15 @@ export async function openKeyboardShortcuts(view?: EditorView): Promise<void> {
     })
   }
 
+  const modalProps: KeyboardShortcutsModalProps = {
+    editorProps,
+    onClose: () => cleanup(),
+  }
+
   dialog = await createSubViewAsync(
     editorProps,
     KeyboardShortcutsModal,
-    {
-      editorProps,
-      isOpen: true,
-      onClose: cleanup,
-    },
+    modalProps,
     state.doc,
     () => -1,
     view

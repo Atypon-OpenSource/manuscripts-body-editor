@@ -27,7 +27,7 @@ import {
   ModalSidebarTitle,
   ScrollableModalContent,
   SidebarContent,
-  StyledModal,
+  StyledModalContent,
   useScrollDetection,
   withListNavigation,
   withNavigableListItem,
@@ -182,6 +182,7 @@ const normalize = (item: BibliographyItemAttrs) => ({
 export interface ReferencesModalProps {
   isOpen: boolean
   onCancel: () => void
+  onClose?: () => void
   items: BibliographyItemAttrs[]
   item?: BibliographyItemAttrs
   citationCounts: Map<string, number>
@@ -199,6 +200,7 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
   onSave,
   onDelete,
   handleImport,
+  onClose,
 }) => {
   const [importing, setImporting] = useState(false)
   const [importSuccessCount, setImportSuccessCount] = useState<number | null>(
@@ -348,23 +350,27 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
           onSave={handleImportSave}
         />
       )}
-      <StyledModal isOpen={isOpen} onRequestClose={onCancel}>
-        <Dialog
-          isOpen={confirm}
-          category={Category.confirmation}
-          header="You've made changes to this option"
-          message="Would you like to save or discard your changes?"
-          actions={{
-            secondary: {
-              action: () => reset(),
-              title: 'Discard',
-            },
-            primary: {
-              action: () => handleSave(valuesRef.current),
-              title: 'Save',
-            },
-          }}
-        />
+      <Dialog
+        isOpen={confirm}
+        category={Category.confirmation}
+        header="You've made changes to this option"
+        message="Would you like to save or discard your changes?"
+        actions={{
+          secondary: {
+            action: () => reset(),
+            title: 'Discard',
+          },
+          primary: {
+            action: () => handleSave(valuesRef.current),
+            title: 'Save',
+          },
+        }}
+      />
+      <StyledModalContent
+        isOpen={isOpen}
+        onRequestClose={onCancel}
+        onExited={() => onClose?.()}
+      >
         <ReferencesModalContainer data-cy={'references-editor'}>
           <ModalHeader>
             <CloseButton data-cy="modal-close-button" onClick={onCancel} />
@@ -432,7 +438,7 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
             </ScrollableModalContent>
           </ModalBody>
         </ReferencesModalContainer>
-      </StyledModal>
+      </StyledModalContent>
     </>
   )
 }

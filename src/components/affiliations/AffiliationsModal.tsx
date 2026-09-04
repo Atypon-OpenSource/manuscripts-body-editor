@@ -29,7 +29,7 @@ import {
   ModalSidebarTitle,
   ScrollableModalContent,
   SidebarContent,
-  StyledModal,
+  StyledModalContent,
 } from '@manuscripts/style-guide'
 import { generateNodeID, schema } from '@manuscripts/transform'
 import isEqual from 'lodash/isEqual'
@@ -70,8 +70,6 @@ export interface AffiliationsModalProps {
   onClose?: () => void
   openAuthorsModal?: () => void
 }
-
-const MODAL_ON_CLOSE_NOTIFY_DELAY_MS = 220
 
 function makeAuthorItems(authors: ContributorAttrs[]) {
   return authors.map((author) => ({
@@ -136,18 +134,6 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
     setAffiliationDetailsUnsavedContinue,
   ] = useState(false)
   const [affiliationTabIndex, setAffiliationTabIndex] = useState(0)
-
-  const prevIsOpenRef = useRef(true)
-  useEffect(() => {
-    if (prevIsOpenRef.current && !isOpen) {
-      prevIsOpenRef.current = isOpen
-      const id = window.setTimeout(() => {
-        onClose?.()
-      }, MODAL_ON_CLOSE_NOTIFY_DELAY_MS)
-      return () => window.clearTimeout(id)
-    }
-    prevIsOpenRef.current = isOpen
-  }, [isOpen, onClose])
 
   useEffect(() => {
     if (isDisableSave) {
@@ -464,10 +450,11 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
   }
 
   return (
-    <StyledModal
+    <StyledModalContent
       isOpen={isOpen}
       onRequestClose={() => handleClose()}
       shouldCloseOnOverlayClick={true}
+      onExited={() => onClose?.()}
     >
       <ModalContainer data-cy="affiliations-modal">
         <ModalHeader>
@@ -599,7 +586,7 @@ export const AffiliationsModal: React.FC<AffiliationsModalProps> = ({
           }
         />
       </ModalContainer>
-    </StyledModal>
+    </StyledModalContent>
   )
 }
 

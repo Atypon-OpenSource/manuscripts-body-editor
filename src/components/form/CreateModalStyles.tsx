@@ -16,8 +16,6 @@
 import { ModalBody, ScrollableModalContent } from '@manuscripts/style-guide'
 import styled from 'styled-components'
 
-export const MODAL_ON_CLOSE_NOTIFY_DELAY_MS = 220
-
 export const StyledModalBody = styled(ModalBody)`
   position: relative;
   height: calc(90vh - 250px);

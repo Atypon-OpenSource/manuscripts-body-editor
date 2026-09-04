@@ -22,7 +22,7 @@ import {
   PrimaryButton,
   PrimarySmallText,
   SecondaryButton,
-  StyledModal,
+  StyledModalContent,
   TextArea,
   Label,
   FormRow,
@@ -64,6 +64,7 @@ const PreviewContainer = styled.div`
 export type InsertEmbedDialogProps = {
   state: ManuscriptEditorState
   dispatch: Dispatch
+  onClose?: () => void
   pos?: number
 }
 
@@ -71,6 +72,7 @@ export const InsertEmbedDialog: React.FC<InsertEmbedDialogProps> = ({
   state,
   dispatch,
   pos,
+  onClose,
 }) => {
   const attrs = pos ? state.doc.nodeAt(pos)?.attrs : undefined
   const [isOpen, setOpen] = useState(true)
@@ -108,7 +110,11 @@ export const InsertEmbedDialog: React.FC<InsertEmbedDialogProps> = ({
   const operation = pos !== undefined && attrs?.href ? 'Update' : 'Insert'
 
   return (
-    <StyledModal isOpen={isOpen} onRequestClose={() => setOpen(false)}>
+    <StyledModalContent
+      isOpen={isOpen}
+      onExited={() => onClose?.()}
+      onRequestClose={() => setOpen(false)}
+    >
       <DialogContainer data-cy="media-editor">
         <HeaderContainer>{operation} external media</HeaderContainer>
 
@@ -163,7 +169,7 @@ export const InsertEmbedDialog: React.FC<InsertEmbedDialogProps> = ({
           </PrimaryButton>
         </ButtonGroup>
       </DialogContainer>
-    </StyledModal>
+    </StyledModalContent>
   )
 }
 
@@ -207,16 +213,20 @@ export const openEmbedDialog = (view?: EditorView, pos?: number) => {
   if (!view) {
     return
   }
+  let dialog: HTMLDivElement | null = null
   const { state, dispatch } = view
 
-  const dialog = ReactSubView(
+  const props: InsertEmbedDialogProps = {
+    state,
+    dispatch,
+    pos,
+    onClose: () => dialog?.remove(),
+  }
+
+  dialog = ReactSubView(
     getEditorProps(state),
     InsertEmbedDialog,
-    {
-      state,
-      dispatch,
-      pos,
-    },
+    props,
     state.doc,
     () => 0,
     view
