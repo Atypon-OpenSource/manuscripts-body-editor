@@ -21,6 +21,8 @@ import {
   schema,
   Target,
 } from '@manuscripts/transform'
+import { NodeType } from 'prosemirror-model'
+import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 import { Decoration } from 'prosemirror-view'
 
 import { EditorProps } from '../../configs/ManuscriptsEditor'
@@ -299,10 +301,16 @@ const isDuplicateAuthor = (
   )
 }
 
-const getMetadataContainerPos = (context: ValidatorContext, pos: number) => {
-  const $pos = context.doc.resolve(pos)
-  return $pos.before($pos.depth)
-}
+// The DOM for individual 'affiliation'/'contributor' nodes is rendered manually inside
+// AffiliationsView/ContributorsView. ProseMirror decorations only apply to nodes that it
+// directly renders in the document DOM, so to ensure the warning decoration appears (or
+// can be scrolled to), we must attach it to the containing 'affiliations'/'contributors'
+// node instead of the individual node position.
+const findMetadataContainer = (
+  context: ValidatorContext,
+  pos: number,
+  type: NodeType
+) => findParentNodeOfTypeClosestToPos(context.doc.resolve(pos), type)
 
 const validateAffiliation: NodeValidator = (node, pos, context) => {
   const inconsistencies: Inconsistency[] = []
@@ -313,25 +321,30 @@ const validateAffiliation: NodeValidator = (node, pos, context) => {
     context.pluginStates.affiliationElements
   )
 
-  if (unused || isDuplicate) {
-    // Use the start position of the parent 'affiliations' node instead of the individual
-    // 'affiliation' node position because the DOM for individual affiliation nodes is
-    // rendered manually inside AffiliationsView. ProseMirror decorations only apply to
-    // nodes that it directly renders in the document DOM, so to ensure the warning
-    // decoration appears (or can be scrolled to), we must attach it to the parent node.
-    const affiliationsNodePos = getMetadataContainerPos(context, pos)
+  if (!unused && !isDuplicate) {
+    return inconsistencies
+  }
 
-    if (unused) {
-      inconsistencies.push(
-        createWarning(node, affiliationsNodePos, 'not-used', 'warning')
-      )
-    }
+  const affiliations = findMetadataContainer(
+    context,
+    pos,
+    schema.nodes.affiliations
+  )  
 
-    if (isDuplicate) {
-      inconsistencies.push(
-        createWarning(node, affiliationsNodePos, 'duplicate', 'warning')
-      )
-    }
+  if (!affiliations) {
+    return inconsistencies
+  }
+
+  if (unused) {
+    inconsistencies.push(
+      createWarning(node, affiliations.pos, 'not-used', 'warning')
+    )
+  }
+
+  if (isDuplicate) {
+    inconsistencies.push(
+      createWarning(node, affiliations.pos, 'duplicate', 'warning')
+    )
   }
 
   return inconsistencies
@@ -343,15 +356,18 @@ const validateContributor: NodeValidator = (node, pos, context) => {
     context.pluginStates.affiliationContributors
   )
 
-  return isDuplicate
-    ? [
-        createWarning(
-          node,
-          getMetadataContainerPos(context, pos),
-          'duplicate',
-          'warning'
-        ),
-      ]
+  if (!isDuplicate) {
+    return []
+  }
+
+  const contributors = findMetadataContainer(
+    context,
+    pos,
+    schema.nodes.contributors
+  )
+
+  return contributors
+    ? [createWarning(node, contributors.pos, 'duplicate', 'warning')]
     : []
 }
 
