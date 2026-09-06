@@ -27,7 +27,7 @@ import { ValidatorContext, validators } from './validators'
 
 export type Inconsistency = {
   type: 'warning'
-  category: 'missing-reference' | 'not-used' | 'empty-content'
+  category: 'missing-reference' | 'not-used' | 'empty-content' | 'duplicate'
   severity: 'error' | 'warning'
   message: string
   nodeDescription: string
@@ -75,6 +75,8 @@ export const buildPluginState = (
   const context: ValidatorContext = {
     pluginStates: {
       affiliations: affiliationsKey.getState(state)?.indexedAffiliationIds,
+      affiliationElements: affiliationsKey.getState(state)?.affiliations,
+      affiliationContributors: affiliationsKey.getState(state)?.contributors,
       bibliography: getBibliographyPluginState(state)?.bibliographyItems,
       objects: objectsKey.getState(state),
       footnotes: footnotesKey.getState(state)?.footnotesElementIDs,

@@ -21,9 +21,12 @@ import {
   schema,
   Target,
 } from '@manuscripts/transform'
+import { NodeType } from 'prosemirror-model'
+import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
 import { Decoration } from 'prosemirror-view'
 
 import { EditorProps } from '../../configs/ManuscriptsEditor'
+import { AffiliationAttrs, ContributorAttrs } from '../../lib/authors'
 import { allowedHref } from '../../lib/url'
 import { isChildOfNodeTypes } from '../../lib/utils'
 import { FootnotesElementState } from '../footnotes'
@@ -32,6 +35,8 @@ import { createDecoration, Inconsistency } from './detect-inconsistency-utils'
 export type ValidatorContext = {
   pluginStates: {
     affiliations: Map<string, number> | undefined
+    affiliationElements: AffiliationAttrs[] | undefined
+    affiliationContributors: ContributorAttrs[] | undefined
     bibliography: Map<string, BibliographyItemAttrs> | undefined
     objects: Map<string, Target> | undefined
     footnotes: Map<string, string> | undefined
@@ -63,6 +68,9 @@ const createWarning = (
 ): Inconsistency => {
   const nodeDescription = customNodeDescription || getNodeDescription(node)
   const message = (() => {
+    const defaultMessage =
+      category === 'empty-content' ? 'Is empty' : 'Has no linked reference'
+
     switch (node.type) {
       case schema.nodes.figure_element:
       case schema.nodes.image_element:
@@ -74,11 +82,15 @@ const createWarning = (
       case schema.nodes.footnote:
         return 'Is not used'
       case schema.nodes.affiliation:
-        return 'Is not corresponding to any Author'
+        return category === 'duplicate'
+          ? 'Two or more affiliation entries appear to represent the same institution.'
+          : 'Is not corresponding to any Author'
+      case schema.nodes.contributor:
+        return category === 'duplicate'
+          ? 'Two or more author entries appear to represent the same person.'
+          : defaultMessage
       default:
-        return category === 'empty-content'
-          ? 'Is empty'
-          : 'Has no linked reference'
+        return defaultMessage
     }
   })()
 
@@ -246,28 +258,117 @@ const validateFootnote: NodeValidator = (node, pos, context) => {
   return inconsistencies
 }
 
+const normalizeDuplicateValue = (value: string | undefined) =>
+  (value ?? '').trim().replace(/\s+/g, ' ').toLowerCase()
+
+const isDuplicateAffiliation = (
+  affiliation: AffiliationAttrs,
+  affiliations: AffiliationAttrs[] | undefined
+) => {
+  const institution = normalizeDuplicateValue(affiliation.institution)
+  if (!affiliations || !institution) {
+    return false
+  }
+
+  const currentIndex = affiliations.findIndex(
+    (entry) => entry.id === affiliation.id
+  )
+
+  return affiliations.some(
+    (entry, index) =>
+      index < currentIndex &&
+      institution === normalizeDuplicateValue(entry.institution)
+  )
+}
+
+const isDuplicateAuthor = (
+  author: ContributorAttrs,
+  authors: ContributorAttrs[] | undefined
+) => {
+  const given = normalizeDuplicateValue(author.given)
+  const family = normalizeDuplicateValue(author.family)
+  if (!authors || !given || !family) {
+    return false
+  }
+
+  const currentIndex = authors.findIndex((entry) => entry.id === author.id)
+
+  return authors.some(
+    (entry, index) =>
+      index < currentIndex &&
+      given === normalizeDuplicateValue(entry.given) &&
+      family === normalizeDuplicateValue(entry.family)
+  )
+}
+
+// The DOM for individual 'affiliation'/'contributor' nodes is rendered manually inside
+// AffiliationsView/ContributorsView. ProseMirror decorations only apply to nodes that it
+// directly renders in the document DOM, so to ensure the warning decoration appears (or
+// can be scrolled to), we must attach it to the containing 'affiliations'/'contributors'
+// node instead of the individual node position.
+const findMetadataContainer = (
+  context: ValidatorContext,
+  pos: number,
+  type: NodeType
+) => findParentNodeOfTypeClosestToPos(context.doc.resolve(pos), type)
+
 const validateAffiliation: NodeValidator = (node, pos, context) => {
   const inconsistencies: Inconsistency[] = []
   const unused = !context.pluginStates.affiliations?.get(node.attrs.id)
 
+  const isDuplicate = isDuplicateAffiliation(
+    node.attrs as AffiliationAttrs,
+    context.pluginStates.affiliationElements
+  )
+
+  if (!unused && !isDuplicate) {
+    return inconsistencies
+  }
+
+  const affiliations = findMetadataContainer(
+    context,
+    pos,
+    schema.nodes.affiliations
+  )  
+
+  if (!affiliations) {
+    return inconsistencies
+  }
+
   if (unused) {
-    // Use the start position of the parent 'affiliations' node instead of the individual
-    // 'affiliation' node position because the DOM for individual affiliation nodes is
-    // rendered manually inside AffiliationsView. ProseMirror decorations only apply to
-    // nodes that it directly renders in the document DOM, so to ensure the warning
-    // decoration appears (or can be scrolled to), we must attach it to the parent node.
-    const $pos = context.doc.resolve(pos)
-    const affiliationsNodePos = $pos.before($pos.depth)
-    const inconsistency = createWarning(
-      node,
-      affiliationsNodePos,
-      'not-used',
-      'warning'
+    inconsistencies.push(
+      createWarning(node, affiliations.pos, 'not-used', 'warning')
     )
-    inconsistencies.push(inconsistency)
+  }
+
+  if (isDuplicate) {
+    inconsistencies.push(
+      createWarning(node, affiliations.pos, 'duplicate', 'warning')
+    )
   }
 
   return inconsistencies
+}
+
+const validateContributor: NodeValidator = (node, pos, context) => {
+  const isDuplicate = isDuplicateAuthor(
+    node.attrs as ContributorAttrs,
+    context.pluginStates.affiliationContributors
+  )
+
+  if (!isDuplicate) {
+    return []
+  }
+
+  const contributors = findMetadataContainer(
+    context,
+    pos,
+    schema.nodes.contributors
+  )
+
+  return contributors
+    ? [createWarning(node, contributors.pos, 'duplicate', 'warning')]
+    : []
 }
 
 export const validators: Record<string, NodeValidator> = {
@@ -280,4 +381,5 @@ export const validators: Record<string, NodeValidator> = {
   [schema.nodes.link.name]: validateLink,
   [schema.nodes.footnote.name]: validateFootnote,
   [schema.nodes.affiliation.name]: validateAffiliation,
+  [schema.nodes.contributor.name]: validateContributor,
 }
