@@ -272,13 +272,15 @@ export const AddKeywordInline: React.FC<{
       {isAddingNewKeyword && isValidNewKeyword() && (
         <CreateKeywordButtonElement />
       )}
-      <Dialog
-        isOpen={isExistingKeywordError}
-        actions={actions}
-        category={Category.confirmation}
-        header={'Keyword already exists'}
-        message={`You can’t add this keyword because it already exists. You can add another one.`}
-      />
+      {isExistingKeywordError && (
+        <Dialog
+          isOpen={isExistingKeywordError}
+          actions={actions}
+          category={Category.confirmation}
+          header={'Keyword already exists'}
+          message={`You can’t add this keyword because it already exists. You can add another one.`}
+        />
+      )}
     </AddNewKeyword>
   )
 }

@@ -79,6 +79,7 @@ export const ReferencesEditor: React.FC<ReferencesEditorProps> = (props) => {
     <ReferencesModal
       isOpen={isOpen}
       onCancel={() => setOpen(false)}
+      onClose={() => props.onClose?.()}
       items={items}
       item={selectedItem}
       citationCounts={props.citationCounts}

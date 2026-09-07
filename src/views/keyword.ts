@@ -43,7 +43,7 @@ export class KeywordView
   extends BaseNodeView<Trackable<KeywordNode>>
   implements ManuscriptNodeView
 {
-  private dialog: HTMLElement
+  private dialog: HTMLElement | null
 
   private isFirstKeyword(): boolean {
     const pos = this.getPos()
@@ -106,6 +106,10 @@ export class KeywordView
     const componentProps: DeleteKeywordDialogProps = {
       keyword: keyword.textContent,
       handleDelete: handleDelete,
+      onClose: () => {
+        this.dialog?.remove()
+        this.dialog = null
+      },
     }
 
     this.dialog = ReactSubView(
@@ -118,9 +122,7 @@ export class KeywordView
       ['keywords-delete']
     )
 
-    if (this.dialog) {
-      this.dom.appendChild(this.dialog)
-    }
+    document.body.appendChild(this.dialog)
   }
 }
 

@@ -23,14 +23,14 @@ import {
   FileUnknownIcon,
   getFileIcon,
   ArrowDownIcon,
-  StyledModal,
   ModalContainer,
   ModalHeader,
   ModalBody,
   WebLinkIcon,
+  StyledModalContent,
 } from '@manuscripts/style-guide'
 import { Target, schema } from '@manuscripts/transform'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 import { FileAttachment } from '../../lib/files'
@@ -195,7 +195,7 @@ const GROUP_LABELS: Record<string, string> = {
   supplement: 'Supplementary files',
 }
 
-interface Props {
+export interface CrossReferenceItemsProps {
   targets: Target[]
   files: FileAttachment[]
   handleSelect: (id: string, customLabel?: string) => void
@@ -203,9 +203,10 @@ interface Props {
   currentTargetId?: string
   currentCustomLabel?: string
   isEdit?: boolean
+  onClose: () => void
 }
 
-export const CrossReferenceItems: React.FC<Props> = ({
+export const CrossReferenceItems: React.FC<CrossReferenceItemsProps> = ({
   targets,
   files,
   handleSelect,
@@ -213,6 +214,7 @@ export const CrossReferenceItems: React.FC<Props> = ({
   currentTargetId,
   currentCustomLabel,
   isEdit = false,
+  onClose,
 }) => {
   const [isOpen, setIsOpen] = useState(true)
   const [selectedItem, setSelectedItem] = useState<string>('')
@@ -224,10 +226,7 @@ export const CrossReferenceItems: React.FC<Props> = ({
     }
   }, [currentTargetId])
 
-  const close = useCallback(() => {
-    setIsOpen(false)
-    handleCancel()
-  }, [handleCancel])
+  const close = () => setIsOpen(false)
 
   const grouped = targets.reduce<Record<string, Target[]>>((acc, t) => {
     ;(acc[t.type] ??= []).push(t)
@@ -235,8 +234,13 @@ export const CrossReferenceItems: React.FC<Props> = ({
   }, {})
 
   return (
-    <StyledModal
+    <StyledModalContent
       isOpen={isOpen}
+      onExited={() => {
+        onClose()
+        console.log('exited')
+        handleCancel()
+      }}
       onRequestClose={close}
       shouldCloseOnOverlayClick={true}
     >
@@ -321,6 +325,6 @@ export const CrossReferenceItems: React.FC<Props> = ({
           }
         />
       </ModalContainer>
-    </StyledModal>
+    </StyledModalContent>
   )
 }

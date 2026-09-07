@@ -66,11 +66,13 @@ const OptionWrapper = styled.div<{ $focused?: boolean; $selected?: boolean }>`
 export type InsertTableDialogProps = {
   state: ManuscriptEditorState
   dispatch?: Dispatch
+  onClose: () => void
 }
 
 export const InsertTableDialog: React.FC<InsertTableDialogProps> = ({
   state,
   dispatch,
+  onClose
 }) => {
   const [isOpen, setOpen] = useState(true)
   const [numberOfColumns, setNumColumns] = useState({ value: 4, label: `4` })
@@ -137,6 +139,8 @@ export const InsertTableDialog: React.FC<InsertTableDialogProps> = ({
       category={Category.confirmation}
       header={'Insert table'}
       message={''}
+      portaled={false}
+      onExited={onClose}
     >
       <Container>
         <Label>Number of columns:</Label>
@@ -186,21 +190,24 @@ export const openInsertTableDialog = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
+  let dialog: HTMLDivElement | null = null
   const props = getEditorProps(state)
 
   const componentProps: InsertTableDialogProps = {
     state,
     dispatch,
+    onClose: () => {
+      dialog?.remove()
+      dialog = null
+    }
   }
 
-  const dialog = ReactSubView(
+  dialog = ReactSubView(
     props,
     InsertTableDialog,
     componentProps,
     state.doc,
-    //@ts-ignore
-    null,
-    //@ts-ignore
+    () => -1,
     null
   )
 
