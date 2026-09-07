@@ -122,9 +122,7 @@ export class KeywordView
       ['keywords-delete']
     )
 
-    if (this.dialog) {
-      this.dom.appendChild(this.dialog)
-    }
+    document.body.appendChild(this.dialog)
   }
 }
 
