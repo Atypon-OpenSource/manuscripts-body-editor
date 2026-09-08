@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
-import { generateNodeID, Nodes, schema } from '@manuscripts/transform'
+import {
+  BibliographyItemAttrs,
+  generateNodeID,
+  Nodes,
+  schema,
+} from '@manuscripts/transform'
 
 import { AffiliationAttrs, ContributorAttrs } from './authors'
 
@@ -68,3 +73,33 @@ export const checkID = <T extends WithID>(attrs: T, nodeType: Nodes) => {
     id: attrs.id || generateNodeID(schema.nodes[nodeType]),
   }
 }
+
+export const normalizeBlblioItem = (item: BibliographyItemAttrs) => ({
+  id: item.id,
+  type: item.type,
+  author: item.author || [],
+  editor: item.editor || [],
+  issued: item.issued,
+  ['container-title']: item['container-title'] || '',
+  ['collection-title']: item['collection-title'] || '',
+  DOI: item.DOI || '',
+  URL: item.URL || '',
+  volume: item.volume || '',
+  issue: item.issue || '',
+  supplement: item.supplement || '',
+  edition: item.edition || '',
+  page: item.page || '',
+  ['number-of-pages']: item['number-of-pages'] || '',
+  title: item.title || '',
+  literal: item.literal || '',
+  std: item.std || '',
+  publisher: item.publisher || '',
+  ['publisher-place']: item['publisher-place'] || '',
+  event: item.event || '',
+  ['event-place']: item['event-place'] || '',
+  ['event-date']: item['event-date'],
+  institution: item.institution || '',
+  locator: item.locator || '',
+  accessed: item.accessed,
+  comment: item.comment || '',
+})
