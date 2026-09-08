@@ -230,7 +230,7 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
       />
       <CitedItems>
         {cited.map((item) => (
-          <CitedItem key={item.id}>
+          <CitedItem key={item.id} data-cy="cited-item">
             <ReferenceLine item={item} />
             <CitedItemActions>
               <IconButton
@@ -241,6 +241,7 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
                 <EditIcon fill={'currentColor'} />
               </IconButton>
               <IconButton
+                data-cy="remove-citation"
                 disabled={!canEdit}
                 onClick={() => setDeleteDialog({ show: true, id: item.id })}
               >
