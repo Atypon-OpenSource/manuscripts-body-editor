@@ -1143,24 +1143,20 @@ export const insertAbstractSection =
       return false
     }
     const abstracts = findAbstractsNode(state.doc)
-    const sections = findChildrenByType(abstracts.node, schema.nodes.section)
-    // Check if the section already exists
-    if (sections.some((s) => s.node.attrs.category === category.id)) {
+    const abstractNodes = findChildrenByType(
+      abstracts.node,
+      schema.nodes.abstract
+    )
+    if (abstractNodes.some((s) => s.node.attrs.category === category.id)) {
       return false
     }
 
-    // check if graphical abstract node exist to insert before it.
-    const ga = findChildrenByType(
-      state.doc,
-      schema.nodes.graphical_abstract_section
-    )[0]
+    const pos =
+      findInsertionPosition(schema.nodes.abstract, abstracts.node) +
+      abstracts.pos +
+      1
 
-    let pos = ga ? ga.pos : abstracts.pos + abstracts.node.content.size + 1
-    if (category.id === 'abstract') {
-      pos = abstracts.pos + 1
-    }
-
-    const node = schema.nodes.section.create({ category: category.id }, [
+    const node = schema.nodes.abstract.create({ category: category.id }, [
       schema.nodes.section_title.create({}, schema.text(category.titles[0])),
       schema.nodes.paragraph.create({ placeholder: 'Type abstract here...' }),
     ])
@@ -1238,15 +1234,13 @@ export const insertGraphicalAbstract =
       return false
     }
 
-    const ga = findChildrenByType(
-      state.doc,
-      schema.nodes.graphical_abstract_section
-    )[0]
-
-    // insert at the end of abstracts section
-    let pos = abstracts.pos + abstracts.node.content.size + 1
-    // abstract-key-image insert before abstract-graphical
-    pos = ga && category.id === 'abstract-key-image' ? ga.pos : pos
+    const pos =
+      findInsertionPosition(
+        schema.nodes.graphical_abstract_section,
+        abstracts.node
+      ) +
+      abstracts.pos +
+      1
 
     const node = schema.nodes.graphical_abstract_section.createAndFill(
       { category: category.id },
@@ -1537,8 +1531,7 @@ export const insertTOCSection = () => {
 export const insertTransAbstract = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch,
-  category?: string,
-  insertAfterPos?: number
+  category?: string
 ) => {
   if (!templateAllows(state, schema.nodes.trans_abstract)) {
     return false
@@ -1566,11 +1559,8 @@ export const insertTransAbstract = (
   )
 
   const abstracts = findAbstractsNode(state.doc)
-
-  const pos =
-    insertAfterPos != null
-      ? insertAfterPos
-      : abstracts.pos + abstracts.node.nodeSize - 1
+  // append at the end of the abstracts node, not just the first valid-but-earlier slot.
+  const pos = abstracts.node.content.size + abstracts.pos + 1
   const tr = state.tr.insert(pos, node)
 
   const selection = TextSelection.create(tr.doc, pos + 1)
@@ -1581,7 +1571,7 @@ export const insertTransAbstract = (
 }
 
 export const insertTransGraphicalAbstract =
-  (category: SectionCategory, insertAfterPos?: number) =>
+  (category: SectionCategory) =>
   (state: ManuscriptEditorState, dispatch?: Dispatch, view?: EditorView) => {
     if (!templateAllows(state, schema.nodes.trans_graphical_abstract)) {
       return false
@@ -1593,10 +1583,7 @@ export const insertTransGraphicalAbstract =
     const lang = state.doc.attrs.primaryLanguageCode || 'en'
 
     const abstracts = findAbstractsNode(state.doc)
-    const pos =
-      insertAfterPos != null
-        ? insertAfterPos
-        : abstracts.pos + abstracts.node.content.size + 1
+    const pos = abstracts.node.content.size + abstracts.pos + 1
 
     const node = schema.nodes.trans_graphical_abstract.createAndFill(
       {
