@@ -286,9 +286,11 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
                   <span>New Reference</span>
                 </NewReferenceButton>
                 <ReferencesInnerWrapper>
-                  <ExistingReferencesHeading>
-                    Existing References
-                  </ExistingReferencesHeading>
+                  {sortedItems.length && (
+                    <ExistingReferencesHeading>
+                      Existing References
+                    </ExistingReferencesHeading>
+                  )}
                   {sortedItems.slice(startIndex, endIndex + 1).map((item) => (
                     <ReferenceButton
                       key={item.id}
@@ -384,6 +386,7 @@ const ReferenceButton = withNavigableListItem(styled.button`
   border: none;
   border-radius: 0;
   text-align: inherit;
+  color: #353535;
 
   padding: ${(props) => props.theme.grid.unit * 4}px 0;
   border-top: 1px solid transparent;
