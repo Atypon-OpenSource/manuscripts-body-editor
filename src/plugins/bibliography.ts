@@ -120,7 +120,7 @@ const buildBibliographyPluginState = (
     $new.engine = $old.engine
     $new.renderedCitations = $old.renderedCitations
   } else {
-    const citationCounts = new Map()
+    const citationCounts = new Map<string, number>()
     const rids = nodes.flatMap((e) => e[0].attrs.rids)
     rids.forEach((rid) => {
       const count = citationCounts.get(rid) || 0
@@ -142,10 +142,17 @@ const buildBibliographyPluginState = (
       csl.style,
       'en-US'
     )
-
+    const uncitedIds: string[] = []
+    bibliographyItems.forEach((item, id) => {
+      if (!rids.includes(id)) {
+        uncitedIds.push(id)
+      }
+    })
     //create new citations since citeproc modifies the ones passed
     const citationTexts = engine.rebuildProcessorState(
-      nodes.map(([node]) => buildCiteprocCitation(node.attrs))
+      nodes.map(([node]) => buildCiteprocCitation(node.attrs)),
+      'html',
+      uncitedIds
     )
 
     $new.version = String(version++)

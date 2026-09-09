@@ -56,6 +56,9 @@ export default () => {
         }
         ids.add(id)
       })
+      if (!tr.steps.length) {
+        return null
+      }
       skipTracking(tr)
       tr.setMeta('origin', 'persist')
       return tr

@@ -33,14 +33,14 @@ importers:
         specifier: 1.1.2
         version: 1.1.2
       '@manuscripts/style-guide':
-        specifier: 3.7.1
-        version: 3.7.1(@types/hoist-non-react-statics@3.3.7(@types/react@19.2.17))(@types/node@20.17.46)(@types/react@19.2.17)(css-to-react-native@3.2.0)
+        specifier: 3.7.2
+        version: 3.7.2(@types/hoist-non-react-statics@3.3.7(@types/react@19.2.17))(@types/node@20.17.46)(@types/react@19.2.17)(css-to-react-native@3.2.0)
       '@manuscripts/track-changes-plugin':
         specifier: 2.4.0
         version: 2.4.0
       '@manuscripts/transform':
-        specifier: 4.5.2-LEAN-5971.0
-        version: 4.5.2-LEAN-5971.0(prosemirror-state@1.4.3)
+        specifier: 4.5.6
+        version: 4.5.6(prosemirror-state@1.4.3)
       '@popperjs/core':
         specifier: 2.11.8
         version: 2.11.8
@@ -866,16 +866,16 @@ packages:
       eslint-plugin-simple-import-sort: '>= 8'
       typescript: '*'
 
-  '@manuscripts/style-guide@3.7.1':
-    resolution: {integrity: sha512-Ctwu+rko4ZNRLelY+gdRlfMJwtjfAeiD//m7kMy5VBIth71MQ6S7p8gGl23/CLim4IFpU3WH3erRBRRgsCCfKA==}
+  '@manuscripts/style-guide@3.7.2':
+    resolution: {integrity: sha512-SmXZuCWfoHHUhcSPQFhDYFB+p2I01CRXmd4PTjyZXgV6TYhuxanazs0c5wODtUONEPY9B++U6bHit5t8PZBXqA==}
     engines: {node: '>=22'}
 
   '@manuscripts/track-changes-plugin@2.4.0':
     resolution: {integrity: sha512-I+KDqXvKRtmRWcqxtjEVLK7GR55pSzwFCoIouZ4wE2d72MXg0l3yUYXL/73FdUE2xwIzVneW65Q3RjHlvL8Ekg==}
     engines: {node: '>=22'}
 
-  '@manuscripts/transform@4.5.2-LEAN-5971.0':
-    resolution: {integrity: sha512-1+ANPOwE6bh923IiG/kqPExTpRr1fTl9p7G7PRyi18Mx3y9cO36xE5kN3j1/S7LZT/tCFQe7xQEEgvL3wZuSQQ==, tarball: https://us-central1-npm.pkg.dev/atypon-artifact/npm-virtual/@manuscripts/transform/-/@manuscripts/transform-4.5.2-LEAN-5971.0.tgz}
+  '@manuscripts/transform@4.5.6':
+    resolution: {integrity: sha512-9c3oJ7H+bxmfzcGtdfLbg5rktuQMMK672zrr/VBWVDh29qfdl+58ZX0XNlfdgpGPosCdaZS/ZIh2Kppr6NjXzQ==}
     engines: {node: '>=22'}
 
   '@napi-rs/wasm-runtime@1.1.6':
@@ -5579,7 +5579,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@manuscripts/style-guide@3.7.1(@types/hoist-non-react-statics@3.3.7(@types/react@19.2.17))(@types/node@20.17.46)(@types/react@19.2.17)(css-to-react-native@3.2.0)':
+  '@manuscripts/style-guide@3.7.2(@types/hoist-non-react-statics@3.3.7(@types/react@19.2.17))(@types/node@20.17.46)(@types/react@19.2.17)(css-to-react-native@3.2.0)':
     dependencies:
       '@headlessui/react': 2.2.10(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       formik: 2.4.9(@types/react@19.2.17)(react@19.2.6)
@@ -5617,7 +5617,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@manuscripts/transform@4.5.2-LEAN-5971.0(prosemirror-state@1.4.3)':
+  '@manuscripts/transform@4.5.6(prosemirror-state@1.4.3)':
     dependencies:
       citeproc: 2.4.63
       jszip: 3.10.1
