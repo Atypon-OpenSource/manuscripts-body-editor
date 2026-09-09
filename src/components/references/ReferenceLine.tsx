@@ -28,16 +28,31 @@ export const Metadata = styled.div`
 `
 
 export const MetadataContainer = styled.div`
+  position: relative;
   flex: 1;
 `
 
 export const ReferenceLine: React.FC<{
   item: BibliographyItemAttrs
-}> = ({ item }) => (
+  showUncited?: boolean
+}> = ({ item, showUncited }) => (
   <MetadataContainer>
+    {showUncited && <UncitedBadge>UNCITED</UncitedBadge>}
     <div data-cy={'reference-title'}>
       {item.title || item.literal || 'Untitled'}
     </div>
     <Metadata>{metadata(item)}</Metadata>
   </MetadataContainer>
 )
+
+const UncitedBadge = styled.span`
+  padding: 1px 6px;
+  display: flex;
+  margin-bottom: 2px;
+  max-width: max-content;
+  border-radius: 4px;
+  color: #353535;
+  background-color: #f7b314;
+  font-size: 10px;
+  font-weight: 500;
+`
