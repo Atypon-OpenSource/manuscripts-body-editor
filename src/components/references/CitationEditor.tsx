@@ -37,7 +37,7 @@ import { cleanItemValues } from '../../lib/utils'
 import { BibliographyItemSource } from './BibliographyItemSource'
 import { CitedItem, CitedItems } from './CitationViewer'
 import { ReferenceLine } from './ReferenceLine'
-import { ReferenceSearch } from './ReferenceSearch'
+import { InsertCitationModal } from './InsertCitationModal'
 import { ReferencesModal } from './ReferencesModal'
 
 const Container = withFocusTrap(styled.div``)
@@ -94,6 +94,7 @@ export interface CitationEditorProps {
   onSave: (item: BibliographyItemAttrs[]) => void
   onDelete: (item: BibliographyItemAttrs) => void
   onCancel: () => void
+  isNodeDeleted: () => boolean
   canEdit: boolean
 }
 
@@ -112,6 +113,7 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
   onUncite,
   onCancel,
   canEdit,
+  isNodeDeleted,
 }) => {
   const [items, dispatchItems] = useReducer(itemsReducer, $items)
   const [rids, dispatchRids] = useReducer(ridsReducer, $rids)
@@ -212,9 +214,10 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
   }
   if (searching) {
     return (
-      <ReferenceSearch
+      <InsertCitationModal
         sources={sources}
         items={items}
+        citationCounts={citationCounts}
         onAdd={handleAdd}
         onCite={(items) => {
           setSearching(false)
@@ -224,12 +227,13 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
       />
     )
   }
-  if (!rids.length) {
+  if (!rids.length && !isNodeDeleted()) {
     return (
-      <ReferenceSearch
+      <InsertCitationModal
         query={query}
         sources={sources}
         items={items}
+        citationCounts={citationCounts}
         onAdd={handleAdd}
         onCite={handleCite}
         onCancel={onCancel}
