@@ -1942,6 +1942,13 @@ export const addNodeComment = (
   return false
 }
 
+const canInsertHighlightMarker = ($pos: ResolvedPos) =>
+  $pos.parent.canReplaceWith(
+    $pos.index(),
+    $pos.index(),
+    schema.nodes.highlight_marker
+  )
+
 export const addInlineComment = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
@@ -1951,6 +1958,15 @@ export const addInlineComment = (
   if (!node) {
     return false
   }
+
+  if (!canInsertHighlightMarker(selection.$from)) {
+    return addNodeComment(
+      isNodeSelection(selection) ? selection.node : node,
+      state,
+      dispatch
+    )
+  }
+
   let from = selection.from
   let to = selection.to
 
