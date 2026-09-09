@@ -94,6 +94,7 @@ export interface CitationEditorProps {
   onSave: (item: BibliographyItemAttrs[]) => void
   onDelete: (item: BibliographyItemAttrs) => void
   onCancel: () => void
+  isNodeDeleted: () => boolean
   canEdit: boolean
 }
 
@@ -112,6 +113,7 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
   onUncite,
   onCancel,
   canEdit,
+  isNodeDeleted,
 }) => {
   const [items, dispatchItems] = useReducer(itemsReducer, $items)
   const [rids, dispatchRids] = useReducer(ridsReducer, $rids)
@@ -225,7 +227,7 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
       />
     )
   }
-  if (!rids.length) {
+  if (!rids.length && !isNodeDeleted()) {
     return (
       <InsertCitationModal
         query={query}

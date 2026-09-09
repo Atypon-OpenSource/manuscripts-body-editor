@@ -160,6 +160,7 @@ export class CitationEditableView extends CitationView {
         onSave: this.handleSave,
         onDelete: this.handleDelete,
         onCancel: this.handleCancel,
+        isNodeDeleted: () => isDeleted(this.node),
         canEdit: can.editCitationsAndRefs,
       }
 
