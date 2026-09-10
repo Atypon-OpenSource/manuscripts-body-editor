@@ -200,7 +200,11 @@ export const LinkForm: React.FC<LinkFormProps> = ({
 
         <Actions>
           <ActionGroup>
-            <RemoveButton variant="secondary" type={'button'} onClick={onRemove}>
+            <RemoveButton
+              variant="secondary"
+              type={'button'}
+              onClick={onRemove}
+            >
               <DeleteIcon />
               <span>Remove Link</span>
             </RemoveButton>

@@ -48,7 +48,7 @@ export class CrossReferenceView
     const attrs = this.node.attrs
     const target = attrs.rids.length ? targets.get(attrs.rids[0]) : undefined
 
-    const isSupplement = target?.type === schema.nodes.supplement.name;
+    const isSupplement = target?.type === schema.nodes.supplement.name
     const derivedLabel = isSupplement
       ? target?.caption || target?.label || ''
       : target?.label || ''

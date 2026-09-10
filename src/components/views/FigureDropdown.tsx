@@ -221,7 +221,10 @@ export const FigureOptions: React.FC<WrappedProps> = ({
           ref={dropdownRef}
         >
           {showReplace && isEmbedMode && (
-            <ListItemButton variant="tertiary" onClick={() => onReplaceEmbed && onReplaceEmbed()}>
+            <ListItemButton
+              variant="tertiary"
+              onClick={() => onReplaceEmbed && onReplaceEmbed()}
+            >
               Edit Link
             </ListItemButton>
           )}
@@ -260,7 +263,11 @@ export const FigureOptions: React.FC<WrappedProps> = ({
                     )
                   )}
                   {showUpload && (
-                    <UploadButton variant="tertiary" onClick={onUpload} disabled={!showUpload}>
+                    <UploadButton
+                      variant="tertiary"
+                      onClick={onUpload}
+                      disabled={!showUpload}
+                    >
                       <UploadIcon /> Upload new...
                     </UploadButton>
                   )}
@@ -269,17 +276,27 @@ export const FigureOptions: React.FC<WrappedProps> = ({
             />
           )}
           {showDownload && (
-            <ListItemButton variant="tertiary" onClick={onDownload} disabled={!showDownload}>
+            <ListItemButton
+              variant="tertiary"
+              onClick={onDownload}
+              disabled={!showDownload}
+            >
               Download
             </ListItemButton>
           )}
           {showDetach && (
-            <ListItemButton variant="tertiary" onClick={onDetach} disabled={!showDetach}>
+            <ListItemButton
+              variant="tertiary"
+              onClick={onDetach}
+              disabled={!showDetach}
+            >
               Detach
             </ListItemButton>
           )}
           {showDelete() && (
-            <ListItemButton variant="tertiary" onClick={onDelete}>Delete</ListItemButton>
+            <ListItemButton variant="tertiary" onClick={onDelete}>
+              Delete
+            </ListItemButton>
           )}
         </OptionsDropdownList>
       )}
@@ -355,7 +372,10 @@ const OptionsDropdownList = styled(DropdownList)`
   right: 4%;
 `
 
-const OptionsButton = styled(IconButton).attrs({ size: 'small', bordered: true })`
+const OptionsButton = styled(IconButton).attrs({
+  size: 'small',
+  bordered: true,
+})`
   && {
     margin: ${(props) => props.theme.grid.unit}px;
     visibility: hidden;
