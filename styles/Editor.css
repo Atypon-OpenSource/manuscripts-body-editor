@@ -95,9 +95,6 @@
 .ProseMirror .pullquote p {
   display: flow-root;
 }
-.ProseMirror .pullquote p i {
-  font-style: normal;
-}
 
 .ProseMirror .pullquote p:first-of-type {
   margin-top: 0;
