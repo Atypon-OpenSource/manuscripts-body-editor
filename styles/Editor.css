@@ -346,7 +346,8 @@
 
 .ProseMirror .caption-description,
 .ProseMirror .caption-title,
-.ProseMirror .element-label {
+.ProseMirror .element-label,
+.ProseMirror :not(.pullquote, blockquote) > .attribution {
   font-size: 14px;
   outline: none;
   margin: 0;

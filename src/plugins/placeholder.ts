@@ -109,12 +109,15 @@ export default () =>
         state.doc.descendants((node, pos, parent) => {
           if (!node.isAtom && node.type.isBlock && node.childCount === 0) {
             if (node.type === node.type.schema.nodes.attribution) {
+              const isQuoteParent =
+                parent?.type === schema.nodes.pullquote_element ||
+                parent?.type === schema.nodes.blockquote_element
+              const placeholder = isQuoteParent
+                ? 'Insert reference here'
+                : 'Attribution'
               decorations.push(
-                Decoration.widget(
-                  pos + 1,
-                  placeholderWidget('Insert reference here')
+                Decoration.widget(pos + 1, placeholderWidget(placeholder))
                 )
-              )
             }
             if (
               node.type === node.type.schema.nodes.paragraph ||
