@@ -286,11 +286,11 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
                   <span>New Reference</span>
                 </NewReferenceButton>
                 <ReferencesInnerWrapper>
-                  {sortedItems.length && (
+                  {sortedItems.length ? (
                     <ExistingReferencesHeading>
                       Existing References
                     </ExistingReferencesHeading>
-                  )}
+                  ) : null}
                   {sortedItems.slice(startIndex, endIndex + 1).map((item) => (
                     <ReferenceButton
                       key={item.id}
@@ -365,6 +365,7 @@ const ReferencesSidebar = styled(ModalSidebar)`
 
 const ReferencesSidebarContent = styled(SidebarContent)`
   overflow-y: auto;
+  padding-top: 1px;
 `
 
 const ReferencesInnerWrapper = withListNavigation(styled.div`
