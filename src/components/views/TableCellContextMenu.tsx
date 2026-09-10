@@ -17,9 +17,9 @@ import {
   Category,
   DeleteIcon,
   Dialog,
-  IconTextButton,
   PlusIcon,
 } from '@manuscripts/style-guide'
+import { Button } from '@manuscripts/style-guide/mui'
 import { skipTracking } from '@manuscripts/track-changes-plugin'
 import { schema } from '@manuscripts/transform'
 import { Command, EditorState } from 'prosemirror-state'
@@ -125,15 +125,20 @@ export const ContextMenu: React.FC<{
   return (
     <MenuDropdownList className={'table-ctx'}>
       <ActionButton
+        variant="tertiary"
         disabled={isHeaderCellSelected(view.state)}
         onClick={() => runCommand(addRows('top'))}
       >
         <PlusIcon /> Insert {rows} above
       </ActionButton>
-      <ActionButton onClick={() => runCommand(addRows('bottom'))}>
+      <ActionButton
+        variant="tertiary"
+        onClick={() => runCommand(addRows('bottom'))}
+      >
         <PlusIcon /> Insert {rows} below
       </ActionButton>
       <ActionButton
+        variant="tertiary"
         onClick={() =>
           showWarningForTCPlugin(setColumnAction, () => addColumns('left'))
         }
@@ -141,6 +146,7 @@ export const ContextMenu: React.FC<{
         <PlusIcon /> Insert {columns} to the left
       </ActionButton>
       <ActionButton
+        variant="tertiary"
         onClick={() =>
           showWarningForTCPlugin(setColumnAction, () => addColumns('right'))
         }
@@ -149,6 +155,7 @@ export const ContextMenu: React.FC<{
       </ActionButton>
       <Separator />
       <ActionButton
+        variant="tertiary"
         disabled={count.rows !== 1}
         onClick={() => runCommand(addHeaderRow(headerPosition))}
       >
@@ -156,6 +163,7 @@ export const ContextMenu: React.FC<{
       </ActionButton>
       <Separator />
       <ActionButton
+        variant="tertiary"
         onClick={() =>
           showWarningForTCPlugin(setRowDeleteAction, () => deleteRow)
         }
@@ -164,6 +172,7 @@ export const ContextMenu: React.FC<{
         {isHeaderCellSelected(view.state) ? ' header ' : ''} {rows}
       </ActionButton>
       <ActionButton
+        variant="tertiary"
         onClick={() =>
           showWarningForTCPlugin(setColumnAction, () => deleteColumn)
         }
@@ -172,12 +181,18 @@ export const ContextMenu: React.FC<{
       </ActionButton>
       {(isCellSelectionMerged || isCellSelectionSplittable) && <Separator />}
       {isCellSelectionMerged && (
-        <ActionButton onClick={() => runCommand(mergeCells, true)}>
+        <ActionButton
+          variant="tertiary"
+          onClick={() => runCommand(mergeCells, true)}
+        >
           Merge cells
         </ActionButton>
       )}
       {isCellSelectionSplittable && (
-        <ActionButton onClick={() => runCommand(splitCell, true)}>
+        <ActionButton
+          variant="tertiary"
+          onClick={() => runCommand(splitCell, true)}
+        >
           Split cells
         </ActionButton>
       )}
@@ -213,12 +228,11 @@ const MenuDropdownList = styled.div`
   flex-direction: column;
 `
 
-const ActionButton = styled(IconTextButton)`
-  padding: 8px 16px;
-  justify-content: flex-start;
-
-  &:hover {
-    background: #f2fbfc;
+const ActionButton = styled(Button)`
+  && {
+    padding: 8px 16px;
+    justify-content: flex-start;
+    width: 100%;
   }
   &:disabled {
     color: #353535;

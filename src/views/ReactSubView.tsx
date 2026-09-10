@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { MuiThemeProvider, muiTheme } from '@manuscripts/style-guide/mui'
 import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
 import React from 'react'
 import { flushSync } from 'react-dom'
@@ -92,16 +93,18 @@ function createView<T extends Trackable<ManuscriptNode>>(
     }
 
     return (
-      <ThemeProvider theme={props.theme}>
-        <Component
-          nodeAttrs={node.attrs}
-          setNodeAttrs={setNodeAttrs}
-          viewProps={{ node, view, getPos }}
-          container={container}
-          {...props}
-          {...componentProps}
-        />
-      </ThemeProvider>
+      <MuiThemeProvider theme={muiTheme}>
+        <ThemeProvider theme={props.theme}>
+          <Component
+            nodeAttrs={node.attrs}
+            setNodeAttrs={setNodeAttrs}
+            viewProps={{ node, view, getPos }}
+            container={container}
+            {...props}
+            {...componentProps}
+          />
+        </ThemeProvider>
+      </MuiThemeProvider>
     )
   }
   return Wrapped
