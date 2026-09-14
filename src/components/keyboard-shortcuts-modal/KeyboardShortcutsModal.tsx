@@ -55,7 +55,7 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({
   onClose,
 }) => {
   const [tabIndex, setTabIndex] = useState(0)
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(true)
   const containerRef = useRef<HTMLDivElement>(null)
 
   const close = () => setIsOpen(false)
