@@ -75,14 +75,7 @@ export const ReferenceSearch: React.FC<{
   onAdd: () => void
   onCite: (items: BibliographyItemAttrs[]) => void
   onCancel: () => void
-}> = ({
-  query: initialQuery,
-  sources,
-  items,
-  onAdd,
-  onCite,
-  onCancel,
-}) => {
+}> = ({ query: initialQuery, sources, items, onAdd, onCite, onCancel }) => {
   const [query, setQuery] = useState<string>(initialQuery || '')
   const [selections, setSelections] = useState(
     new Map<string, BibliographyItemAttrs>()
