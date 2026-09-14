@@ -16,7 +16,7 @@
 
 import { ContextMenu, ContextMenuProps } from '@manuscripts/style-guide'
 import { isDeleted, skipTracking } from '@manuscripts/track-changes-plugin'
-import { schema, SupplementNode, Target } from '@manuscripts/transform'
+import { schema, Target } from '@manuscripts/transform'
 import { TextSelection } from 'prosemirror-state'
 
 import {
@@ -24,8 +24,6 @@ import {
   CrossReferenceItemsProps,
 } from '../components/views/CrossReferenceItems'
 import { handleComment } from '../lib/comments'
-import { findNodeByID } from '../lib/doc'
-import { getSupplementDisplayLabel } from '../lib/supplements'
 import { objectsKey } from '../plugins/objects'
 import { createEditableNodeView } from './creators'
 import { CrossReferenceView } from './cross_reference'
@@ -88,25 +86,13 @@ export class CrossReferenceEditableView extends CrossReferenceView {
 
   public getTargets = () => {
     const targets = objectsKey.getState(this.view.state) as Map<string, Target>
-    const files = this.props.getFiles()
-    const fileMap = new Map(files.map((f) => [f.id, f.name]))
     const excludedTypes = [schema.nodes.image_element.name]
-    const supplement = schema.nodes.supplement.name
 
     return Array.from(targets.values()).reduce<Target[]>((acc, t) => {
       if (excludedTypes.includes(t.type)) {
         return acc
       }
-      // Prefer caption title, then URL / file name for supplements and weblinks.
-      if (t.type === supplement && t.href) {
-        const found = findNodeByID(this.view.state.doc, t.id)
-        const label = found
-          ? getSupplementDisplayLabel(found.node as SupplementNode, files)
-          : (fileMap.get(t.href) ?? t.href)
-        acc.push({ ...t, label, caption: '' })
-      } else {
-        acc.push(t)
-      }
+      acc.push(t)
       return acc
     }, [])
   }

@@ -585,7 +585,7 @@ span.comment-marker {
 .bib-item {
   display: flex;
   margin-bottom: 12px;
-  min-height: 80px;
+  min-height: 60px;
 }
 .bib-item:focus-visible {
   outline: 4px solid var(--focus-outline-color);
@@ -2126,6 +2126,7 @@ th:hover > .table-context-menu-button,
   padding-right: 150px;
 }
 
+.ProseMirror .add-new-reference,
 .ProseMirror .add-trans-abstract {
   display: flex;
   align-items: center;
@@ -2140,16 +2141,42 @@ th:hover > .table-context-menu-button,
   background: unset;
   border: none;
 }
-
+.ProseMirror .add-new-reference {
+  bottom: 100%;
+  top: auto;
+}
+.ProseMirror .add-new-reference svg,
 .ProseMirror .add-trans-abstract svg {
   width: 16px;
   height: 16px;
 }
 
+.ProseMirror .add-new-reference svg rect,
 .ProseMirror .add-trans-abstract svg rect {
   fill: #6e6e6e !important;
 }
 
+.tracking-visible .ProseMirror .bib-item.inserted .uncited-reference-marker,
+.tracking-visible .ProseMirror .deleted.bib-item .uncited-reference-marker {
+  text-decoration: none !important;
+}
+.tracking-visible .ProseMirror .bib-item.deleted {
+  display: block;
+}
+.ProseMirror .uncited-reference-marker {
+  padding: 1px 6px 0 6px;
+  border-radius: 4px;
+  left: calc(100% + 5px);
+  position: absolute;
+  top: 0;
+  color: #353535;
+  line-height: 13px;
+  background-color: #f7b314;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.ProseMirror .add-new-reference-text,
 .ProseMirror .add-trans-abstract-text {
   font-size: 14px;
   color: #353535;
