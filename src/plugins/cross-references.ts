@@ -275,7 +275,6 @@ const selectAndScrollToCreator = (view: EditorView) => ($pos: ResolvedPos) => {
 
   const selTr = view.state.tr
   selTr.setSelection(NodeSelection.create(view.state.doc, $pos.pos))
-  view.focus()
   view.dispatch(selTr)
   // Standard PM's scrollIntoView doesn't allow placement control - hence switching to native DOM's peer method.
   let scrollable = view.dom.parentElement

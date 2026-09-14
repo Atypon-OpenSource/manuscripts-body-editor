@@ -50,8 +50,8 @@ export class CrossReferenceView
 
     const isSupplement = target?.type === schema.nodes.supplement.name
     const derivedLabel = isSupplement
-      ? target?.caption || target?.label || ''
-      : target?.label || ''
+      ? target?.caption || target?.label || '[cross-ref]'
+      : target?.label || '[cross-ref]'
 
     this.dom.textContent = attrs.label || derivedLabel
     this.dom.addEventListener('click', this.handleClick)

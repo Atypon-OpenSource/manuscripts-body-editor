@@ -85,7 +85,7 @@ export const CrossRefWarningModal: React.FC<{
         <Body>
           <Title>
             <AttentionRedIcon width={24} height={24} />
-            Confirm deletion?
+            Confirm Deletion
           </Title>
           <p>
             <b>{elementLabel}</b> {xrefs.length === 1 ? 'is' : 'are'} actively
@@ -96,26 +96,23 @@ export const CrossRefWarningModal: React.FC<{
             in your document. Deleting {pronoun} will break the following
             cross-references:
           </p>
-          {/*<XrefGroupDisplay*/}
-          {/*  references={references}*/}
-          {/*  selectAndScrollTo={selectAndScrollTo}*/}
-          {/*/>*/}
           <div>
             <ToggleHeader>
-              <SecondaryBoldHeading>Hide locations</SecondaryBoldHeading>
+              <SecondaryBoldHeading>
+                {showRef
+                  ? 'Hide locations'
+                  : `Show ${references.length} location`}
+              </SecondaryBoldHeading>
               <ToggleButton onClick={toggleReferenceList}>
                 <ArrowUpIcon />
               </ToggleButton>
             </ToggleHeader>
             {showRef && (
               <ListWrapper>
-                {xrefs.map((group, i) => (
-                  <XrefGroupDisplay
-                    key={i}
-                    group={group}
-                    selectAndScrollTo={selectAndScrollTo}
-                  />
-                ))}
+                <XrefGroupDisplay
+                  xrefs={references}
+                  selectAndScrollTo={selectAndScrollTo}
+                />
               </ListWrapper>
             )}
           </div>
@@ -159,70 +156,52 @@ export const CrossRefWarningModal: React.FC<{
 }
 
 const XrefGroupDisplay: React.FC<{
-  group: XrefGroup
+  xrefs: [ManuscriptNode, ResolvedPos, string][]
   selectAndScrollTo: ($pos: ResolvedPos) => void
-}> = ({ group, selectAndScrollTo }) => {
-  const [showRef, setShowRef] = useState(true)
-
-  const toggleReferenceList = () => setShowRef(!showRef)
-
+}> = ({ xrefs, selectAndScrollTo }) => {
   return (
-    <NestedListWrapper>
-      <SecondaryToggleHeader>
-        <SecondaryHeading>{group.label}</SecondaryHeading>
-        <ToggleButton onClick={toggleReferenceList}>
-          <ArrowUpIcon />
-        </ToggleButton>
-      </SecondaryToggleHeader>
-      {showRef && (
-        <ReferencesList>
-          {group.xrefs.map(([xrefNode, pos], i) => {
-            const xrefPos = findChildren(
-              pos.node(),
-              (child) => child.attrs.id === xrefNode.attrs.id
-            )[0]
+    <ReferencesList>
+      {xrefs.map(([xrefNode, pos, label], i) => {
+        const xrefPos = findChildren(
+          pos.node(),
+          (child) => child.attrs.id === xrefNode.attrs.id
+        )[0]
 
-            const content = pos.node().content
-            const MAX_LENGTH = 40
+        const content = pos.node().content
+        const MAX_LENGTH = 40
 
-            const nodeStart = xrefPos.pos
-            const nodeEnd = xrefPos.pos + xrefNode.nodeSize
+        const nodeStart = xrefPos.pos
+        const nodeEnd = xrefPos.pos + xrefNode.nodeSize
 
-            const leftHandText = content.textBetween(
-              nodeStart > MAX_LENGTH ? nodeStart - MAX_LENGTH : 0,
-              nodeStart
-            )
-            const rightHandText = content.textBetween(
-              nodeEnd,
-              Math.min(nodeEnd + MAX_LENGTH, content.size)
-            )
+        const leftHandText = content.textBetween(
+          nodeStart > MAX_LENGTH ? nodeStart - MAX_LENGTH : 0,
+          nodeStart
+        )
+        const rightHandText = content.textBetween(
+          nodeEnd,
+          Math.min(nodeEnd + MAX_LENGTH, content.size)
+        )
 
-            const derivedLabel =
-              xrefNode.attrs.label || group.label || '[cross-ref]'
+        const derivedLabel = xrefNode.attrs.label || label || '[cross-ref]'
 
-            return (
-              <ListItem key={i}>
-                <XRefTextContainer>
-                  <XRefAdjacentText direction={'rtl'}>
-                    {leftHandText}
-                  </XRefAdjacentText>
-                  <XRefLabel>{derivedLabel}</XRefLabel>
-                  <XRefAdjacentText direction={'ltr'}>
-                    {rightHandText}
-                  </XRefAdjacentText>
-                </XRefTextContainer>
-                <ScrollButton
-                  $mini={true}
-                  onClick={() => selectAndScrollTo(pos)}
-                >
-                  Show
-                </ScrollButton>
-              </ListItem>
-            )
-          })}
-        </ReferencesList>
-      )}
-    </NestedListWrapper>
+        return (
+          <ListItem key={i}>
+            <XRefTextContainer>
+              <XRefAdjacentText direction={'rtl'}>
+                {leftHandText}
+              </XRefAdjacentText>
+              <XRefLabel>{derivedLabel}</XRefLabel>
+              <XRefAdjacentText direction={'ltr'}>
+                {rightHandText}
+              </XRefAdjacentText>
+            </XRefTextContainer>
+            <ScrollButton $mini={true} onClick={() => selectAndScrollTo(pos)}>
+              Show
+            </ScrollButton>
+          </ListItem>
+        )
+      })}
+    </ReferencesList>
   )
 }
 
@@ -314,17 +293,6 @@ const ListWrapper = styled.div`
   overflow-y: auto;
 `
 
-const NestedListWrapper = styled.div`
-  padding: 2px 10px;
-`
-
-const SecondaryToggleHeader = styled(ToggleHeader)`
-  padding: 0;
-  border: none;
-  background: #ffffff;
-  border-bottom: 1px solid #e2e2e2;
-`
-
 const ToggleButton = styled(IconButton)`
   height: 24px;
   &&:not([disabled]):focus-visible {
@@ -364,7 +332,6 @@ const ListItem = styled.li`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 4px 0;
   border-bottom: solid 1px #e2e2e2;
   &:last-child {
     border-bottom: none;
