@@ -334,6 +334,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   }
 
   public destroy() {
+    this.dialog?.remove()
     this.removeKeydownListener?.()
     super.destroy()
   }

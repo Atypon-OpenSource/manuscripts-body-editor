@@ -47,6 +47,7 @@ export class CrossReferenceEditableView extends CrossReferenceView {
   }
 
   public showPicker = () => {
+    this.popperContainer?.remove()
     const rids = this.node.attrs.rids
 
     const componentProps: CrossReferenceItemsProps = {
