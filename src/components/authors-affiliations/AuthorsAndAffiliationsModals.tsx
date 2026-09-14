@@ -49,6 +49,7 @@ export interface AuthorsAndAffiliationsModalsProps {
   affiliation?: AffiliationAttrs
   addNewAuthor?: boolean
   addNewAffiliation?: boolean
+  onClose: () => void
 }
 
 export const AuthorsAndAffiliationsModals: React.FC<
@@ -60,6 +61,7 @@ export const AuthorsAndAffiliationsModals: React.FC<
   affiliation,
   addNewAuthor,
   addNewAffiliation,
+  onClose,
 }) => {
   const [showOverlay, setShowOverlay] = useState(false)
   const [authors, setAuthors] = useState(() =>
@@ -108,6 +110,7 @@ export const AuthorsAndAffiliationsModals: React.FC<
       <>
         <AuthorsModal
           {...authorsProps}
+          onClose={onClose}
           onOpenAffiliationsModal={handleOpenOverlay}
         />
         {showOverlay && (
@@ -126,6 +129,7 @@ export const AuthorsAndAffiliationsModals: React.FC<
       <AffiliationsModal
         {...affiliationsProps}
         openAuthorsModal={handleOpenOverlay}
+        onClose={onClose}
       />
       {showOverlay && (
         <CreateAuthorModal
@@ -144,6 +148,7 @@ export const openAuthorsAndAffiliationsModals = (
   view: ManuscriptEditorView | EditorView | undefined,
   initialModal: 'authors' | 'affiliations'
 ) => {
+  let dialog: HTMLDivElement | null = null
   if (!view) {
     return
   }
@@ -155,9 +160,10 @@ export const openAuthorsAndAffiliationsModals = (
     view: view as ManuscriptEditorView,
     addNewAuthor: initialModal === 'authors',
     addNewAffiliation: initialModal === 'affiliations',
+    onClose: () => dialog?.remove(),
   }
 
-  const dialog = ReactSubView(
+  dialog = ReactSubView(
     props,
     AuthorsAndAffiliationsModals,
     componentProps,

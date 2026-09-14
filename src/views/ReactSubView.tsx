@@ -44,7 +44,7 @@ function createSubView<T extends Trackable<ManuscriptNode>>(
   componentProps: object,
   node: T,
   getPos: () => number,
-  view: ManuscriptEditorView,
+  view: ManuscriptEditorView | null,
   classNames: string[] = []
 ): HTMLDivElement {
   const container = document.createElement('div')
@@ -69,7 +69,7 @@ function createView<T extends Trackable<ManuscriptNode>>(
   componentProps: object,
   node: T,
   getPos: () => number,
-  view: ManuscriptEditorView,
+  view: ManuscriptEditorView | null,
   classNames: string[] = [],
   container: HTMLDivElement
 ) {
@@ -82,6 +82,10 @@ function createView<T extends Trackable<ManuscriptNode>>(
 
   const Wrapped: React.FC = () => {
     const setNodeAttrs = (nextAttrs: Partial<ManuscriptNode['attrs']>) => {
+      if (!view) {
+        console.warn('Skipped setting node attributes due to editorView missing')
+        return
+      }
       const { selection, tr } = view.state
 
       tr.setNodeMarkup(getPos(), undefined, {
@@ -120,7 +124,7 @@ export function createSubViewAsync<T extends Trackable<ManuscriptNode>>(
   componentProps: object,
   node: T,
   getPos: () => number,
-  view: ManuscriptEditorView,
+  view: ManuscriptEditorView | null,
   classNames: string[] = []
 ): Promise<HTMLDivElement> {
   const container = document.createElement('div')

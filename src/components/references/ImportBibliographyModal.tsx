@@ -18,7 +18,7 @@ import {
   ModalCardBody,
   ModalContainer,
   ModalHeader,
-  StyledModal,
+  StyledModalContent,
 } from '@manuscripts/style-guide'
 import { BibliographyItemAttrs } from '@manuscripts/transform'
 import React, { useState } from 'react'
@@ -48,8 +48,14 @@ export const ImportBibliographyModal: React.FC<
     handleClose()
   }
 
+  const onClose = () => setOpen(false)
+
   return (
-    <StyledModal isOpen={isOpen} onRequestClose={onCancel}>
+    <StyledModalContent
+      isOpen={isOpen}
+      onExited={onCancel}
+      onRequestClose={onClose}
+    >
       <ModalContainer
         data-cy={
           isConfirming
@@ -59,7 +65,7 @@ export const ImportBibliographyModal: React.FC<
       >
         <ModalHeader>
           <CloseButton
-            onClick={isConfirming ? handleBack : onCancel}
+            onClick={isConfirming ? handleBack : onClose}
             data-cy="modal-close-button"
           />
         </ModalHeader>
@@ -72,12 +78,12 @@ export const ImportBibliographyModal: React.FC<
             />
           ) : (
             <ImportBibliography
-              onCancel={onCancel}
+              onCancel={onClose}
               onContinue={setPendingItems}
             />
           )}
         </ModalCardBody>
       </ModalContainer>
-    </StyledModal>
+    </StyledModalContent>
   )
 }

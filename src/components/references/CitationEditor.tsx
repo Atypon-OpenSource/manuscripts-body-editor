@@ -205,6 +205,7 @@ export const CitationEditor: React.FC<CitationEditorProps> = ({
       />
     )
   }
+
   return (
     <Container>
       <Dialog

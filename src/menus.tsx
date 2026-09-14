@@ -621,7 +621,7 @@ export const getEditorMenus = (
         id: 'insert-awards',
         label: 'Funder Information',
         isEnabled: isEditAllowed(state) && isCommandValid(insertAward()),
-        run: () => openInsertAwardModal(view),
+        run: () => openInsertAwardModal()(view),
         isHidden: !templateAllows(state, schema.nodes.awards),
       },
       {
