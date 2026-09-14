@@ -104,7 +104,7 @@ export const CrossRefWarningModal: React.FC<{
                   : `Show ${references.length} location`}
               </SecondaryBoldHeading>
               <ToggleButton onClick={toggleReferenceList}>
-                <ArrowUpIcon />
+                {showRef ? <ArrowUpIcon /> : <ArrowDownIcon />}
               </ToggleButton>
             </ToggleHeader>
             {showRef && (
@@ -380,4 +380,8 @@ const SelectorContainer = styled.div`
   border-radius: 4px;
   border: 1px solid #fe8f1f;
   background: #fff9e5;
+`
+
+const ArrowDownIcon = styled(ArrowUpIcon)`
+  transform: rotate(180deg);
 `
