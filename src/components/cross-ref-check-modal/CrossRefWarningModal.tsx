@@ -30,8 +30,8 @@ import {
   withFocusTrap,
 } from '@manuscripts/style-guide'
 import { ResolvedPos } from 'prosemirror-model'
-import { findChildren } from 'prosemirror-utils'
 import styled from 'styled-components'
+import { getSurroundingText } from '../../lib/utils'
 
 export type XrefGroup = {
   referenced: ManuscriptNode
@@ -162,36 +162,20 @@ const XrefGroupDisplay: React.FC<{
   return (
     <ReferencesList>
       {xrefs.map(([xrefNode, pos, label], i) => {
-        const xrefPos = findChildren(
-          pos.node(),
-          (child) => child.attrs.id === xrefNode.attrs.id
-        )[0]
-
-        const content = pos.node().content
-        const MAX_LENGTH = 40
-
-        const nodeStart = xrefPos.pos
-        const nodeEnd = xrefPos.pos + xrefNode.nodeSize
-
-        const leftHandText = content.textBetween(
-          nodeStart > MAX_LENGTH ? nodeStart - MAX_LENGTH : 0,
-          nodeStart
+        const { leftHandText, rightHandText } = getSurroundingText(
+          pos,
+          xrefNode
         )
-        const rightHandText = content.textBetween(
-          nodeEnd,
-          Math.min(nodeEnd + MAX_LENGTH, content.size)
-        )
-
         const derivedLabel = xrefNode.attrs.label || label || '[cross-ref]'
 
         return (
           <ListItem key={i}>
             <XRefTextContainer>
-              <XRefAdjacentText direction={'rtl'}>
+              <XRefAdjacentText $direction={'rtl'}>
                 {leftHandText}
               </XRefAdjacentText>
               <XRefLabel>{derivedLabel}</XRefLabel>
-              <XRefAdjacentText direction={'ltr'}>
+              <XRefAdjacentText $direction={'ltr'}>
                 {rightHandText}
               </XRefAdjacentText>
             </XRefTextContainer>
@@ -363,13 +347,13 @@ const XRefLabel = styled.span`
   mix-blend-mode: darken;
 `
 
-const XRefAdjacentText = styled.span<{ direction: 'rtl' | 'ltr' }>`
+const XRefAdjacentText = styled.span<{ $direction: 'rtl' | 'ltr' }>`
   display: block;
   max-width: 150px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  direction: ${(props) => props.direction};
+  direction: ${(props) => props.$direction};
 `
 
 const SelectorContainer = styled.div`

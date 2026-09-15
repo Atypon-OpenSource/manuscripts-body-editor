@@ -18,7 +18,7 @@ import { ManuscriptEditorView } from '@manuscripts/transform'
 import { ResolvedPos } from 'prosemirror-model'
 
 import { getEditorProps } from '../../plugins/editor-props'
-import ReactSubView, { SubViewContainer } from '../../views/ReactSubView'
+import ReactSubView from '../../views/ReactSubView'
 import {
   CrossRefWarningModal,
   DeleteOption,
@@ -54,7 +54,7 @@ export const openCrossRefWarningModal = (
     state.doc,
     () => 0,
     view
-  ) as SubViewContainer
+  )
   document.body.appendChild(dialog)
   return dialog
 }

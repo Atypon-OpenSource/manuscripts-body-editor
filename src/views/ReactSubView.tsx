@@ -48,7 +48,7 @@ function createSubView<T extends Trackable<ManuscriptNode>>(
   getPos: () => number,
   view: ManuscriptEditorView,
   classNames: string[] = []
-): HTMLDivElement {
+): SubViewContainer {
   const container = document.createElement('div') as SubViewContainer
   container.unmount = () => root.unmount()
   const Wrapped = createView<T>(

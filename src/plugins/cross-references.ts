@@ -36,6 +36,8 @@ import {
 import { openCrossRefWarningModal } from '../components/cross-ref-check-modal/openModal'
 import { objectsKey } from './objects'
 
+export const DELETE_WITHOUT_REF = 'delete-without-ref'
+
 let modalActive = false
 let modalElement: HTMLDivElement | null = null
 
@@ -63,7 +65,8 @@ export default () => {
         tr.getMeta(trackChangesPluginKey) ||
         tr.getMeta(TrackChangesAction.refreshChanges) ||
         tr.getMeta('addToHistory') === false ||
-        tr.getMeta('delete-without-ref')
+        tr.getMeta('collab$') ||
+        tr.getMeta(DELETE_WITHOUT_REF)
       ) {
         return true
       }
@@ -263,7 +266,7 @@ const onConfirmCreator =
         newTr.delete(from, to)
       }
     } else {
-      newTr.setMeta('delete-without-ref', true)
+      newTr.setMeta(DELETE_WITHOUT_REF, true)
     }
     view.dispatch(newTr)
   }
