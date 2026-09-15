@@ -69,10 +69,18 @@ export const ReferenceSearchResult = withNavigableListItem(styled.div`
 export const ReferenceSearchResults: React.FC<{
   items: BibliographyItemAttrs[]
   total: number
+  documentCitationCounts?: Map<string, number>
   isSelected: (item: BibliographyItemAttrs) => boolean
   onSelect: (item: BibliographyItemAttrs) => void
   onShowMore: () => void
-}> = ({ items, total, isSelected, onSelect, onShowMore }) => {
+}> = ({
+  items,
+  total,
+  documentCitationCounts,
+  isSelected,
+  onSelect,
+  onShowMore,
+}) => {
   const list = useRef<HTMLElement>(null)
   const onExpandReferenceList = () => {
     const element = list.current
@@ -100,7 +108,12 @@ export const ReferenceSearchResults: React.FC<{
               <AddIcon width={24} height={24} />
             )}
           </StatusIcon>
-          <ReferenceLine item={item} />
+          <ReferenceLine
+            item={item}
+            showUncited={
+              documentCitationCounts && !documentCitationCounts.get(item.id)
+            }
+          />
         </ReferenceSearchResult>
       ))}
       {items.length < 25 && total > items.length ? (
