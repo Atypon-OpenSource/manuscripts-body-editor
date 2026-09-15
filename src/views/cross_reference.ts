@@ -50,11 +50,17 @@ export class CrossReferenceView
 
     const isSupplement = target?.type === schema.nodes.supplement.name
     const derivedLabel = isSupplement
-      ? target?.caption || target?.label || ''
-      : target?.label || ''
+      ? target?.caption || target?.label || '[cross-ref]'
+      : target?.label || '[cross-ref]'
 
     this.dom.textContent = attrs.label || derivedLabel
     this.dom.addEventListener('click', this.handleClick)
+
+    if (this.isOrphaned()) {
+      this.dom.classList.add('orphaned-cross-reference')
+    } else {
+      this.dom.classList.remove('orphaned-cross-reference')
+    }
   }
 
   public initialise = () => {
@@ -73,6 +79,12 @@ export class CrossReferenceView
       'keydown',
       handleEnterKey(() => this.handleClick())
     )
+  }
+
+  protected isOrphaned() {
+    const targets = objectsKey.getState(this.view.state) as Map<string, Target>
+    const rid = this.node.attrs.rids[0]
+    return !targets?.get(rid)
   }
 }
 

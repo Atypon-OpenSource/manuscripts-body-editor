@@ -19,12 +19,16 @@ import { ResolvedPos } from 'prosemirror-model'
 
 import { getEditorProps } from '../../plugins/editor-props'
 import ReactSubView from '../../views/ReactSubView'
-import { CrossRefWarningModal, XrefGroup } from './CrossRefWarningModal'
+import {
+  CrossRefWarningModal,
+  DeleteOption,
+  XrefGroup,
+} from './CrossRefWarningModal'
 
 export const openCrossRefWarningModal = (
   view: ManuscriptEditorView,
   xrefGroups: XrefGroup[],
-  onConfirm: () => void,
+  onConfirm: (deleteOption: DeleteOption) => void,
   onClose: () => void,
   selectAndScrollTo: ($pos: ResolvedPos) => void
 ): HTMLDivElement => {
@@ -32,8 +36,14 @@ export const openCrossRefWarningModal = (
   const props = getEditorProps(state)
   const componentProps = {
     xrefs: xrefGroups,
-    onConfirm,
-    onClose,
+    onConfirm: (deleteOption: DeleteOption) => {
+      dialog.unmount?.()
+      onConfirm(deleteOption)
+    },
+    onClose: () => {
+      dialog.unmount?.()
+      onClose()
+    },
     selectAndScrollTo,
   }
 

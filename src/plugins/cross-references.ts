@@ -20,15 +20,23 @@ import {
   schema,
   Target,
 } from '@manuscripts/transform'
-import { trackChangesPluginKey } from '@manuscripts/track-changes-plugin'
+import {
+  trackChangesPluginKey,
+  TrackChangesAction,
+} from '@manuscripts/track-changes-plugin'
 import isEqual from 'lodash/isEqual'
 import { Node, ResolvedPos } from 'prosemirror-model'
 import { NodeSelection, Plugin, Transaction } from 'prosemirror-state'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
-import { XrefGroup } from '../components/cross-ref-check-modal/CrossRefWarningModal'
+import {
+  DeleteOption,
+  XrefGroup,
+} from '../components/cross-ref-check-modal/CrossRefWarningModal'
 import { openCrossRefWarningModal } from '../components/cross-ref-check-modal/openModal'
 import { objectsKey } from './objects'
+
+export const DELETE_WITHOUT_REF = 'delete-without-ref'
 
 let modalActive = false
 let modalElement: HTMLDivElement | null = null
@@ -55,7 +63,10 @@ export default () => {
         !view ||
         !tr.docChanged ||
         tr.getMeta(trackChangesPluginKey) ||
-        tr.getMeta('addToHistory') === false
+        tr.getMeta(TrackChangesAction.refreshChanges) ||
+        tr.getMeta('addToHistory') === false ||
+        tr.getMeta('collab$') ||
+        tr.getMeta(DELETE_WITHOUT_REF)
       ) {
         return true
       }
@@ -219,7 +230,7 @@ const onConfirmCreator =
     deletedIds: Set<string>,
     tr: Transaction
   ) =>
-  () => {
+  (deleteOption: DeleteOption) => {
     cleanup()
     if (!view) {
       return
@@ -237,21 +248,25 @@ const onConfirmCreator =
       }
       newTr.step(step)
     }
-    // Remove cross-references that pointed to the now-deleted nodes.
-    // Collect positions in reverse order so deletions don't shift
-    // positions of earlier entries.
-    const xrefPositions: { from: number; to: number }[] = []
+    if (deleteOption === 'delete-with-ref') {
+      // Remove cross-references that pointed to the now-deleted nodes.
+      // Collect positions in reverse order so deletions don't shift
+      // positions of earlier entries.
+      const xrefPositions: { from: number; to: number }[] = []
     newTr.doc.descendants((node, pos) => {
       if (node.type === schema.nodes.cross_reference) {
         const rids = node.attrs.rids as string[]
         if (rids.some((rid) => deletedIds.has(rid))) {
           xrefPositions.push({ from: pos, to: pos + node.nodeSize })
         }
-      }
+        }
     })
     for (let i = xrefPositions.length - 1; i >= 0; i--) {
-      const { from, to } = xrefPositions[i]
-      newTr.delete(from, to)
+        const { from, to } = xrefPositions[i]
+        newTr.delete(from, to)
+      }
+    } else {
+      newTr.setMeta(DELETE_WITHOUT_REF, true)
     }
     view.dispatch(newTr)
   }
@@ -263,7 +278,6 @@ const selectAndScrollToCreator = (view: EditorView) => ($pos: ResolvedPos) => {
 
   const selTr = view.state.tr
   selTr.setSelection(NodeSelection.create(view.state.doc, $pos.pos))
-  view.focus()
   view.dispatch(selTr)
   // Standard PM's scrollIntoView doesn't allow placement control - hence switching to native DOM's peer method.
   let scrollable = view.dom.parentElement

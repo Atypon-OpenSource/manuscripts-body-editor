@@ -303,6 +303,10 @@
   color: inherit;
 }
 
+.ProseMirror .orphaned-cross-reference {
+  text-decoration: underline dotted #f35143;
+}
+
 .ProseMirror .bib-item.ProseMirror-selectednode,
 .ProseMirror .citation.ProseMirror-selectednode,
 .ProseMirror .cross-reference.ProseMirror-selectednode {
