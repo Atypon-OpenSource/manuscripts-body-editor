@@ -31,14 +31,21 @@ import { ReferenceSearchResults } from './ReferenceSearchResults'
 import { ReferenceSearchResultsPlaceholder } from './ReferenceSearchResultsPlaceholder'
 
 const SearchSourceLabel = styled(IconTextButton)`
-  margin: ${(props) => props.theme.grid.unit * 2}px
-    ${(props) => props.theme.grid.unit * 4}px
-    ${(props) => props.theme.grid.unit * 2}px;
-  color: ${(props) => props.theme.colors.text.secondary};
-
-  &:hover {
-    color: ${(props) => props.theme.colors.text.muted};
+  height: ${(props) => props.theme.grid.unit * 10}px;
+  background: #f2f2f2;
+  display: flex;
+  justify-content: flex-start;
+  padding: ${(props) => props.theme.grid.unit * 2}px;
+  svg {
+    margin-right: ${(props) => props.theme.grid.unit * 2}px;
   }
+`
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  border-radius: 4px;
+  border: 1px solid #e2e2e2;
 `
 
 type RunningState = {
@@ -57,9 +64,10 @@ type State = RunningState | CompletedState
 export const ReferenceSearchSection: React.FC<{
   query: string
   source: BibliographyItemSource
+  documentCitationCounts?: Map<string, number>
   isSelected: (item: BibliographyItemAttrs) => boolean
   onSelect: (item: BibliographyItemAttrs) => void
-}> = ({ query, source, isSelected, onSelect }) => {
+}> = ({ query, source, documentCitationCounts, isSelected, onSelect }) => {
   const [expanded, setExpanded] = useState(true)
   const [state, setState] = useState<State>()
   const [limit, setLimit] = useState(3)
@@ -97,7 +105,7 @@ export const ReferenceSearchSection: React.FC<{
   }
 
   return (
-    <>
+    <Container>
       <SearchSourceLabel onClick={toggleExpanded}>
         {expanded ? (
           <TriangleExpandedIcon className={'icon'} />
@@ -114,11 +122,12 @@ export const ReferenceSearchSection: React.FC<{
         <ReferenceSearchResults
           items={state.items}
           total={state.total}
+          documentCitationCounts={documentCitationCounts}
           isSelected={isSelected}
           onSelect={onSelect}
           onShowMore={handleShowMore}
         />
       )}
-    </>
+    </Container>
   )
 }
