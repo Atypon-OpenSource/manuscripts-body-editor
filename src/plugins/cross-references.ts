@@ -217,7 +217,8 @@ function createXrefGroups(
     const xrefs = xrefsByRid.get(id)
     if (xrefs?.length) {
       const label = targets.get(referenced.attrs.id)?.label || ''
-      xrefGroups.push({ referenced, label, xrefs })
+      const caption = targets.get(referenced.attrs.id)?.caption || ''
+      xrefGroups.push({ referenced, label, caption, xrefs })
     }
   }
   return xrefGroups

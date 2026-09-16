@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-import { ManuscriptNode } from '@manuscripts/transform'
-import React, { useState } from 'react'
-
 import {
   ArrowUpIcon,
   AttentionRedIcon,
@@ -27,15 +24,21 @@ import {
   RadioButton,
   StyledModal,
   TertiaryButton,
+  WebLinkIcon,
   withFocusTrap,
 } from '@manuscripts/style-guide'
-import { ResolvedPos } from 'prosemirror-model'
-import styled from 'styled-components'
+import { ManuscriptNode, schema } from '@manuscripts/transform'
+import { NodeType, ResolvedPos } from 'prosemirror-model'
+import React, { useState } from 'react'
+
 import { getSurroundingText } from '../../lib/utils'
+import { nodeTypeIcon } from '../../node-type-icons'
+import styled from 'styled-components'
 
 export type XrefGroup = {
   referenced: ManuscriptNode
   label: string
+  caption: string
   xrefs: [ManuscriptNode, ResolvedPos][]
 }
 
@@ -56,7 +59,13 @@ export const CrossRefWarningModal: React.FC<{
     onClose()
   }
 
-  const [showRef, setShowRef] = useState(true)
+  const [showRef, setShowRef] = useState(false)
+  const [isScrolling, setIsScrolling] = useState(false)
+
+  const handleSelectAndScrollTo = ($pos: ResolvedPos) => {
+    setIsScrolling(true)
+    selectAndScrollTo($pos)
+  }
 
   const toggleReferenceList = () => setShowRef(!showRef)
 
@@ -66,8 +75,8 @@ export const CrossRefWarningModal: React.FC<{
   }
 
   const references = xrefs.flatMap((xrefGroup) =>
-    xrefGroup.xrefs.map((xref) => [...xref, xrefGroup.label])
-  ) as [ManuscriptNode, ResolvedPos, string][]
+    xrefGroup.xrefs.map((xref) => [...xref])
+  ) as [ManuscriptNode, ResolvedPos][]
 
   const elementLabel =
     xrefs.length === 1 ? xrefs[0].label : `${xrefs.length} elements`
@@ -77,11 +86,15 @@ export const CrossRefWarningModal: React.FC<{
   return (
     <Modal
       isOpen={isOpen}
+      $isScrolling={isScrolling}
       onRequestClose={() => handleClose()}
       shouldCloseOnOverlayClick={false}
       hideOverlay={true}
     >
-      <Container data-cy="cross-reference-warning-modal">
+      <Container
+        $isScrolling={isScrolling}
+        data-cy="cross-reference-warning-modal"
+      >
         <Body>
           <Title>
             <AttentionRedIcon width={24} height={24} />
@@ -109,10 +122,18 @@ export const CrossRefWarningModal: React.FC<{
             </ToggleHeader>
             {showRef && (
               <ListWrapper>
-                <XrefGroupDisplay
-                  xrefs={references}
-                  selectAndScrollTo={selectAndScrollTo}
-                />
+                {xrefs.length === 1 ? (
+                  <XrefGroupDisplay
+                    label={xrefs[0].label}
+                    xrefs={xrefs[0].xrefs}
+                    selectAndScrollTo={handleSelectAndScrollTo}
+                  />
+                ) : (
+                  <XrefGroupsDisplay
+                    xrefsGroup={xrefs}
+                    selectAndScrollTo={handleSelectAndScrollTo}
+                  />
+                )}
               </ListWrapper>
             )}
           </div>
@@ -156,12 +177,13 @@ export const CrossRefWarningModal: React.FC<{
 }
 
 const XrefGroupDisplay: React.FC<{
-  xrefs: [ManuscriptNode, ResolvedPos, string][]
+  label: string
+  xrefs: XrefGroup['xrefs']
   selectAndScrollTo: ($pos: ResolvedPos) => void
-}> = ({ xrefs, selectAndScrollTo }) => {
+}> = ({ label, xrefs, selectAndScrollTo }) => {
   return (
     <ReferencesList>
-      {xrefs.map(([xrefNode, pos, label], i) => {
+      {xrefs.map(([xrefNode, pos], i) => {
         const { leftHandText, rightHandText } = getSurroundingText(
           pos,
           xrefNode
@@ -189,24 +211,61 @@ const XrefGroupDisplay: React.FC<{
   )
 }
 
-const Container = styled(ModalContainer)`
+const XrefGroupsDisplay: React.FC<{
+  xrefsGroup: XrefGroup[]
+  selectAndScrollTo: ($pos: ResolvedPos) => void
+}> = ({ xrefsGroup, selectAndScrollTo }) => {
+  return (
+    <ReferencesList>
+      {xrefsGroup.map(({ referenced, label, caption, xrefs }, i) => {
+        const icon = getReferencedIcon(referenced.type)
+
+        return (
+          <div key={i}>
+            <DarkSecondaryBoldHeading>
+              {icon ? <ItemIcon>{icon}</ItemIcon> : null}
+              {`${label}:`}
+              <CaptionTitle $direction={'ltr'}>{caption}</CaptionTitle>
+            </DarkSecondaryBoldHeading>
+            <XrefGroupDisplay
+              label={label}
+              xrefs={xrefs}
+              selectAndScrollTo={selectAndScrollTo}
+            />
+          </div>
+        )
+      })}
+    </ReferencesList>
+  )
+}
+
+const getReferencedIcon = (type: NodeType): React.ReactNode => {
+  if (type === schema.nodes.supplement) {
+    return <WebLinkIcon className="file-icon" />
+  }
+  return nodeTypeIcon(schema.nodes[type.name])
+}
+
+const Container = styled(ModalContainer)<{ $isScrolling: boolean }>`
   position: absolute;
   top: 1rem;
-  left: 50%;
-  right: 0;
-  max-height: calc(50vh - 2rem);
+  left: ${({ $isScrolling }) =>
+    $isScrolling ? 'calc(100% - 556px - 0rem)' : '50%'};
+  max-height: calc(60vh - 2rem);
   min-height: 280px;
-  transform: translate(-50%, 0);
+  transform: ${({ $isScrolling }) =>
+    $isScrolling ? 'translate(0, 0)' : 'translate(-50%, 0)'};
   max-width: 556px;
   transition:
     top 0.2s,
+    left 0.2s,
     transform 0.2s;
 `
 
 // since we need to scroll inside the editor when this dialog is active, we can't use dialog.showModal()
 // so we recreate the appearance using classic position:fixed/after approach.
 // While showModal doesn't block scrolling - it doesn't allow to focus on the editor and that kills the scrollIntoView
-const Modal = styled(StyledModal)`
+const Modal = styled(StyledModal)<{ $isScrolling: boolean }>`
   position: fixed;
   top: 0;
   left: 0;
@@ -231,6 +290,8 @@ const Modal = styled(StyledModal)`
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.2);
+    opacity: ${({ $isScrolling }) => ($isScrolling ? 0.15 : 1)};
+    transform: opacity 0.2s;
   }
   h3 {
     font-size: 16px;
@@ -272,9 +333,10 @@ const ToggleHeader = styled.div`
 const ListWrapper = styled.div`
   border: 1px solid #e2e2e2;
   border-top: none;
-  max-height: 16vh;
+  max-height: 21vh;
   min-height: 100px;
   overflow-y: auto;
+  padding: 12px;
 `
 
 const ToggleButton = styled(IconButton)`
@@ -303,11 +365,28 @@ const SecondaryBoldHeading = styled(SecondaryHeading)`
   color: #6e6e6e;
 `
 
+const DarkSecondaryBoldHeading = styled(SecondaryBoldHeading)`
+  display: flex;
+  padding: 0 4px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  color: #353535;
+  background: #f2f2f2;
+`
+
+const ItemIcon = styled.span`
+  display: flex;
+  padding-right: 8px;
+  svg {
+    align-self: center;
+  }
+`
+
 const ReferencesList = styled.ul`
   display: flex;
   gap: 10px;
   flex-direction: column;
-  padding: 12px;
+  padding: 0;
   margin: 0;
   list-style: none;
 `
@@ -354,6 +433,11 @@ const XRefAdjacentText = styled.span<{ $direction: 'rtl' | 'ltr' }>`
   overflow: hidden;
   text-overflow: ellipsis;
   direction: ${(props) => props.$direction};
+`
+
+const CaptionTitle = styled(XRefAdjacentText)`
+  max-width: 120px;
+  margin-left: 4px;
 `
 
 const SelectorContainer = styled.div`
