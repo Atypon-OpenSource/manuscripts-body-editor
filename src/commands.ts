@@ -1862,6 +1862,7 @@ const createAndFillFigureElement = (attrs?: Attrs) =>
     [
       schema.nodes.figure.create(),
       schema.nodes.caption.create(undefined, schema.nodes.text_block.create()),
+      schema.nodes.attribution.create(),
       schema.nodes.alt_text.create(),
       schema.nodes.long_desc.create(),
       schema.nodes.listing.create(),
@@ -1882,6 +1883,7 @@ const createImageElement = (attrs?: Attrs) =>
     [
       schema.nodes.figure.create(),
       schema.nodes.caption.create(undefined, schema.nodes.text_block.create()),
+      schema.nodes.attribution.create(),
       schema.nodes.alt_text.create(),
       schema.nodes.long_desc.create(),
     ]
@@ -2144,6 +2146,7 @@ const createHeroImage = (attrs?: Attrs) =>
     },
     [
       schema.nodes.figure.create(),
+      schema.nodes.attribution.create(),
       schema.nodes.alt_text.create(),
       schema.nodes.long_desc.create(),
     ]
