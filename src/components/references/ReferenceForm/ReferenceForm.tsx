@@ -16,15 +16,7 @@
 
 import {
   AddAuthorIcon,
-  ButtonGroup,
-  Category,
-  DeleteIcon,
-  Dialog,
-  IconButton,
-  LinkIcon,
   OptionType,
-  PrimaryButton,
-  SecondaryButton,
   SelectField,
   Label,
   FormRow,
@@ -42,9 +34,7 @@ import { shouldRenderField } from '../../../lib/utils'
 import { ChangeHandlingForm } from '../../ChangeHandlingForm'
 import { PersonDropDown } from './PersonDropDown'
 import {
-  Actions,
   Button,
-  DeleteButton,
   FormFields,
   ReferenceTextArea,
   ReferenceTextField,
@@ -58,22 +48,33 @@ const bibliographyItemTypeOptions: OptionType[] = bibliographyItemTypes.map(
 )
 export interface ReferenceFormActions {
   reset: () => void
+  submit: () => void
+  isDirty: () => boolean
+}
+
+export const validateReference = (values: BibliographyItemAttrs) => {
+  const errors: Partial<BibliographyItemAttrs> = {}
+
+  if (values.type === 'literal') {
+    if (!values.literal?.trim()) {
+      errors.literal = 'Literal is required for unstructured references'
+    }
+  } else {
+    if (!values.title?.trim()) {
+      errors.title = 'Title is required'
+    }
+  }
+  return errors
 }
 
 export const ReferenceForm: React.FC<{
   values: BibliographyItemAttrs
-  showDelete: boolean
   onChange: (values: BibliographyItemAttrs) => void
-  onCancel: () => void
-  onDelete: () => void
   onSave: (values: BibliographyItemAttrs) => void
   actionsRef?: MutableRefObject<ReferenceFormActions | undefined>
 }> = ({
   values,
-  showDelete,
   onChange,
-  onDelete,
-  onCancel,
   onSave,
   actionsRef,
 }) => {
@@ -88,28 +89,15 @@ export const ReferenceForm: React.FC<{
     }
   }, [values])
 
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
-
-  const validateReference = (values: BibliographyItemAttrs) => {
-    const errors: Partial<BibliographyItemAttrs> = {}
-
-    if (values.type === 'literal') {
-      if (!values.literal?.trim()) {
-        errors.literal = 'Literal is required for unstructured references'
-      }
-    } else {
-      if (!values.title?.trim()) {
-        errors.title = 'Title is required'
-      }
-    }
-    return errors
-  }
-
   if (actionsRef && !actionsRef.current) {
     actionsRef.current = {
       reset: () => {
         formRef.current?.resetForm()
       },
+      submit: () => {
+        formRef.current?.submitForm()
+      },
+      isDirty: () => formRef.current?.dirty ?? false,
     }
   }
 
@@ -124,55 +112,6 @@ export const ReferenceForm: React.FC<{
       {(formik) => {
         return (
           <ChangeHandlingForm onChange={onChange}>
-            <Dialog
-              isOpen={showDeleteDialog}
-              category={Category.confirmation}
-              header="Delete Reference"
-              message="Are you sure you want to delete this reference from the list?"
-              actions={{
-                secondary: {
-                  action: () => {
-                    onDelete()
-                    setShowDeleteDialog(false)
-                  },
-                  title: 'Delete',
-                },
-                primary: {
-                  action: () => setShowDeleteDialog(false),
-                  title: 'Cancel',
-                },
-              }}
-            />
-            <Actions>
-              <ButtonGroup>
-                <IconButton
-                  as="a"
-                  href={`https://doi.org/${formik.values.DOI}`}
-                  target={'_blank'}
-                >
-                  <LinkIcon />
-                </IconButton>
-                <DeleteButton
-                  $defaultColor
-                  disabled={!showDelete}
-                  data-tooltip-content="Unable to delete because the item is used in the document"
-                  data-tooltip-hidden={showDelete}
-                  onClick={() => setShowDeleteDialog(true)}
-                >
-                  <DeleteIcon />
-                </DeleteButton>
-              </ButtonGroup>
-              <ButtonGroup>
-                <SecondaryButton onClick={onCancel}>Cancel</SecondaryButton>
-                <PrimaryButton
-                  type="submit"
-                  disabled={!formik.isValid || !formik.dirty}
-                >
-                  Save
-                </PrimaryButton>
-              </ButtonGroup>
-            </Actions>
-
             <FormFields ref={fieldsRef}>
               <FormRow>
                 <Label htmlFor={'citation-item-type'}>Type</Label>

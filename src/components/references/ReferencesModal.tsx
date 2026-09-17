@@ -32,7 +32,12 @@ import {
   useScrollDetection,
   withListNavigation,
   withNavigableListItem,
+  ButtonGroup,
+  DeleteIcon,
+  LinkIcon,
+  outlineStyle,
 } from '@manuscripts/style-guide'
+import { Button, IconButton } from '@manuscripts/style-guide/mui'
 import {
   BibliographyItemAttrs,
   generateNodeID,
@@ -40,11 +45,12 @@ import {
 } from '@manuscripts/transform'
 import isEqual from 'lodash/isEqual'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import {
   ReferenceForm,
   ReferenceFormActions,
+  validateReference,
 } from './ReferenceForm/ReferenceForm'
 import { ReferenceLine } from './ReferenceLine'
 import { ImportBibliographyModal } from './ImportBibliographyModal'
@@ -87,6 +93,7 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
 
   const [selection, setSelection] = useState<BibliographyItemAttrs>()
   const [isNew, setIsNew] = useState<boolean>(false)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const selectionRef = useRef<HTMLDivElement>(null)
 
   const sortedItems = useMemo(
@@ -173,6 +180,12 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
     return extraKeys.length > 0
   }
 
+  const canDeleteSelectedItem =
+    (selection &&
+      !citationCounts.get(selection.id) &&
+      isNewItem(selection, ['id', 'type'])) ??
+    false
+
   const handleSave = (values: BibliographyItemAttrs | undefined) => {
     if (!values || !selection) {
       return
@@ -221,8 +234,14 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
     setSelection(item)
   }
 
+  const [canSave, setCanSave] = useState(false)
+
   const handleChange = (values: BibliographyItemAttrs) => {
     valuesRef.current = values
+    const errors = validateReference(values)
+    const isValid = Object.keys(errors).length === 0
+    const dirty = actionsRef.current?.isDirty() ?? false
+    setCanSave(isValid && dirty)
   }
 
   const handleImportSave = (data: BibliographyItemAttrs[]) => {
@@ -254,6 +273,25 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
             primary: {
               action: () => handleSave(valuesRef.current),
               title: 'Save',
+            },
+          }}
+        />
+        <Dialog
+          isOpen={showDeleteDialog}
+          category={Category.confirmation}
+          header="Delete Reference"
+          message="Are you sure you want to delete this reference from the list?"
+          actions={{
+            secondary: {
+              action: () => {
+                handleDelete()
+                setShowDeleteDialog(false)
+              },
+              title: 'Delete',
+            },
+            primary: {
+              action: () => setShowDeleteDialog(false),
+              title: 'Cancel',
             },
           }}
         />
@@ -313,6 +351,25 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
                         showUncited={!citationCounts.get(item.id)}
                         item={item}
                       />
+                      {isSelected(item) && (
+                        <ButtonGroup>
+                          <IconButton
+                            component={'a'}
+                            href={`https://doi.org/${item.DOI}`}
+                            target={'_blank'}
+                            size={'small'}
+                          >
+                            <DOILinkIcon fill={'#6E6E6E'} />
+                          </IconButton>
+                          <IconButton
+                            disabled={!canDeleteSelectedItem}
+                            size={'small'}
+                            onClick={() => setShowDeleteDialog(true)}
+                          >
+                            <DeleteIcon fill={'#6E6E6E'} />
+                          </IconButton>
+                        </ButtonGroup>
+                      )}
                     </ReferenceButton>
                   ))}
                 </ReferencesInnerWrapper>
@@ -328,27 +385,32 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
                 </ImportFromFileButton>
               </ImportFromFileFooter>
             </ReferencesSidebar>
-            <ScrollableModalContent>
+            <ReferencesContent>
               {importSuccessCount !== null ? (
                 <ImportSuccessPlaceholder count={importSuccessCount} />
               ) : (
                 selection && (
                   <ReferenceForm
                     values={normalizeBlblioItem(selection)}
-                    showDelete={
-                      !citationCounts.get(selection.id) &&
-                      isNewItem(selection, ['id', 'type']) // disable the delete button for the new citations
-                    }
                     onChange={handleChange}
-                    onCancel={onCancel}
-                    onDelete={handleDelete}
                     onSave={handleSave}
                     actionsRef={actionsRef}
                   />
                 )
               )}
-            </ScrollableModalContent>
+            </ReferencesContent>
           </ModalBody>
+          <Footer>
+            <TertiaryButton variant="tertiary" onClick={onCancel}>
+              Close
+            </TertiaryButton>
+            <Button
+              disabled={!canSave}
+              onClick={() => actionsRef.current?.submit()}
+            >
+              Save Changes
+            </Button>
+          </Footer>
         </ReferencesModalContainer>
       </StyledModal>
     </>
@@ -363,9 +425,13 @@ const ReferencesSidebar = styled(ModalSidebar)`
   width: 70%;
 `
 
+const ReferencesContent = styled(ScrollableModalContent)`
+  padding-top: 32px;
+`
+
 const ReferencesSidebarContent = styled(SidebarContent)`
   overflow-y: auto;
-  padding-top: 1px;
+  padding-top: 8px;
 `
 
 const ReferencesInnerWrapper = withListNavigation(styled.div`
@@ -375,7 +441,7 @@ const ReferencesInnerWrapper = withListNavigation(styled.div`
 
 const CitationCountIconStyled = styled(CitationCountIcon)``
 
-const ReferenceButton = withNavigableListItem(styled.button`
+const referenceButtonStyles = css`
   cursor: pointer;
   display: flex;
   width: 100%;
@@ -412,6 +478,13 @@ const ReferenceButton = withNavigableListItem(styled.button`
     padding: ${(props) => props.theme.grid.unit * 2}px;
     border-radius: 6px;
   }
+`
+
+const ReferenceButton = withNavigableListItem(styled.div.attrs({
+  role: 'button',
+  tabIndex: 0,
+})`
+  ${referenceButtonStyles}
 `)
 
 const IconContainer = styled.div`
@@ -437,10 +510,14 @@ const CitationCount = styled.div`
   }
 `
 
-const NewReferenceButton = styled(ReferenceButton)`
+const NewReferenceButton = styled.button`
+  ${referenceButtonStyles}
+
   svg {
     margin-right: 8px;
   }
+
+  ${outlineStyle}
 `
 const ExistingReferencesHeading = styled.h3`
   font-size: 18px;
@@ -477,4 +554,19 @@ const ImportFromFileButton = styled.button`
   svg rect {
     fill: #6e6e6e;
   }
+`
+
+const Footer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 32px;
+  gap: 16px;
+`
+
+const TertiaryButton = styled(Button)`
+  color: #0d79d0;
+`
+
+const DOILinkIcon = styled(LinkIcon)`
+  transform: rotate(-45deg);
 `
