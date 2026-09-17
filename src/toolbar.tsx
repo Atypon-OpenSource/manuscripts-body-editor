@@ -49,6 +49,7 @@ import {
   blockActive,
   canInsert,
   canInsertCrossReference,
+  canInsertInlineComment,
   Dispatch,
   insertBlock,
   insertBoxElement,
@@ -179,7 +180,9 @@ export const toolbar: ToolbarConfig = {
     comment: {
       title: 'Insert comment',
       content: <AddCommentIcon />,
-      isEnabled: isEnabled(canInsert(schema.nodes.highlight_marker)), // TODO: check both ends of selection
+      isEnabled: isEnabled((state) =>
+        canInsertInlineComment(state.selection.$from)
+      ),
       run: addInlineComment,
     },
     cross_reference: {
