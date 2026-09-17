@@ -1944,6 +1944,13 @@ export const addNodeComment = (
   return false
 }
 
+export const canInsertInlineComment = ($pos: ResolvedPos) =>
+  $pos.parent.canReplaceWith(
+    $pos.index(),
+    $pos.index(),
+    schema.nodes.highlight_marker
+  )
+
 export const addInlineComment = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
@@ -1953,6 +1960,11 @@ export const addInlineComment = (
   if (!node) {
     return false
   }
+
+  if (!canInsertInlineComment(selection.$from)) {
+    return false
+  }
+
   let from = selection.from
   let to = selection.to
 
