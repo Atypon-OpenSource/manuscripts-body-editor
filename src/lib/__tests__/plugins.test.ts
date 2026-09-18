@@ -43,7 +43,6 @@ const buildProps = (doc: ActualManuscriptNode): EditorProps => ({
   doc,
   locale: 'en-US',
   popper: new PopperManager(),
-  projectID: '',
   getCurrentUser: () => userProfile,
   history,
   setComment: () => undefined,

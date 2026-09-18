@@ -59,7 +59,6 @@ export interface EditorProps {
   theme: DefaultTheme
   getCurrentUser: () => UserProfile
 
-  projectID: string
   doc: ManuscriptNode
   getFiles: () => FileAttachment[]
   fileManagement: FileManagement
