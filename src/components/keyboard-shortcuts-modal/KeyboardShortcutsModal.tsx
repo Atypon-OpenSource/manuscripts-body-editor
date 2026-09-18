@@ -37,7 +37,7 @@ import styled, { ThemeProvider } from 'styled-components'
 import type { EditorProps } from '../../configs/ManuscriptsEditor'
 import { isMac } from '../../lib/platform'
 import { getEditorProps } from '../../plugins/editor-props'
-import { createSubViewAsync } from '../../views/ReactSubView'
+import { createSubViewAsync, SubViewContainer } from '../../views/ReactSubView'
 import { ModalTabs } from '../authors-affiliations/ModalTabs'
 import { formattedShortCut } from './FormattedShortcut'
 import { EDITOR_KEYBOARD_SHORTCUT_TABS } from './keyboard-shortcuts'
@@ -237,7 +237,7 @@ const ButtonsContainer = styled(ButtonGroup)`
   flex-shrink: 0;
 `
 
-let dialog: HTMLDivElement | null = null
+let dialog: SubViewContainer | null = null
 
 export async function openKeyboardShortcuts(view?: EditorView): Promise<void> {
   if (!view || dialog) {
@@ -249,7 +249,7 @@ export async function openKeyboardShortcuts(view?: EditorView): Promise<void> {
 
   const cleanup = () => {
     if (dialog) {
-      dialog?.remove()
+      dialog.destroy()
       dialog = null
     }
     // Restore editor focus at the existing selection after the dialog is torn down.

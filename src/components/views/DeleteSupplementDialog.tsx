@@ -21,7 +21,7 @@ import {
   performDeleteSupplement,
 } from '../../lib/supplements'
 import { getEditorProps } from '../../plugins/editor-props'
-import ReactSubView from '../../views/ReactSubView'
+import ReactSubView, { SubViewContainer } from '../../views/ReactSubView'
 
 interface DeleteSupplementDialogProps {
   onDelete: () => void
@@ -64,7 +64,7 @@ export const openDeleteSupplementDialog = (
     return
   }
 
-  let dialog: HTMLDivElement | null = null
+  let dialog: SubViewContainer | null = null
 
   const { state } = view
   const props = getEditorProps(state)
@@ -72,7 +72,7 @@ export const openDeleteSupplementDialog = (
   const dialogProps: DeleteSupplementDialogProps = {
       onDelete: () => performDeleteSupplement(view, pos),
       onClose: () => {
-        dialog?.remove()
+        dialog?.destroy()
         dialog = null
       }
     }

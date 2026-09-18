@@ -36,7 +36,7 @@ import Select, { OptionProps, SingleValue } from 'react-select'
 import styled from 'styled-components'
 
 import { getEditorProps } from '../../plugins/editor-props'
-import ReactSubView from '../../views/ReactSubView'
+import ReactSubView, { SubViewContainer } from '../../views/ReactSubView'
 
 // Ranges brought from: https://www.unicode.org/Public/UCD/latest/ucd/Blocks.txt
 const unicodeRanges = [
@@ -149,7 +149,7 @@ const OptionComponent: React.FC<OptionProps<OptionType, false>> = ({
 }
 
 export const openInsertSpecialCharacterDialog = (view?: EditorView) => {
-  let dialog: HTMLDivElement | null = null
+  let dialog: SubViewContainer | null = null
   if (!view) {
     return
   }
@@ -163,7 +163,7 @@ export const openInsertSpecialCharacterDialog = (view?: EditorView) => {
     {
       view,
       onClose: () => {
-        dialog?.remove()
+        dialog?.destroy()
         dialog = null
       },
     },

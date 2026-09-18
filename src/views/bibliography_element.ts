@@ -42,7 +42,7 @@ import { selectedSuggestionKey } from '../plugins/selected-suggestion'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-import ReactSubView from './ReactSubView'
+import ReactSubView, { SubViewContainer } from './ReactSubView'
 import {
   addTrackChangesAttributes,
   addTrackChangesClassNames,
@@ -53,7 +53,7 @@ export class BibliographyElementBlockView extends BlockView<
   Trackable<BibliographyElementNode>
 > {
   private container: HTMLElement
-  private editor?: HTMLDivElement
+  private editor?: SubViewContainer
   private contextMenu: HTMLDivElement
   private version: string
 
@@ -63,7 +63,7 @@ export class BibliographyElementBlockView extends BlockView<
       return
     }
 
-    this.editor?.remove()
+    this.editor?.destroy()
 
     const componentProps: ReferencesEditorProps = {
       items: Array.from(bib.bibliographyItems.values()),
@@ -72,7 +72,7 @@ export class BibliographyElementBlockView extends BlockView<
       onSave: this.handleSave,
       onDelete: this.handleDelete,
       onClose: () => {
-        this.editor?.remove()
+        this.editor?.destroy()
         this.editor = undefined
       },
     }

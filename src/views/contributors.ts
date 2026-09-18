@@ -36,13 +36,13 @@ import { selectedSuggestionKey } from '../plugins/selected-suggestion'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-import ReactSubView from './ReactSubView'
+import ReactSubView, { SubViewContainer } from './ReactSubView'
 import { ORCIDIcon } from '../icons'
 export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   contextMenu: HTMLElement
   container: HTMLElement
   inner: HTMLElement
-  dialog?: HTMLElement
+  dialog?: SubViewContainer
   version: string
 
   public ignoreMutation = () => true
@@ -317,13 +317,12 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       author,
       addNewAuthor: addNew,
       onClose: () => {
-        this.dialog?.remove()
-        // this.dialog?.unmount()
+        this.dialog?.destroy()
         this.dialog = undefined
       },
     }
 
-    this.dialog?.remove()
+    this.dialog?.destroy()
 
     this.dialog = ReactSubView(
       this.props,
@@ -338,7 +337,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   }
 
   public destroy() {
-    this.dialog?.remove()
+    this.dialog?.destroy()
     this.removeKeydownListener?.()
     super.destroy()
   }

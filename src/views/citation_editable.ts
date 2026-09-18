@@ -34,10 +34,10 @@ import { deleteNode, saveBibliographyItem } from '../lib/view'
 import { getBibliographyPluginState } from '../plugins/bibliography'
 import { CitationView } from './citation'
 import { createEditableNodeView } from './creators'
-import ReactSubView from './ReactSubView'
+import ReactSubView, { SubViewContainer } from './ReactSubView'
 
 export class CitationEditableView extends CitationView {
-  private editor: HTMLElement | null
+  private editor: SubViewContainer | null
   private contextMenu: HTMLElement
   private can = this.props.getCapabilities()
 
@@ -89,7 +89,7 @@ export class CitationEditableView extends CitationView {
   }
 
   public destroy = () => {
-    this.editor?.remove()
+    this.editor?.destroy()
     this.props.popper.destroy()
   }
 

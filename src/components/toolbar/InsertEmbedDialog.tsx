@@ -36,7 +36,7 @@ import { Dispatch, insertEmbed } from '../../commands'
 import { allowedHref } from '../../lib/url'
 import { useDoWithDebounce } from '../../lib/use-do-with-debounce'
 import { getEditorProps } from '../../plugins/editor-props'
-import ReactSubView from '../../views/ReactSubView'
+import ReactSubView, { SubViewContainer } from '../../views/ReactSubView'
 import { Open } from '../views/LinkForm'
 
 const HeaderContainer = styled(PrimaryBoldHeading)`
@@ -213,7 +213,7 @@ export const openEmbedDialog = (view?: EditorView, pos?: number) => {
   if (!view) {
     return
   }
-  let dialog: HTMLDivElement | null = null
+  let dialog: SubViewContainer | null = null
   const { state, dispatch } = view
 
   const props: InsertEmbedDialogProps = {
@@ -221,7 +221,7 @@ export const openEmbedDialog = (view?: EditorView, pos?: number) => {
     dispatch,
     pos,
     onClose: () => {
-      dialog?.remove()
+      dialog?.destroy()
       dialog = null
     },
   }

@@ -28,10 +28,11 @@ import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
 import { XrefGroup } from '../components/cross-ref-check-modal/CrossRefWarningModal'
 import { openCrossRefWarningModal } from '../components/cross-ref-check-modal/openModal'
+import { SubViewContainer } from '../views/ReactSubView'
 import { objectsKey } from './objects'
 
 let modalActive = false
-let modalElement: HTMLDivElement | null = null
+let modalElement: SubViewContainer | null = null
 
 export default () => {
   let view: ManuscriptEditorView | null = null
@@ -78,7 +79,7 @@ export default () => {
         modalActive = false
         if (modalElement) {
           modalElement.classList.remove('modal-bottom')
-          modalElement.remove()
+          modalElement.destroy()
           modalElement = null
         }
       }

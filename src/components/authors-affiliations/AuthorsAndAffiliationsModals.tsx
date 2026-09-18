@@ -28,7 +28,7 @@ import {
   upsertAffiliation,
 } from '../../lib/authors-and-affiliations'
 import { getEditorProps } from '../../plugins/editor-props'
-import ReactSubView from '../../views/ReactSubView'
+import ReactSubView, { SubViewContainer } from '../../views/ReactSubView'
 import {
   deleteNode,
   findChildrenAttrsByType,
@@ -148,7 +148,7 @@ export const openAuthorsAndAffiliationsModals = (
   view: ManuscriptEditorView | EditorView | undefined,
   initialModal: 'authors' | 'affiliations'
 ) => {
-  let dialog: HTMLDivElement | null = null
+  let dialog: SubViewContainer | null = null
   if (!view) {
     return
   }
@@ -161,7 +161,7 @@ export const openAuthorsAndAffiliationsModals = (
     addNewAuthor: initialModal === 'authors',
     addNewAffiliation: initialModal === 'affiliations',
     onClose: () => {
-      dialog?.remove()
+      dialog?.destroy()
       dialog = null
     },
   }

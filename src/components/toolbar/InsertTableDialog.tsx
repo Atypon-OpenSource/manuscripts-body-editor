@@ -27,7 +27,7 @@ import styled from 'styled-components'
 
 import { Dispatch, insertTable } from '../../commands'
 import { getEditorProps } from '../../plugins/editor-props'
-import ReactSubView from '../../views/ReactSubView'
+import ReactSubView, { SubViewContainer } from '../../views/ReactSubView'
 
 const Label = styled.div`
   padding-right: 16px;
@@ -190,14 +190,14 @@ export const openInsertTableDialog = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
-  let dialog: HTMLDivElement | null = null
+  let dialog: SubViewContainer | null = null
   const props = getEditorProps(state)
 
   const componentProps: InsertTableDialogProps = {
     state,
     dispatch,
     onClose: () => {
-      dialog?.remove()
+      dialog?.destroy()
       dialog = null
     }
   }

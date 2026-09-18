@@ -25,7 +25,7 @@ import { handleEnterKey } from '../lib/navigation-utils'
 import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
-import ReactSubView from './ReactSubView'
+import ReactSubView, { SubViewContainer } from './ReactSubView'
 import { isDeleted } from '@manuscripts/track-changes-plugin'
 
 //todo fix
@@ -43,7 +43,7 @@ export class KeywordView
   extends BaseNodeView<Trackable<KeywordNode>>
   implements ManuscriptNodeView
 {
-  private dialog: HTMLElement | null
+  private dialog: SubViewContainer | null
 
   private isFirstKeyword(): boolean {
     const pos = this.getPos()
@@ -90,7 +90,7 @@ export class KeywordView
   }
 
   private showConfirmationDialog = () => {
-    this.dialog?.remove()
+    this.dialog?.destroy()
 
     const keyword = this.node
     const pos = this.getPos()
@@ -107,7 +107,7 @@ export class KeywordView
       keyword: keyword.textContent,
       handleDelete: handleDelete,
       onClose: () => {
-        this.dialog?.remove()
+        this.dialog?.destroy()
         this.dialog = null
       },
     }

@@ -25,7 +25,7 @@ import React, { useRef, useState } from 'react'
 import { schema } from '@manuscripts/transform'
 import { EditorView } from 'prosemirror-view'
 
-import ReactSubView from '../../views/ReactSubView'
+import ReactSubView, { SubViewContainer } from '../../views/ReactSubView'
 import { AwardAttrs } from '../../views/award'
 import { getEditorProps } from '../../plugins/editor-props'
 import { AwardForm } from './AwardForm'
@@ -102,7 +102,7 @@ export const AwardModal: React.FC<AwardModalProps> = ({
 }
 
 export const openInsertAwardModal = () => {
-  let dialog: HTMLDivElement | null
+  let dialog: SubViewContainer | null
   return (view?: EditorView) => {
     if (!view) {
       return
@@ -118,7 +118,7 @@ export const openInsertAwardModal = () => {
       initialData,
       onSaveAward,
       onClose: () => {
-        dialog?.remove()
+        dialog?.destroy()
         dialog = null
       },
     }

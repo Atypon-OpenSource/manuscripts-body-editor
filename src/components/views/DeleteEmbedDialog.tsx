@@ -19,7 +19,7 @@ import { EditorView } from 'prosemirror-view'
 import React, { useState } from 'react'
 
 import { getEditorProps } from '../../plugins/editor-props'
-import ReactSubView from '../../views/ReactSubView'
+import ReactSubView, { SubViewContainer } from '../../views/ReactSubView'
 
 export interface DeleteEmbedDialogProps {
   deleteNode: () => void
@@ -67,7 +67,7 @@ export const openDeleteEmbedDialog = (
 ) => {
   const { state, dispatch } = view
   const props = getEditorProps(state)
-  let dialog: HTMLDivElement | null = null
+  let dialog: SubViewContainer | null = null
 
   const dialogProps: DeleteEmbedDialogProps = {
       deleteNode: () => {
@@ -76,7 +76,7 @@ export const openDeleteEmbedDialog = (
         dispatch(state.tr.delete(from, to))
       },
       onClose: () => {
-        dialog?.remove()
+        dialog?.destroy()
         dialog = null
       }
     }

@@ -27,10 +27,10 @@ import { handleComment } from '../lib/comments'
 import { objectsKey } from '../plugins/objects'
 import { createEditableNodeView } from './creators'
 import { CrossReferenceView } from './cross_reference'
-import ReactSubView from './ReactSubView'
+import ReactSubView, { SubViewContainer } from './ReactSubView'
 
 export class CrossReferenceEditableView extends CrossReferenceView {
-  protected popperContainer: HTMLDivElement | null
+  protected popperContainer: SubViewContainer | null
   protected contextMenu: HTMLElement
 
   public selectNode = () => {
@@ -47,7 +47,7 @@ export class CrossReferenceEditableView extends CrossReferenceView {
   }
 
   public showPicker = () => {
-    this.popperContainer?.remove()
+    this.popperContainer?.destroy()
     const rids = this.node.attrs.rids
 
     const componentProps: CrossReferenceItemsProps = {
@@ -59,7 +59,7 @@ export class CrossReferenceEditableView extends CrossReferenceView {
       currentCustomLabel: this.node.attrs.label,
       isEdit: rids.length > 0,
       onClose: () => {
-        this.popperContainer?.remove()
+        this.popperContainer?.destroy()
         this.popperContainer = null
       },
     }
@@ -78,7 +78,7 @@ export class CrossReferenceEditableView extends CrossReferenceView {
 
   public destroy = () => {
     this.props.popper.destroy()
-    this.popperContainer?.remove()
+    this.popperContainer?.destroy()
   }
 
   public deselectNode = () => {

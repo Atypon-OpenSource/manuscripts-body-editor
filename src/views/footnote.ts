@@ -32,12 +32,12 @@ import { getFootnotesElementState } from '../lib/footnotes'
 import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
-import ReactSubView from './ReactSubView'
+import ReactSubView, { SubViewContainer } from './ReactSubView'
 import { handleEnterKey } from '../lib/navigation-utils'
 import { isSelectionInsideNode } from '../lib/view'
 
 export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
-  dialog: HTMLElement | null = null
+  dialog: SubViewContainer | null = null
   contextMenu: HTMLDivElement
   isMenuShown: boolean = false
   previousActionsLabels: string[] = []
@@ -199,7 +199,7 @@ export class FootnoteView extends BaseNodeView<Trackable<FootnoteNode>> {
         'This action will entirely remove the footnote from the list because it will no longer be used.',
       handleDelete: this.handleDelete,
       onClose: () => {
-        this.dialog?.remove()
+        this.dialog?.destroy()
         this.dialog = null
       },
     }
