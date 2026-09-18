@@ -28,10 +28,10 @@ import {
 import { allowedHref } from '../lib/url'
 import { createEditableNodeView } from './creators'
 import { LinkView } from './link'
-import ReactSubView from './ReactSubView'
+import ReactSubView, { SubViewContainer } from './ReactSubView'
 
 export class LinkEditableView extends LinkView {
-  protected popperContainer: HTMLDivElement
+  protected popperContainer: SubViewContainer
 
   public ignoreMutation = () => true
 
@@ -231,7 +231,7 @@ export class LinkEditableView extends LinkView {
 
   private closeForm = () => {
     this.props.popper.destroy()
-    this.popperContainer?.remove()
+    this.popperContainer?.destroy()
   }
 }
 
