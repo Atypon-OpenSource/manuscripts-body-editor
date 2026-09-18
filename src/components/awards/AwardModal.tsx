@@ -117,7 +117,10 @@ export const openInsertAwardModal = () => {
     const modalProps: AwardModalProps = {
       initialData,
       onSaveAward,
-      onClose: () => dialog?.remove(),
+      onClose: () => {
+        dialog?.remove()
+        dialog = null
+      },
     }
     dialog = ReactSubView(
       props,

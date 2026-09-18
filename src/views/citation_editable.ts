@@ -258,7 +258,7 @@ export class CitationEditableView extends CitationView {
     tr.setNodeAttribute(pos, 'rids', rids)
 
     this.view.dispatch(tr)
-    // this.handleCancel()
+    this.handleCancel()
   }
 
   private handleDelete = (item: BibliographyItemAttrs) => {

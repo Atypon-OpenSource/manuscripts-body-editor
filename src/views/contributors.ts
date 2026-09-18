@@ -316,7 +316,11 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       view: this.view,
       author,
       addNewAuthor: addNew,
-      onClose: () => this.dialog?.remove(),
+      onClose: () => {
+        this.dialog?.remove()
+        // this.dialog?.unmount()
+        this.dialog = undefined
+      },
     }
 
     this.dialog?.remove()

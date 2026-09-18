@@ -142,7 +142,10 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
     const componentProps: AwardModalProps = {
       initialData: award?.attrs || ({} as AwardAttrs),
       onSaveAward: this.handleSaveAward,
-      onClose: () => this.modalContainer?.remove(),
+      onClose: () => {
+        this.modalContainer?.remove()
+        this.modalContainer = null
+      },
     }
     this.modalContainer = ReactSubView(
       this.props,
@@ -190,7 +193,6 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
       const to = pos + award.nodeSize
       this.view.dispatch(tr.delete(from, to))
     }
-    this.modalContainer?.remove()
   }
 }
 

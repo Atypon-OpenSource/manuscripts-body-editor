@@ -160,7 +160,13 @@ export const openInsertSpecialCharacterDialog = (view?: EditorView) => {
   dialog = ReactSubView(
     props,
     InsertSpecialCharacterDialog,
-    { view, onClose: () => dialog?.remove() },
+    {
+      view,
+      onClose: () => {
+        dialog?.remove()
+        dialog = null
+      },
+    },
     state.doc,
     () => 0,
     view

@@ -160,7 +160,10 @@ export const openAuthorsAndAffiliationsModals = (
     view: view as ManuscriptEditorView,
     addNewAuthor: initialModal === 'authors',
     addNewAffiliation: initialModal === 'affiliations',
-    onClose: () => dialog?.remove(),
+    onClose: () => {
+      dialog?.remove()
+      dialog = null
+    },
   }
 
   dialog = ReactSubView(
@@ -173,6 +176,4 @@ export const openAuthorsAndAffiliationsModals = (
   )
   view.focus()
   document.body.appendChild(dialog)
-  // @TODO refactor to allow cleaning it up
-  return dialog
 }

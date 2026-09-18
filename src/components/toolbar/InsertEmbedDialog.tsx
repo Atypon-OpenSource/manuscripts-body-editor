@@ -220,7 +220,10 @@ export const openEmbedDialog = (view?: EditorView, pos?: number) => {
     state,
     dispatch,
     pos,
-    onClose: () => dialog?.remove(),
+    onClose: () => {
+      dialog?.remove()
+      dialog = null
+    },
   }
 
   dialog = ReactSubView(

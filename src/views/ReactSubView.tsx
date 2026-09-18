@@ -24,6 +24,8 @@ import { ThemeProvider } from 'styled-components'
 import { EditorProps } from '../configs/ManuscriptsEditor'
 import { Trackable } from '../types'
 
+export type SubViewContainer = HTMLDivElement & { unmount: () => void }
+
 export interface ReactViewComponentProps<NodeT extends ManuscriptNode> {
   nodeAttrs: NodeT['attrs']
   setNodeAttrs: (nextAttrs: Partial<NodeT['attrs']>) => void
@@ -46,8 +48,8 @@ function createSubView<T extends Trackable<ManuscriptNode>>(
   getPos: () => number,
   view: ManuscriptEditorView | null,
   classNames: string[] = []
-): HTMLDivElement {
-  const container = document.createElement('div')
+): SubViewContainer {
+  const container = document.createElement('div') as SubViewContainer
   const Wrapped = createView<T>(
     props,
     Component,
@@ -60,6 +62,7 @@ function createSubView<T extends Trackable<ManuscriptNode>>(
   )
   const root = createRoot(container)
   root.render(<Wrapped />)
+  container.unmount = () => root.unmount()
   return container
 }
 
@@ -72,7 +75,7 @@ function createView<T extends Trackable<ManuscriptNode>>(
   view: ManuscriptEditorView | null,
   classNames: string[] = [],
   container: HTMLDivElement
-) {
+) : SubViewContainer {
   container.classList.add('tools-panel')
   if (classNames.length) {
     container.classList.add(...classNames)

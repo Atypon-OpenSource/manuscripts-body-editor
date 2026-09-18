@@ -53,7 +53,7 @@ export class BibliographyElementBlockView extends BlockView<
   Trackable<BibliographyElementNode>
 > {
   private container: HTMLElement
-  private editor: HTMLDivElement
+  private editor?: HTMLDivElement
   private contextMenu: HTMLDivElement
   private version: string
 
@@ -63,13 +63,18 @@ export class BibliographyElementBlockView extends BlockView<
       return
     }
 
+    this.editor?.remove()
+
     const componentProps: ReferencesEditorProps = {
       items: Array.from(bib.bibliographyItems.values()),
       citationCounts: bib.citationCounts,
       item: id ? bib.bibliographyItems.get(id) : undefined,
       onSave: this.handleSave,
       onDelete: this.handleDelete,
-      onClose: () => this.editor?.remove(),
+      onClose: () => {
+        this.editor?.remove()
+        this.editor = undefined
+      },
     }
 
     this.editor = ReactSubView(

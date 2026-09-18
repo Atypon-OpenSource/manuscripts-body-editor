@@ -238,7 +238,6 @@ export const CrossReferenceItems: React.FC<CrossReferenceItemsProps> = ({
       isOpen={isOpen}
       onExited={() => {
         onClose()
-        console.log('exited')
         handleCancel()
       }}
       onRequestClose={close}
