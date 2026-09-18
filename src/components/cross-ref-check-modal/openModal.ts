@@ -37,11 +37,11 @@ export const openCrossRefWarningModal = (
   const componentProps = {
     xrefs: xrefGroups,
     onConfirm: (deleteOption: DeleteOption) => {
-      dialog.unmount?.()
+      dialog.unmount()
       onConfirm(deleteOption)
     },
     onClose: () => {
-      dialog.unmount?.()
+      dialog.unmount()
       onClose()
     },
     selectAndScrollTo,

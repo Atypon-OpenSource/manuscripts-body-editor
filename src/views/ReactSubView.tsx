@@ -24,7 +24,7 @@ import { ThemeProvider } from 'styled-components'
 import { EditorProps } from '../configs/ManuscriptsEditor'
 import { Trackable } from '../types'
 
-export type SubViewContainer = HTMLDivElement & { unmount?: () => void }
+export type SubViewContainer = HTMLDivElement & { unmount: () => void }
 
 export interface ReactViewComponentProps<NodeT extends ManuscriptNode> {
   nodeAttrs: NodeT['attrs']
