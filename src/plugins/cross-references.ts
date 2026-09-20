@@ -37,9 +37,11 @@ import { openCrossRefWarningModal } from '../components/cross-ref-check-modal/op
 import { objectsKey } from './objects'
 
 export const DELETE_WITHOUT_REF = 'delete-without-ref'
+export const SELECTED_CROSS_REF_CLASS = 'selected-cross-reference'
 
 let modalActive = false
 let modalElement: HTMLDivElement | null = null
+let scrollTargetEl: HTMLElement | null = null
 
 export default () => {
   let view: ManuscriptEditorView | null = null
@@ -91,6 +93,9 @@ export default () => {
           modalElement.classList.remove('modal-bottom')
           modalElement.remove()
           modalElement = null
+        }
+        if (scrollTargetEl) {
+          scrollTargetEl.classList.remove(SELECTED_CROSS_REF_CLASS)
         }
       }
 
@@ -307,5 +312,13 @@ const selectAndScrollToCreator = (view: EditorView) => ($pos: ResolvedPos) => {
   } else {
     modalElement?.classList.remove('modal-bottom')
     scrollable.scrollTo({ top: scrollTo, behavior: 'smooth' })
+  }
+  const dom = view.nodeDOM($pos.pos)
+  if (dom && dom instanceof HTMLElement) {
+    dom.classList.add(SELECTED_CROSS_REF_CLASS)
+    if (scrollTargetEl && scrollTargetEl !== dom) {
+      scrollTargetEl?.classList.remove(SELECTED_CROSS_REF_CLASS)
+    }
+    scrollTargetEl = dom
   }
 }
