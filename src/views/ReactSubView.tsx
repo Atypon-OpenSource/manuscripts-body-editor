@@ -18,11 +18,32 @@ import { MuiThemeProvider, muiTheme } from '@manuscripts/style-guide/mui'
 import { ManuscriptEditorView, ManuscriptNode } from '@manuscripts/transform'
 import React from 'react'
 import { flushSync } from 'react-dom'
-import { createRoot } from 'react-dom/client'
+import { createRoot, Root } from 'react-dom/client'
 import { ThemeProvider } from 'styled-components'
 
 import { EditorProps } from '../configs/ManuscriptsEditor'
 import { Trackable } from '../types'
+
+/**
+ * A DOM container that owns a React root. Because the element is inserted and
+ * removed by non-React code, call `destroy()` instead of `remove()` so the root
+ * is unmounted and its effects are cleaned up. Safe to call more than once.
+ */
+export type SubViewContainer = HTMLDivElement & { destroy: () => void }
+
+const attachDestroy = (
+  container: HTMLDivElement,
+  root: Root
+): SubViewContainer => {
+  const subView = container as SubViewContainer
+  subView.destroy = () => {
+    subView.remove()
+    // Will cause an error if unmounted in sync: React refuses to unmount a
+    // root synchronously from there, so finish the unmount after the current task.
+    queueMicrotask(() => root.unmount())
+  }
+  return subView
+}
 
 export interface ReactViewComponentProps<NodeT extends ManuscriptNode> {
   nodeAttrs: NodeT['attrs']
@@ -44,9 +65,9 @@ function createSubView<T extends Trackable<ManuscriptNode>>(
   componentProps: object,
   node: T,
   getPos: () => number,
-  view: ManuscriptEditorView,
+  view: ManuscriptEditorView | null,
   classNames: string[] = []
-): HTMLDivElement {
+): SubViewContainer {
   const container = document.createElement('div')
   const Wrapped = createView<T>(
     props,
@@ -60,7 +81,7 @@ function createSubView<T extends Trackable<ManuscriptNode>>(
   )
   const root = createRoot(container)
   root.render(<Wrapped />)
-  return container
+  return attachDestroy(container, root)
 }
 
 function createView<T extends Trackable<ManuscriptNode>>(
@@ -69,7 +90,7 @@ function createView<T extends Trackable<ManuscriptNode>>(
   componentProps: object,
   node: T,
   getPos: () => number,
-  view: ManuscriptEditorView,
+  view: ManuscriptEditorView | null,
   classNames: string[] = [],
   container: HTMLDivElement
 ) {
@@ -82,6 +103,10 @@ function createView<T extends Trackable<ManuscriptNode>>(
 
   const Wrapped: React.FC = () => {
     const setNodeAttrs = (nextAttrs: Partial<ManuscriptNode['attrs']>) => {
+      if (!view) {
+        console.warn('Skipped setting node attributes due to editorView missing')
+        return
+      }
       const { selection, tr } = view.state
 
       tr.setNodeMarkup(getPos(), undefined, {
@@ -120,9 +145,9 @@ export function createSubViewAsync<T extends Trackable<ManuscriptNode>>(
   componentProps: object,
   node: T,
   getPos: () => number,
-  view: ManuscriptEditorView,
+  view: ManuscriptEditorView | null,
   classNames: string[] = []
-): Promise<HTMLDivElement> {
+): Promise<SubViewContainer> {
   const container = document.createElement('div')
   const Wrapped = createView<T>(
     props,
@@ -137,11 +162,11 @@ export function createSubViewAsync<T extends Trackable<ManuscriptNode>>(
 
   const root = createRoot(container)
 
-  return new Promise<HTMLDivElement>((resolve) => {
+  return new Promise<SubViewContainer>((resolve) => {
     flushSync(() => {
       root.render(<Wrapped />)
     })
-    resolve(container)
+    resolve(attachDestroy(container, root))
   })
 }
 
