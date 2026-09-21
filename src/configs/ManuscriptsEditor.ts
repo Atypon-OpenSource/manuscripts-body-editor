@@ -21,7 +21,6 @@ import {
   ManuscriptNodeType,
   schema,
   SectionCategory,
-  UserProfile,
 } from '@manuscripts/transform'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
@@ -57,7 +56,6 @@ export interface EditorProps {
   attributes?: { [key: string]: string }
   locale: string
   theme: DefaultTheme
-  getCurrentUser: () => UserProfile
 
   doc: ManuscriptNode
   getFiles: () => FileAttachment[]

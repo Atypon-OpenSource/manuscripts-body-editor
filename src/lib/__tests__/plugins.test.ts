@@ -17,7 +17,6 @@ import {
   ActualManuscriptNode,
   schema,
   SectionCategory,
-  UserProfile,
 } from '@manuscripts/transform'
 import { createMemoryHistory } from 'history'
 import { EditorState } from 'prosemirror-state'
@@ -31,11 +30,6 @@ import { PopperManager } from '../popper'
 import { getMatchingDescendant } from '../utils'
 import jsonDoc from './__fixtures__/doc.json'
 import { defaultTheme } from '@manuscripts/style-guide'
-const userProfile: UserProfile = {
-  _id: 'MPUserProfile:1',
-  userID: 'MPUser:1',
-  connectID: 'connectID1',
-}
 
 const history = createMemoryHistory()
 
@@ -43,7 +37,6 @@ const buildProps = (doc: ActualManuscriptNode): EditorProps => ({
   doc,
   locale: 'en-US',
   popper: new PopperManager(),
-  getCurrentUser: () => userProfile,
   history,
   setComment: () => undefined,
   setSelectedComment: () => undefined,
