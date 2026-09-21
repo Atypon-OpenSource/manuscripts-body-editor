@@ -37,7 +37,7 @@ import styled, { ThemeProvider } from 'styled-components'
 import type { EditorProps } from '../../configs/ManuscriptsEditor'
 import { isMac } from '../../lib/platform'
 import { getEditorProps } from '../../plugins/editor-props'
-import { createSubViewAsync, SubViewContainer } from '../../views/ReactSubView'
+import ReactSubView, { SubViewContainer } from '../../views/ReactSubView'
 import { ModalTabs } from '../authors-affiliations/ModalTabs'
 import { formattedShortCut } from './FormattedShortcut'
 import { EDITOR_KEYBOARD_SHORTCUT_TABS } from './keyboard-shortcuts'
@@ -263,7 +263,7 @@ export async function openKeyboardShortcuts(view?: EditorView): Promise<void> {
     onClose: () => cleanup(),
   }
 
-  dialog = await createSubViewAsync(
+  dialog = ReactSubView(
     editorProps,
     KeyboardShortcutsModal,
     modalProps,
