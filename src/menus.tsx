@@ -66,7 +66,6 @@ import { isEditAllowed } from './lib/utils'
 import { getEditorProps } from './plugins/editor-props'
 import { useEditor } from './useEditor'
 import { openInsertAwardModal } from './components/awards/AwardModal'
-import { isEmptyReferences } from './lib/view'
 import { openReferencesEditor } from './components/references/ReferencesEditor'
 
 export const getEditorMenus = (
@@ -661,7 +660,7 @@ export const getEditorMenus = (
           mac: 'Option+CommandOrControl+N',
           pc: 'CommandOrControl+Option+N',
         },
-        isEnabled: isEditAllowed(state) && isCommandValid(isEmptyReferences),
+        isEnabled: isEditAllowed(state),
         run: doCommand(openReferencesEditor),
         isHidden: !templateAllows(state, schema.nodes.bibliography_item),
       },

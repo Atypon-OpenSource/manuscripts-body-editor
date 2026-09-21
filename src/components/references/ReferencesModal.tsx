@@ -564,7 +564,13 @@ const Footer = styled.div`
 `
 
 const TertiaryButton = styled(Button)`
-  color: #0d79d0;
+  &.MuiButton-textSecondary {
+    color: #0d79d0;
+
+    &:hover {
+      background-color: rgba(13, 121, 208, 0.04);
+    }
+  }
 `
 
 const DOILinkIcon = styled(LinkIcon)`
