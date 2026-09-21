@@ -303,10 +303,22 @@
   color: inherit;
 }
 
+.ProseMirror .orphaned-cross-reference {
+  text-decoration: underline dotted #f35143;
+}
+
 .ProseMirror .bib-item.ProseMirror-selectednode,
 .ProseMirror .citation.ProseMirror-selectednode,
 .ProseMirror .cross-reference.ProseMirror-selectednode {
   background-color: #bce7f6;
+}
+
+.ProseMirror .cross-reference.selected-cross-reference {
+  border-radius: 4px;
+  outline: 2px solid #FE8F1F;
+  outline-offset: 1.5px;
+  background: #FFF9E5;
+  mix-blend-mode: darken;
 }
 
 .ProseMirror .block-table_element .block-gutter {
