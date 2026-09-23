@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { CaptionNode, ManuscriptNodeView } from '@manuscripts/transform'
+import { CaptionNode, ManuscriptNodeView, schema } from '@manuscripts/transform'
 
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
@@ -30,6 +30,10 @@ export class CaptionView
     this.dom = document.createElement('caption')
     this.dom.className = 'caption-description placeholder'
     this.contentDOM = this.dom
+    const $pos = this.view.state.doc.resolve(this.getPos())
+    if ($pos.parent.type === schema.nodes.headshot_element) {
+      this.dom.setAttribute('aria-label', 'Headshot Summary')
+    }
   }
 }
 

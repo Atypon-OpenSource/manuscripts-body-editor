@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { CaptionTitleNode } from '@manuscripts/transform'
+import { CaptionTitleNode, schema } from '@manuscripts/transform'
 
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
@@ -29,6 +29,10 @@ export class CaptionTitleView extends BaseNodeView<CaptionTitleNode> {
     this.dom = document.createElement('div')
     this.dom.className = 'caption-title placeholder'
     this.contentDOM = this.dom
+    const $pos = this.view.state.doc.resolve(this.getPos())
+    if ($pos.parent.type === schema.nodes.headshot_element) {
+      this.dom.setAttribute('aria-label', 'Headshot Name')
+    }
   }
 }
 export default createNodeView(CaptionTitleView)
