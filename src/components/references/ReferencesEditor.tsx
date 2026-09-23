@@ -23,6 +23,12 @@ import React, { useEffect, useReducer, useState } from 'react'
 import { attrsReducer } from '../../lib/array-reducer'
 import { cleanItemValues } from '../../lib/utils'
 import { ReferencesModal, ReferencesModalProps } from './ReferencesModal'
+import { getEditorProps } from '../../plugins/editor-props'
+import { deleteNode, saveBibliographyItem } from '../../lib/view'
+import ReactSubView from '../../views/ReactSubView'
+import { EditorState, Transaction } from 'prosemirror-state'
+import { EditorView } from 'prosemirror-view'
+import { getBibliographyPluginState } from '../../plugins/bibliography'
 
 export type ReferencesEditorProps = Omit<
   ReferencesModalProps,
@@ -87,4 +93,36 @@ export const ReferencesEditor: React.FC<ReferencesEditorProps> = (props) => {
       handleImport={handleImport}
     />
   )
+}
+
+export const openReferencesEditor = (
+  state: EditorState,
+  _?: (tr: Transaction) => void,
+  view?: EditorView
+) => {
+  if (!view) {
+    return false
+  }
+
+  const props = getEditorProps(state)
+  const bib = getBibliographyPluginState(view.state)
+
+  const componentProps: ReferencesEditorProps = {
+    items: bib ? Array.from(bib.bibliographyItems.values()) : [],
+    citationCounts: new Map<string, number>(bib?.citationCounts),
+    onDelete: (item) => deleteNode(view, item.id),
+    onSave: (item) => saveBibliographyItem(view, item),
+  }
+
+  const referencesEditor = ReactSubView(
+    props,
+    ReferencesEditor,
+    componentProps,
+    state.doc,
+    () => 0,
+    view
+  )
+  view.focus()
+  document.body.appendChild(referencesEditor)
+  return true
 }
