@@ -97,573 +97,573 @@ export const ReferenceForm: React.FC<{
   onSave,
   actionsRef,
 }) => {
-    const fieldsRef = useRef<HTMLDivElement>(null)
-    const formRef = useRef<FormikProps<BibliographyItemAttrs>>(null)
-    const [newAuthorIndex, setNewAuthorIndex] = useState<number>()
-    const [newEditorIndex, setNewEditorIndex] = useState<number>()
+  const fieldsRef = useRef<HTMLDivElement>(null)
+  const formRef = useRef<FormikProps<BibliographyItemAttrs>>(null)
+  const [newAuthorIndex, setNewAuthorIndex] = useState<number>()
+  const [newEditorIndex, setNewEditorIndex] = useState<number>()
 
-    useEffect(() => {
-      if (fieldsRef.current) {
-        fieldsRef.current.scrollTop = 0
-      }
-    }, [values])
-
-    if (actionsRef && !actionsRef.current) {
-      actionsRef.current = {
-        reset: () => {
-          formRef.current?.resetForm()
-        },
-        submit: () => {
-          formRef.current?.submitForm()
-        },
-        isDirty: () => formRef.current?.dirty ?? false,
-      }
+  useEffect(() => {
+    if (fieldsRef.current) {
+      fieldsRef.current.scrollTop = 0
     }
+  }, [values])
 
-    return (
-      <Formik<BibliographyItemAttrs>
-        initialValues={values}
-        onSubmit={onSave}
-        enableReinitialize={true}
-        innerRef={formRef}
-        validate={validateReference}
-      >
-        {(formik) => {
-          return (
-            <ChangeHandlingForm onChange={onChange}>
-              <FormFields ref={fieldsRef}>
+  if (actionsRef && !actionsRef.current) {
+    actionsRef.current = {
+      reset: () => {
+        formRef.current?.resetForm()
+      },
+      submit: () => {
+        formRef.current?.submitForm()
+      },
+      isDirty: () => formRef.current?.dirty ?? false,
+    }
+  }
+
+  return (
+    <Formik<BibliographyItemAttrs>
+      initialValues={values}
+      onSubmit={onSave}
+      enableReinitialize={true}
+      innerRef={formRef}
+      validate={validateReference}
+    >
+      {(formik) => {
+        return (
+          <ChangeHandlingForm onChange={onChange}>
+            <FormFields ref={fieldsRef}>
+              <FormRow>
+                <Label htmlFor={'citation-item-type'}>Type</Label>
+
+                <Field
+                  id={'citation-item-type'}
+                  name={'type'}
+                  component={SelectField}
+                  options={bibliographyItemTypeOptions}
+                />
+              </FormRow>
+
+              {shouldRenderField(
+                'title',
+                formik.values.type as BibliographyItemType
+              ) && (
                 <FormRow>
-                  <Label htmlFor={'citation-item-type'}>Type</Label>
+                  <Label>Title</Label>
 
-                  <Field
-                    id={'citation-item-type'}
-                    name={'type'}
-                    component={SelectField}
-                    options={bibliographyItemTypeOptions}
+                  <Field name={'title'}>
+                    {(props: FieldProps) => (
+                      <ReferenceTextArea id={'title'} {...props.field} />
+                    )}
+                  </Field>
+                </FormRow>
+              )}
+
+              {shouldRenderField(
+                'literal',
+                formik.values.type as BibliographyItemType
+              ) && (
+                <FormRow>
+                  <Label>Text</Label>
+
+                  <Field name={'literal'}>
+                    {(props: FieldProps) => (
+                      <ReferenceTextArea id={'literal'} {...props.field} />
+                    )}
+                  </Field>
+                </FormRow>
+              )}
+              {shouldRenderField(
+                'std',
+                formik.values.type as BibliographyItemType
+              ) && (
+                <FormRow>
+                  <Label htmlFor={'std'}>Standard</Label>
+                  <Field name={'std'}>
+                    {(props: FieldProps) => (
+                      <ReferenceTextArea id={'std'} {...props.field} />
+                    )}
+                  </Field>
+                </FormRow>
+              )}
+
+              {shouldRenderField(
+                'author',
+                formik.values.type as BibliographyItemType
+              ) && (
+                <FieldArray
+                  name={'author'}
+                  render={({ push, remove }) => (
+                    <FormRow
+                      $direction="row"
+                      $justify="space-between"
+                      $align="center"
+                    >
+                      <Label>
+                        Authors
+                        {isAuthorRequired(formik.values.type) && (
+                          <RequiredIndicator>*</RequiredIndicator>
+                        )}
+                      </Label>
+
+                      <Button
+                        onClick={() => {
+                          setNewAuthorIndex(formik.values.author?.length)
+                          push({
+                            given: '',
+                            family: '',
+                          })
+                        }}
+                      >
+                        <AddAuthorIcon height={17} width={17} />
+                      </Button>
+
+                      <div style={{ width: '100%' }}>
+                        {formik.values.author?.map((author, index) => (
+                          <PersonDropDown
+                            key={index}
+                            index={index}
+                            person={author}
+                            isNew={newAuthorIndex === index}
+                            remove={remove}
+                            onChange={formik.handleChange}
+                            type="author"
+                          />
+                        ))}
+                        {typeof formik.errors.author === 'string' && (
+                          <InputErrorText>
+                            {formik.errors.author}
+                          </InputErrorText>
+                        )}
+                      </div>
+                    </FormRow>
+                  )}
+                />
+              )}
+
+              {shouldRenderField(
+                'editor',
+                formik.values.type as BibliographyItemType
+              ) && (
+                <FieldArray
+                  name={'editor'}
+                  render={({ push, remove }) => (
+                    <FormRow>
+                      <Label>Editors</Label>
+
+                      <Button
+                        onClick={() => {
+                          setNewEditorIndex(formik.values.editor?.length)
+                          push({
+                            given: '',
+                            family: '',
+                          })
+                        }}
+                      >
+                        <AddAuthorIcon height={17} width={17} />
+                      </Button>
+
+                      <div>
+                        {formik.values.editor?.map((editor, index) => (
+                          <PersonDropDown
+                            key={index}
+                            index={index}
+                            person={editor}
+                            isNew={newEditorIndex === index}
+                            remove={remove}
+                            onChange={formik.handleChange}
+                            type="editor"
+                          />
+                        ))}
+                      </div>
+                    </FormRow>
+                  )}
+                />
+              )}
+
+              {shouldRenderField(
+                'issued',
+                formik.values.type as BibliographyItemType
+              ) && (
+                <FormRow>
+                  <Label htmlFor="issued-year-field">Issued (Year)</Label>
+
+                  <YearField
+                    name={"issued['date-parts'][0][0]"}
+                    id="issued-year-field"
+                    type={'number'}
+                    step={1}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      const { value } = event.target
+                      if (value) {
+                        if (formik.values.issued) {
+                          // NOTE: this assumes that "issued" is already a complete object
+                          formik.setFieldValue(
+                            "issued['date-parts'][0][0]",
+                            Number(value)
+                          )
+                        } else {
+                          formik.setFieldValue('issued', {
+                            'date-parts': [[Number(value)]],
+                          })
+                        }
+                      } else {
+                        // NOTE: not undefined due to https://github.com/jaredpalmer/formik/issues/2180
+                        formik.setFieldValue('issued', '')
+                      }
+                    }}
                   />
                 </FormRow>
+              )}
 
-                {shouldRenderField(
-                  'title',
-                  formik.values.type as BibliographyItemType
-                ) && (
-                    <FormRow>
-                      <Label>Title</Label>
+              {shouldRenderField(
+                'container-title',
+                formik.values.type as BibliographyItemType
+              ) && (
+                <FormRow>
+                  <Label htmlFor={'container-title'}>Container Title</Label>
 
-                      <Field name={'title'}>
-                        {(props: FieldProps) => (
-                          <ReferenceTextArea id={'title'} {...props.field} />
-                        )}
-                      </Field>
-                    </FormRow>
-                  )}
-
-                {shouldRenderField(
-                  'literal',
-                  formik.values.type as BibliographyItemType
-                ) && (
-                    <FormRow>
-                      <Label>Text</Label>
-
-                      <Field name={'literal'}>
-                        {(props: FieldProps) => (
-                          <ReferenceTextArea id={'literal'} {...props.field} />
-                        )}
-                      </Field>
-                    </FormRow>
-                  )}
-                {shouldRenderField(
-                  'std',
-                  formik.values.type as BibliographyItemType
-                ) && (
-                    <FormRow>
-                      <Label htmlFor={'std'}>Standard</Label>
-                      <Field name={'std'}>
-                        {(props: FieldProps) => (
-                          <ReferenceTextArea id={'std'} {...props.field} />
-                        )}
-                      </Field>
-                    </FormRow>
-                  )}
-
-                {shouldRenderField(
-                  'author',
-                  formik.values.type as BibliographyItemType
-                ) && (
-                    <FieldArray
-                      name={'author'}
-                      render={({ push, remove }) => (
-                        <FormRow
-                          $direction="row"
-                          $justify="space-between"
-                          $align="center"
-                        >
-                          <Label>
-                            Authors
-                            {isAuthorRequired(formik.values.type) && (
-                              <RequiredIndicator>*</RequiredIndicator>
-                            )}
-                          </Label>
-
-                          <Button
-                            onClick={() => {
-                              setNewAuthorIndex(formik.values.author?.length)
-                              push({
-                                given: '',
-                                family: '',
-                              })
-                            }}
-                          >
-                            <AddAuthorIcon height={17} width={17} />
-                          </Button>
-
-                          <div style={{ width: '100%' }}>
-                            {formik.values.author?.map((author, index) => (
-                              <PersonDropDown
-                                key={index}
-                                index={index}
-                                person={author}
-                                isNew={newAuthorIndex === index}
-                                remove={remove}
-                                onChange={formik.handleChange}
-                                type="author"
-                              />
-                            ))}
-                            {typeof formik.errors.author === 'string' && (
-                              <InputErrorText>
-                                {formik.errors.author}
-                              </InputErrorText>
-                            )}
-                          </div>
-                        </FormRow>
-                      )}
-                    />
-                  )}
-
-                {shouldRenderField(
-                  'editor',
-                  formik.values.type as BibliographyItemType
-                ) && (
-                    <FieldArray
-                      name={'editor'}
-                      render={({ push, remove }) => (
-                        <FormRow>
-                          <Label>Editors</Label>
-
-                          <Button
-                            onClick={() => {
-                              setNewEditorIndex(formik.values.editor?.length)
-                              push({
-                                given: '',
-                                family: '',
-                              })
-                            }}
-                          >
-                            <AddAuthorIcon height={17} width={17} />
-                          </Button>
-
-                          <div>
-                            {formik.values.editor?.map((editor, index) => (
-                              <PersonDropDown
-                                key={index}
-                                index={index}
-                                person={editor}
-                                isNew={newEditorIndex === index}
-                                remove={remove}
-                                onChange={formik.handleChange}
-                                type="editor"
-                              />
-                            ))}
-                          </div>
-                        </FormRow>
-                      )}
-                    />
-                  )}
-
-                {shouldRenderField(
-                  'issued',
-                  formik.values.type as BibliographyItemType
-                ) && (
-                    <FormRow>
-                      <Label htmlFor="issued-year-field">Issued (Year)</Label>
-
-                      <YearField
-                        name={"issued['date-parts'][0][0]"}
-                        id="issued-year-field"
-                        type={'number'}
-                        step={1}
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                          const { value } = event.target
-                          if (value) {
-                            if (formik.values.issued) {
-                              // NOTE: this assumes that "issued" is already a complete object
-                              formik.setFieldValue(
-                                "issued['date-parts'][0][0]",
-                                Number(value)
-                              )
-                            } else {
-                              formik.setFieldValue('issued', {
-                                'date-parts': [[Number(value)]],
-                              })
-                            }
-                          } else {
-                            // NOTE: not undefined due to https://github.com/jaredpalmer/formik/issues/2180
-                            formik.setFieldValue('issued', '')
-                          }
-                        }}
+                  <Field name={'container-title'}>
+                    {(props: FieldProps) => (
+                      <ReferenceTextArea
+                        id={'container-title'}
+                        {...props.field}
                       />
-                    </FormRow>
-                  )}
+                    )}
+                  </Field>
+                </FormRow>
+              )}
+              {shouldRenderField(
+                'collection-title',
+                formik.values.type as BibliographyItemType
+              ) && (
+                <FormRow>
+                  <Label htmlFor={'collection-title'}>Collection Title</Label>
 
-                {shouldRenderField(
-                  'container-title',
-                  formik.values.type as BibliographyItemType
-                ) && (
-                    <FormRow>
-                      <Label htmlFor={'container-title'}>Container Title</Label>
-
-                      <Field name={'container-title'}>
-                        {(props: FieldProps) => (
-                          <ReferenceTextArea
-                            id={'container-title'}
-                            {...props.field}
-                          />
-                        )}
-                      </Field>
-                    </FormRow>
-                  )}
-                {shouldRenderField(
-                  'collection-title',
-                  formik.values.type as BibliographyItemType
-                ) && (
-                    <FormRow>
-                      <Label htmlFor={'collection-title'}>Collection Title</Label>
-
-                      <Field name={'collection-title'}>
-                        {(props: FieldProps) => (
-                          <ReferenceTextArea
-                            id={'collection-title'}
-                            {...props.field}
-                          />
-                        )}
-                      </Field>
-                    </FormRow>
-                  )}
-
-                {shouldRenderField(
-                  'volume',
-                  formik.values.type as BibliographyItemType
-                ) && (
-                    <FormRow>
-                      <Label htmlFor={'volume'}>Volume</Label>
-
-                      <Field name={'volume'}>
-                        {(props: FieldProps) => (
-                          <ReferenceTextField id={'volume'} {...props.field} />
-                        )}
-                      </Field>
-                    </FormRow>
-                  )}
-
-                {shouldRenderField(
-                  'issue',
-                  formik.values.type as BibliographyItemType
-                ) && (
-                    <FormRow>
-                      <Label htmlFor={'issue'}>Issue</Label>
-
-                      <Field name={'issue'}>
-                        {(props: FieldProps) => (
-                          <ReferenceTextField id={'issue'} {...props.field} />
-                        )}
-                      </Field>
-                    </FormRow>
-                  )}
-
-                {shouldRenderField(
-                  'supplement',
-                  formik.values.type as BibliographyItemType
-                ) && (
-                    <FormRow>
-                      <Label htmlFor={'supplement'}>Supplement</Label>
-
-                      <Field name={'supplement'}>
-                        {(props: FieldProps) => (
-                          <ReferenceTextField
-                            type={'supplement'}
-                            id={'supplement'}
-                            {...props.field}
-                          />
-                        )}
-                      </Field>
-                    </FormRow>
-                  )}
-
-                {shouldRenderField(
-                  'edition',
-                  formik.values.type as BibliographyItemType
-                ) && (
-                    <FormRow>
-                      <Label htmlFor={'edition'}>Edition</Label>
-
-                      <Field name={'edition'}>
-                        {(props: FieldProps) => (
-                          <ReferenceTextField id={'edition'} {...props.field} />
-                        )}
-                      </Field>
-                    </FormRow>
-                  )}
-
-                {shouldRenderField(
-                  'publisher-place',
-                  formik.values.type as BibliographyItemType
-                ) && (
-                    <FormRow>
-                      <Label htmlFor={'publisher-place'}>Publisher Location</Label>
-
-                      <Field name={'publisher-place'}>
-                        {(props: FieldProps) => (
-                          <ReferenceTextField
-                            id={'publisher-place'}
-                            {...props.field}
-                          />
-                        )}
-                      </Field>
-                    </FormRow>
-                  )}
-
-                {shouldRenderField(
-                  'publisher',
-                  formik.values.type as BibliographyItemType
-                ) && (
-                    <FormRow>
-                      <Label htmlFor={'publisher'}>Publisher</Label>
-
-                      <Field name={'publisher'}>
-                        {(props: FieldProps) => (
-                          <ReferenceTextField id="publisher" {...props.field} />
-                        )}
-                      </Field>
-                    </FormRow>
-                  )}
-                {shouldRenderField(
-                  'event',
-                  formik.values.type as BibliographyItemType
-                ) && (
-                    <FormRow>
-                      <Label htmlFor={'event'}>Event</Label>
-
-                      <Field name={'event'}>
-                        {(props: FieldProps) => (
-                          <ReferenceTextField id={'event'} {...props.field} />
-                        )}
-                      </Field>
-                    </FormRow>
-                  )}
-
-                {shouldRenderField(
-                  'event-place',
-                  formik.values.type as BibliographyItemType
-                ) && (
-                    <FormRow>
-                      <Label htmlFor={'event-place'}>Event Place</Label>
-
-                      <Field name={'event-place'}>
-                        {(props: FieldProps) => (
-                          <ReferenceTextField id={'event-place'} {...props.field} />
-                        )}
-                      </Field>
-                    </FormRow>
-                  )}
-
-                {shouldRenderField(
-                  'event-date',
-                  formik.values.type as BibliographyItemType
-                ) && (
-                    <FormRow>
-                      <Label htmlFor={"event-date['date-parts'][0][0]"}>
-                        Event date (Year)
-                      </Label>
-
-                      <YearField
-                        name={"event-date['date-parts'][0][0]"}
-                        type={'number'}
-                        step={1}
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                          const { value } = event.target
-
-                          if (value) {
-                            if (formik.values['event-date']) {
-                              // NOTE: this assumes that "event-date" is already a complete object
-                              formik.setFieldValue(
-                                "event-date['date-parts'][0][0]",
-                                Number(value)
-                              )
-                            } else {
-                              formik.setFieldValue('event-date', {
-                                'date-parts': [[Number(value)]],
-                              })
-                            }
-                          } else {
-                            // NOTE: not undefined due to https://github.com/jaredpalmer/formik/issues/2180
-                            formik.setFieldValue('event-date', '')
-                          }
-                        }}
+                  <Field name={'collection-title'}>
+                    {(props: FieldProps) => (
+                      <ReferenceTextArea
+                        id={'collection-title'}
+                        {...props.field}
                       />
-                    </FormRow>
-                  )}
+                    )}
+                  </Field>
+                </FormRow>
+              )}
 
-                {shouldRenderField(
-                  'institution',
-                  formik.values.type as BibliographyItemType
-                ) && (
-                    <FormRow>
-                      <Label htmlFor={'institution'}>Institution</Label>
+              {shouldRenderField(
+                'volume',
+                formik.values.type as BibliographyItemType
+              ) && (
+                <FormRow>
+                  <Label htmlFor={'volume'}>Volume</Label>
 
-                      <Field name={'institution'}>
-                        {(props: FieldProps) => (
-                          <ReferenceTextField id={'institution'} {...props.field} />
-                        )}
-                      </Field>
-                    </FormRow>
-                  )}
+                  <Field name={'volume'}>
+                    {(props: FieldProps) => (
+                      <ReferenceTextField id={'volume'} {...props.field} />
+                    )}
+                  </Field>
+                </FormRow>
+              )}
 
-                {shouldRenderField(
-                  'page',
-                  formik.values.type as BibliographyItemType
-                ) && (
-                    <FormRow>
-                      <Label htmlFor={'page'}>Page</Label>
+              {shouldRenderField(
+                'issue',
+                formik.values.type as BibliographyItemType
+              ) && (
+                <FormRow>
+                  <Label htmlFor={'issue'}>Issue</Label>
 
-                      <Field name={'page'}>
-                        {(props: FieldProps) => (
-                          <ReferenceTextField id={'page'} {...props.field} />
-                        )}
-                      </Field>
-                    </FormRow>
-                  )}
+                  <Field name={'issue'}>
+                    {(props: FieldProps) => (
+                      <ReferenceTextField id={'issue'} {...props.field} />
+                    )}
+                  </Field>
+                </FormRow>
+              )}
 
-                {shouldRenderField(
-                  'number-of-pages',
-                  formik.values.type as BibliographyItemType
-                ) && (
-                    <FormRow>
-                      <Label htmlFor={'number-of-pages'}>Number of pages</Label>
+              {shouldRenderField(
+                'supplement',
+                formik.values.type as BibliographyItemType
+              ) && (
+                <FormRow>
+                  <Label htmlFor={'supplement'}>Supplement</Label>
 
-                      <Field name={'umber-of-pages'}>
-                        {(props: FieldProps) => (
-                          <ReferenceTextField
-                            id={'number-of-pages'}
-                            {...props.field}
-                          />
-                        )}
-                      </Field>
-                    </FormRow>
-                  )}
-
-                {shouldRenderField(
-                  'locator',
-                  formik.values.type as BibliographyItemType
-                ) && (
-                    <FormRow>
-                      <Label htmlFor={'locator'}>Locator</Label>
-
-                      <Field name={'locator'}>
-                        {(props: FieldProps) => (
-                          <ReferenceTextField id={'locator'} {...props.field} />
-                        )}
-                      </Field>
-                    </FormRow>
-                  )}
-
-                {shouldRenderField(
-                  'DOI',
-                  formik.values.type as BibliographyItemType
-                ) && (
-                    <FormRow>
-                      <Label htmlFor={'DOI'}>DOI</Label>
-
-                      <Field name={'DOI'}>
-                        {(props: FieldProps) => (
-                          <ReferenceTextField
-                            id={'DOI'}
-                            pattern={'(https://doi.org/)?10..+'}
-                            {...props.field}
-                          />
-                        )}
-                      </Field>
-                    </FormRow>
-                  )}
-
-                {shouldRenderField(
-                  'URL',
-                  formik.values.type as BibliographyItemType
-                ) && (
-                    <FormRow>
-                      <Label htmlFor={'URL'}>URL</Label>
-
-                      <Field name={'URL'}>
-                        {(props: FieldProps) => (
-                          <ReferenceTextField id={'URL'} {...props.field} />
-                        )}
-                      </Field>
-                    </FormRow>
-                  )}
-
-                {shouldRenderField(
-                  'accessed',
-                  formik.values.type as BibliographyItemType
-                ) && (
-                    <FormRow>
-                      <Label htmlFor={"accessed['date-parts'][0][0]"}>
-                        Accessed (Year)
-                      </Label>
-
-                      <YearField
-                        name={"accessed['date-parts'][0][0]"}
-                        type={'number'}
-                        step={1}
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                          const { value } = event.target
-
-                          if (value) {
-                            if (formik.values['event-date']) {
-                              // NOTE: this assumes that "accessed" is already a complete object
-                              formik.setFieldValue(
-                                "accessed['date-parts'][0][0]",
-                                Number(value)
-                              )
-                            } else {
-                              formik.setFieldValue('accessed', {
-                                'date-parts': [[Number(value)]],
-                              })
-                            }
-                          } else {
-                            // NOTE: not undefined due to https://github.com/jaredpalmer/formik/issues/2180
-                            formik.setFieldValue('accessed', '')
-                          }
-                        }}
+                  <Field name={'supplement'}>
+                    {(props: FieldProps) => (
+                      <ReferenceTextField
+                        type={'supplement'}
+                        id={'supplement'}
+                        {...props.field}
                       />
-                    </FormRow>
-                  )}
-                {shouldRenderField(
-                  'comment',
-                  formik.values.type as BibliographyItemType
-                ) && (
-                    <FormRow>
-                      <Label>Comment</Label>
+                    )}
+                  </Field>
+                </FormRow>
+              )}
 
-                      <Field name={'comment'}>
-                        {(props: FieldProps) => (
-                          <ReferenceTextArea id={'comment'} {...props.field} />
-                        )}
-                      </Field>
-                    </FormRow>
-                  )}
-              </FormFields>
-            </ChangeHandlingForm>
-          )
-        }}
-      </Formik>
-    )
-  }
+              {shouldRenderField(
+                'edition',
+                formik.values.type as BibliographyItemType
+              ) && (
+                <FormRow>
+                  <Label htmlFor={'edition'}>Edition</Label>
+
+                  <Field name={'edition'}>
+                    {(props: FieldProps) => (
+                      <ReferenceTextField id={'edition'} {...props.field} />
+                    )}
+                  </Field>
+                </FormRow>
+              )}
+
+              {shouldRenderField(
+                'publisher-place',
+                formik.values.type as BibliographyItemType
+              ) && (
+                <FormRow>
+                  <Label htmlFor={'publisher-place'}>Publisher Location</Label>
+
+                  <Field name={'publisher-place'}>
+                    {(props: FieldProps) => (
+                      <ReferenceTextField
+                        id={'publisher-place'}
+                        {...props.field}
+                      />
+                    )}
+                  </Field>
+                </FormRow>
+              )}
+
+              {shouldRenderField(
+                'publisher',
+                formik.values.type as BibliographyItemType
+              ) && (
+                <FormRow>
+                  <Label htmlFor={'publisher'}>Publisher</Label>
+
+                  <Field name={'publisher'}>
+                    {(props: FieldProps) => (
+                      <ReferenceTextField id="publisher" {...props.field} />
+                    )}
+                  </Field>
+                </FormRow>
+              )}
+              {shouldRenderField(
+                'event',
+                formik.values.type as BibliographyItemType
+              ) && (
+                <FormRow>
+                  <Label htmlFor={'event'}>Event</Label>
+
+                  <Field name={'event'}>
+                    {(props: FieldProps) => (
+                      <ReferenceTextField id={'event'} {...props.field} />
+                    )}
+                  </Field>
+                </FormRow>
+              )}
+
+              {shouldRenderField(
+                'event-place',
+                formik.values.type as BibliographyItemType
+              ) && (
+                <FormRow>
+                  <Label htmlFor={'event-place'}>Event Place</Label>
+
+                  <Field name={'event-place'}>
+                    {(props: FieldProps) => (
+                      <ReferenceTextField id={'event-place'} {...props.field} />
+                    )}
+                  </Field>
+                </FormRow>
+              )}
+
+              {shouldRenderField(
+                'event-date',
+                formik.values.type as BibliographyItemType
+              ) && (
+                <FormRow>
+                  <Label htmlFor={"event-date['date-parts'][0][0]"}>
+                    Event date (Year)
+                  </Label>
+
+                  <YearField
+                    name={"event-date['date-parts'][0][0]"}
+                    type={'number'}
+                    step={1}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      const { value } = event.target
+
+                      if (value) {
+                        if (formik.values['event-date']) {
+                          // NOTE: this assumes that "event-date" is already a complete object
+                          formik.setFieldValue(
+                            "event-date['date-parts'][0][0]",
+                            Number(value)
+                          )
+                        } else {
+                          formik.setFieldValue('event-date', {
+                            'date-parts': [[Number(value)]],
+                          })
+                        }
+                      } else {
+                        // NOTE: not undefined due to https://github.com/jaredpalmer/formik/issues/2180
+                        formik.setFieldValue('event-date', '')
+                      }
+                    }}
+                  />
+                </FormRow>
+              )}
+
+              {shouldRenderField(
+                'institution',
+                formik.values.type as BibliographyItemType
+              ) && (
+                <FormRow>
+                  <Label htmlFor={'institution'}>Institution</Label>
+
+                  <Field name={'institution'}>
+                    {(props: FieldProps) => (
+                      <ReferenceTextField id={'institution'} {...props.field} />
+                    )}
+                  </Field>
+                </FormRow>
+              )}
+
+              {shouldRenderField(
+                'page',
+                formik.values.type as BibliographyItemType
+              ) && (
+                <FormRow>
+                  <Label htmlFor={'page'}>Page</Label>
+
+                  <Field name={'page'}>
+                    {(props: FieldProps) => (
+                      <ReferenceTextField id={'page'} {...props.field} />
+                    )}
+                  </Field>
+                </FormRow>
+              )}
+
+              {shouldRenderField(
+                'number-of-pages',
+                formik.values.type as BibliographyItemType
+              ) && (
+                <FormRow>
+                  <Label htmlFor={'number-of-pages'}>Number of pages</Label>
+
+                  <Field name={'umber-of-pages'}>
+                    {(props: FieldProps) => (
+                      <ReferenceTextField
+                        id={'number-of-pages'}
+                        {...props.field}
+                      />
+                    )}
+                  </Field>
+                </FormRow>
+              )}
+
+              {shouldRenderField(
+                'locator',
+                formik.values.type as BibliographyItemType
+              ) && (
+                <FormRow>
+                  <Label htmlFor={'locator'}>Locator</Label>
+
+                  <Field name={'locator'}>
+                    {(props: FieldProps) => (
+                      <ReferenceTextField id={'locator'} {...props.field} />
+                    )}
+                  </Field>
+                </FormRow>
+              )}
+
+              {shouldRenderField(
+                'DOI',
+                formik.values.type as BibliographyItemType
+              ) && (
+                <FormRow>
+                  <Label htmlFor={'DOI'}>DOI</Label>
+
+                  <Field name={'DOI'}>
+                    {(props: FieldProps) => (
+                      <ReferenceTextField
+                        id={'DOI'}
+                        pattern={'(https://doi.org/)?10..+'}
+                        {...props.field}
+                      />
+                    )}
+                  </Field>
+                </FormRow>
+              )}
+
+              {shouldRenderField(
+                'URL',
+                formik.values.type as BibliographyItemType
+              ) && (
+                <FormRow>
+                  <Label htmlFor={'URL'}>URL</Label>
+
+                  <Field name={'URL'}>
+                    {(props: FieldProps) => (
+                      <ReferenceTextField id={'URL'} {...props.field} />
+                    )}
+                  </Field>
+                </FormRow>
+              )}
+
+              {shouldRenderField(
+                'accessed',
+                formik.values.type as BibliographyItemType
+              ) && (
+                <FormRow>
+                  <Label htmlFor={"accessed['date-parts'][0][0]"}>
+                    Accessed (Year)
+                  </Label>
+
+                  <YearField
+                    name={"accessed['date-parts'][0][0]"}
+                    type={'number'}
+                    step={1}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      const { value } = event.target
+
+                      if (value) {
+                        if (formik.values['event-date']) {
+                          // NOTE: this assumes that "accessed" is already a complete object
+                          formik.setFieldValue(
+                            "accessed['date-parts'][0][0]",
+                            Number(value)
+                          )
+                        } else {
+                          formik.setFieldValue('accessed', {
+                            'date-parts': [[Number(value)]],
+                          })
+                        }
+                      } else {
+                        // NOTE: not undefined due to https://github.com/jaredpalmer/formik/issues/2180
+                        formik.setFieldValue('accessed', '')
+                      }
+                    }}
+                  />
+                </FormRow>
+              )}
+              {shouldRenderField(
+                'comment',
+                formik.values.type as BibliographyItemType
+              ) && (
+                <FormRow>
+                  <Label>Comment</Label>
+
+                  <Field name={'comment'}>
+                    {(props: FieldProps) => (
+                      <ReferenceTextArea id={'comment'} {...props.field} />
+                    )}
+                  </Field>
+                </FormRow>
+              )}
+            </FormFields>
+          </ChangeHandlingForm>
+        )
+      }}
+    </Formik>
+  )
+}
