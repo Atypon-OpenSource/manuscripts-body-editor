@@ -20,13 +20,22 @@ import {
   SelectField,
   Label,
   FormRow,
+  InputErrorText,
+  RequiredIndicator,
   YearField,
 } from '@manuscripts/style-guide'
 import {
   BibliographyItemAttrs,
   BibliographyItemType,
 } from '@manuscripts/transform'
-import { Field, FieldArray, FieldProps, Formik, FormikProps } from 'formik'
+import {
+  Field,
+  FieldArray,
+  FieldProps,
+  Formik,
+  FormikErrors,
+  FormikProps,
+} from 'formik'
 import React, { MutableRefObject, useEffect, useRef, useState } from 'react'
 
 import { bibliographyItemTypes } from '../../../lib/references'
@@ -46,6 +55,13 @@ const bibliographyItemTypeOptions: OptionType[] = bibliographyItemTypes.map(
     value: i[0],
   })
 )
+
+const isAuthorRequired = (type?: BibliographyItemType) =>
+  type === 'article-journal'
+
+const hasAuthorName = (author: CSL.Person) =>
+  !!(author.family?.trim() || author.literal?.trim())
+
 export interface ReferenceFormActions {
   reset: () => void
   submit: () => void
@@ -53,7 +69,7 @@ export interface ReferenceFormActions {
 }
 
 export const validateReference = (values: BibliographyItemAttrs) => {
-  const errors: Partial<BibliographyItemAttrs> = {}
+  const errors: FormikErrors<BibliographyItemAttrs> = {}
 
   if (values.type === 'literal') {
     if (!values.literal?.trim()) {
@@ -62,6 +78,9 @@ export const validateReference = (values: BibliographyItemAttrs) => {
   } else {
     if (!values.title?.trim()) {
       errors.title = 'Title is required'
+    }
+    if (isAuthorRequired(values.type) && !values.author?.some(hasAuthorName)) {
+      errors.author = 'At least one author name is required'
     }
   }
   return errors
@@ -179,7 +198,12 @@ export const ReferenceForm: React.FC<{
                       $justify="space-between"
                       $align="center"
                     >
-                      <Label>Authors</Label>
+                      <Label>
+                        Authors
+                        {isAuthorRequired(formik.values.type) && (
+                          <RequiredIndicator>*</RequiredIndicator>
+                        )}
+                      </Label>
 
                       <Button
                         onClick={() => {
@@ -205,6 +229,11 @@ export const ReferenceForm: React.FC<{
                             type="author"
                           />
                         ))}
+                        {typeof formik.errors.author === 'string' && (
+                          <InputErrorText>
+                            {formik.errors.author}
+                          </InputErrorText>
+                        )}
                       </div>
                     </FormRow>
                   )}
