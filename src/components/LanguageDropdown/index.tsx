@@ -20,10 +20,15 @@ import {
   TickIcon,
   TriangleCollapsedIcon,
 } from '@manuscripts/style-guide'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 
-import { getLanguage, getLanguageLabel, Language } from '../../lib/languages'
+import {
+  getLanguage,
+  getLanguageLabel,
+  Language,
+  languagesFromCodes,
+} from '../../lib/languages'
 
 interface LanguageDropdownProps {
   onLanguageSelect: (languageCode: string) => void
@@ -33,7 +38,7 @@ interface LanguageDropdownProps {
   buttonLabel?: string
   selectedLanguageDisplay?: string
   onCloseParent?: () => void
-  languages: Language[]
+  languageCodes: string[]
   menuItemRef?: (el: HTMLDivElement | null) => void
 }
 
@@ -78,9 +83,13 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
   showButton = false,
   selectedLanguageDisplay,
   onCloseParent,
-  languages,
+  languageCodes,
   menuItemRef,
 }) => {
+  const languages = useMemo(
+    () => languagesFromCodes(languageCodes),
+    [languageCodes]
+  )
   const [isOpen, setIsOpen] = useState(!showButton)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const dropdownMenuRef = useRef<HTMLDivElement>(null)
