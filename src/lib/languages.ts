@@ -19,7 +19,22 @@
 // hand-maintained (and kept in sync) in every host app.
 const englishNames = new Intl.DisplayNames(['en'], { type: 'language' })
 
+// The same codes get looked up repeatedly (a document's own lang attr on
+// every widget re-render, the same menu options every time it opens) —
+// cache by code rather than re-resolving via Intl.DisplayNames each time.
+const labelCache = new Map<string, string>()
+
 export const getLanguageLabel = (code: string): string => {
+  const cached = labelCache.get(code)
+  if (cached !== undefined) {
+    return cached
+  }
+  const label = computeLanguageLabel(code)
+  labelCache.set(code, label)
+  return label
+}
+
+const computeLanguageLabel = (code: string): string => {
   try {
     const name = englishNames.of(code) ?? code
     const nativeName = new Intl.DisplayNames([code], { type: 'language' }).of(
