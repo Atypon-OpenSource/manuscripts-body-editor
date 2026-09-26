@@ -14,14 +14,8 @@
  * limitations under the License.
  */
 
-// Host apps send just the codes they support; display names come from the
-// browser's own CLDR data via Intl.DisplayNames rather than being
-// hand-maintained (and kept in sync) in every host app.
 const englishNames = new Intl.DisplayNames(['en'], { type: 'language' })
 
-// The same codes get looked up repeatedly (a document's own lang attr on
-// every widget re-render, the same menu options every time it opens) —
-// cache by code rather than re-resolving via Intl.DisplayNames each time.
 const labelCache = new Map<string, string>()
 
 export const getLanguageLabel = (code: string): string => {
@@ -42,9 +36,6 @@ const computeLanguageLabel = (code: string): string => {
     )
     return nativeName && nativeName !== name ? `${name} (${nativeName})` : name
   } catch {
-    // Intl.DisplayNames throws RangeError on a malformed/empty code (e.g. a
-    // stale value from an older document) — fall back to showing it as-is
-    // rather than crashing the widget.
     return code || 'English'
   }
 }
