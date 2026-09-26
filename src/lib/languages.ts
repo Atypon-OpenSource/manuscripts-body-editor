@@ -14,24 +14,22 @@
  * limitations under the License.
  */
 
-export interface Language {
-  code: string
-  name: string
-  nativeName: string
-}
+// Host apps send just the codes they support; display names come from the
+// browser's own CLDR data via Intl.DisplayNames rather than being
+// hand-maintained (and kept in sync) in every host app.
+const englishNames = new Intl.DisplayNames(['en'], { type: 'language' })
 
-const ENGLISH = {
-  code: 'en',
-  name: 'English',
-  nativeName: 'English',
-}
-
-export const getLanguage = (code: string, languages: Language[]) => {
-  return languages.find((l) => l.code === code) || ENGLISH
-}
-
-export const getLanguageLabel = (language: Language) => {
-  return language.nativeName && language.nativeName !== language.name
-    ? `${language.name} (${language.nativeName})`
-    : language.name
+export const getLanguageLabel = (code: string): string => {
+  try {
+    const name = englishNames.of(code) ?? code
+    const nativeName = new Intl.DisplayNames([code], { type: 'language' }).of(
+      code
+    )
+    return nativeName && nativeName !== name ? `${name} (${nativeName})` : name
+  } catch {
+    // Intl.DisplayNames throws RangeError on a malformed/empty code (e.g. a
+    // stale value from an older document) — fall back to showing it as-is
+    // rather than crashing the widget.
+    return code || 'English'
+  }
 }
