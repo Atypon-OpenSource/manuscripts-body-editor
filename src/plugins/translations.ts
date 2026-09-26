@@ -27,7 +27,7 @@ import { Decoration, DecorationSet } from 'prosemirror-view'
 import { insertTransAbstract, insertTransGraphicalAbstract } from '../commands'
 import { EditorProps } from '../configs/ManuscriptsEditor'
 import { addIcon, translateIcon } from '../icons'
-import { getLanguage, getLanguageLabel, languagesFromCodes } from '../lib/languages'
+import { getLanguageLabel } from '../lib/languages'
 import {
   createKeyboardInteraction,
   handleEnterKey,
@@ -77,15 +77,15 @@ const createLanguageMenu = (
     removeKeydownListener()
     props.popper.destroy()
   }
-  languagesFromCodes(props.languageCodes).forEach((language, index) => {
+  props.languageCodes.forEach((code, index) => {
     const item = createMenuItem(
       props,
-      getLanguageLabel(language),
+      getLanguageLabel(code),
       () => {
-        onSelect(language.code)
+        onSelect(code)
         destroy()
       },
-      selectedCode === language.code,
+      selectedCode === code,
       index === 0 ? 0 : -1
     )
     menuItems.push(item)
@@ -186,8 +186,7 @@ export default (props: EditorProps) =>
                   $btn.tabIndex = canEdit ? 0 : -1
 
                   const code = node.attrs.lang || 'en'
-                  const lang = getLanguage(code, languagesFromCodes(props.languageCodes))
-                  const label = getLanguageLabel(lang)
+                  const label = getLanguageLabel(code)
                   $btn.innerHTML = `<span>${label}</span> ${translateIcon}`
 
                   if (canEdit) {

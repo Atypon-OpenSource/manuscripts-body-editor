@@ -20,15 +20,10 @@ import {
   TickIcon,
   TriangleCollapsedIcon,
 } from '@manuscripts/style-guide'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
-import {
-  getLanguage,
-  getLanguageLabel,
-  Language,
-  languagesFromCodes,
-} from '../../lib/languages'
+import { getLanguageLabel } from '../../lib/languages'
 
 interface LanguageDropdownProps {
   onLanguageSelect: (languageCode: string) => void
@@ -43,30 +38,29 @@ interface LanguageDropdownProps {
 }
 
 const LanguageOptionItem: React.FC<{
-  language: Language
+  code: string
   isSelected: boolean
   onSelect: (
     event: React.MouseEvent | React.KeyboardEvent,
     languageCode: string
   ) => void
-}> = ({ language, isSelected, onSelect }) => {
+}> = ({ code, isSelected, onSelect }) => {
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter') {
       event.preventDefault()
-      onSelect(event, language.code)
+      onSelect(event, code)
     }
   }
 
   return (
     <StyledLanguageOption
-      key={language.code}
-      onClick={(event) => onSelect(event, language.code)}
+      key={code}
+      onClick={(event) => onSelect(event, code)}
       onKeyDown={handleKeyDown}
       tabIndex={0}
       role="submenuitem"
     >
-      {language.name}
-      {language.nativeName && ` (${language.nativeName})`}
+      {getLanguageLabel(code)}
       {isSelected && (
         <TickIconWrapper>
           <TickIcon />
@@ -86,10 +80,6 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
   languageCodes,
   menuItemRef,
 }) => {
-  const languages = useMemo(
-    () => languagesFromCodes(languageCodes),
-    [languageCodes]
-  )
   const [isOpen, setIsOpen] = useState(!showButton)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const dropdownMenuRef = useRef<HTMLDivElement>(null)
@@ -178,11 +168,6 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
     onLanguageSelect(languageCode)
   }
 
-  const getDisplayName = (languageCode: string) => {
-    const lang = getLanguage(languageCode, languages)
-    return getLanguageLabel(lang)
-  }
-
   return (
     <DropdownContainer ref={dropdownRef}>
       {showButton && (
@@ -201,7 +186,7 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
               Document language <TriangleCollapsedIcon />
             </ButtonLabel>
             <SelectedLanguage>
-              {selectedLanguageDisplay || getDisplayName(currentLanguage)}
+              {selectedLanguageDisplay || getLanguageLabel(currentLanguage)}
             </SelectedLanguage>
           </ButtonContent>
         </LanguageButton>
@@ -218,11 +203,11 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({
           role="menu"
         >
           {!showButton && <DropdownTitle>Choose language</DropdownTitle>}
-          {languages.map((language) => (
+          {languageCodes.map((code) => (
             <LanguageOptionItem
-              key={language.code}
-              language={language}
-              isSelected={currentLanguage === language.code}
+              key={code}
+              code={code}
+              isSelected={currentLanguage === code}
               onSelect={handleSelect}
             />
           ))}
