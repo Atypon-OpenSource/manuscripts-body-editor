@@ -248,7 +248,7 @@ const getReferencedIcon = (type: NodeType): React.ReactNode => {
 
 const Container = styled(ModalContainer)<{ $isScrolling: boolean }>`
   position: absolute;
-  top: 1rem;
+  top: ${({ $isScrolling }) => ($isScrolling ? '1rem' : '30%')};
   left: ${({ $isScrolling }) =>
     $isScrolling ? 'calc(100% - 556px - 0rem)' : '50%'};
   max-height: calc(60vh - 2rem);
