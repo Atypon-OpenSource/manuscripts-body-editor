@@ -37,19 +37,6 @@ export const Button = styled(IconButton).attrs({
   }
 `
 
-export const Actions = styled.div`
-  flex-shrink: 1;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  .tooltip {
-    max-width: ${(props) => props.theme.grid.unit * 39}px;
-    padding: ${(props) => props.theme.grid.unit * 2}px;
-    border-radius: 6px;
-  }
-`
-
 export const ReferenceTextField = styled(TextField)`
   padding: ${(props) => props.theme.grid.unit * 2}px
     ${(props) => props.theme.grid.unit * 3}px;
