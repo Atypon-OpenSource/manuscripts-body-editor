@@ -60,7 +60,7 @@ const isAuthorRequired = (type?: BibliographyItemType) =>
   type === 'article-journal'
 
 const hasAuthorName = (author: CSL.Person) =>
-  !!(author.family?.trim() || author.literal?.trim())
+  !!(author.given?.trim() || author.family?.trim() || author.literal?.trim())
 
 export interface ReferenceFormActions {
   reset: () => void
