@@ -133,19 +133,21 @@
 
 .ProseMirror .figure-block {
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
   border: 1px solid #f2f2f2;
   border-radius: 4px;
   margin: 16px 0 0 !important;
   box-sizing: border-box;
-  justify-self: center;
+  justify-self: stretch;
   position: relative;
+  padding: 8px;
 }
 .ProseMirror .figure-block-group {
   width: 100%;
   border: 1px solid #f2f2f2;
   border-radius: 4px;
   position: relative;
-  padding: 8px;
 }
 
 .ProseMirror .figure-block {
@@ -436,6 +438,268 @@
 
 .tools-panel button svg {
   max-width: 16px;
+}
+
+.add-caption-file-button {
+  text-align: left;
+  display: none;
+  max-width: 100%;
+  min-width: 0;
+  margin-top: 12px;
+}
+
+.ProseMirror .show_accessibility_element .add-caption-file-button {
+  display: block;
+}
+
+.add-caption-file-inner.tools-panel {
+  position: static;
+}
+
+.ProseMirror .figure.placeholder.caption-file-placeholder {
+  position: relative;
+  width: 100%;
+  max-width: none;
+  height: 72px;
+  min-height: 72px;
+  max-height: 72px;
+  box-sizing: border-box;
+  padding: 0;
+  overflow: visible;
+  align-items: stretch;
+  justify-content: center;
+  text-align: center;
+}
+
+.ProseMirror .caption-file-placeholder .instructions {
+  align-self: stretch;
+  flex: 1 1 auto;
+  width: 100%;
+  height: 72px;
+  max-height: 72px;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ProseMirror .caption-file-placeholder .instructions > div {
+  width: auto;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.ProseMirror .caption-file-placeholder p,
+.ProseMirror .caption-file-placeholder .caption-file-browse-link {
+  margin: 0;
+  color: #6e6e6e;
+  font-family: Lato, sans-serif;
+  font-weight: 400;
+  line-height: 1.3;
+}
+
+.ProseMirror .caption-file-placeholder .caption-file-placeholder-hint {
+  margin-top: 4px;
+  color: #6e6e6e;
+  font-size: 12px;
+}
+
+.ProseMirror .caption-file-placeholder .caption-file-browse-link {
+  color: #0d79d0;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.caption-file-placeholder-close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid var(--greys-seashell-grey-f-2-f-2-f-2, #f2f2f2);
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12);
+  line-height: 0;
+  cursor: pointer;
+  transform: translate(50%, -50%);
+}
+
+.caption-file-placeholder-close svg {
+  width: 10px;
+  height: 10px;
+}
+
+.caption-file-placeholder-close svg path {
+  fill: #6e6e6e;
+  stroke: #6e6e6e;
+}
+
+.caption-file-list {
+  max-width: 100%;
+  min-width: 0;
+  margin-bottom: 8px;
+  text-align: left;
+}
+
+.caption-file-list-title {
+  margin-bottom: 8px;
+  color: #353535;
+  font-family: Lato, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.3;
+}
+
+.caption-file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  margin-bottom: 8px;
+  padding: 8px;
+  border: 1px solid #e2e2e2;
+  border-radius: 4px;
+  background: #f2f2f2;
+  box-sizing: border-box;
+}
+
+.caption-file-item-file {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 70%;
+  min-width: 0;
+}
+
+.caption-file-item-icon {
+  display: flex;
+  flex: 0 0 auto;
+  color: #353535;
+}
+
+.caption-file-item-icon svg {
+  width: 19px;
+  height: 19px;
+}
+
+.caption-file-item-name {
+  min-width: 0;
+  overflow: hidden;
+  color: #353535;
+  font-family: Lato, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.caption-file-language {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  color: #353535;
+  font-family: Lato, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.caption-file-language-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #353535;
+  font-family: Lato, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 24px;
+  cursor: pointer;
+}
+
+.caption-file-language-value {
+  white-space: nowrap;
+}
+
+.caption-file-language-arrow {
+  display: flex;
+  pointer-events: none;
+}
+
+.caption-file-language-arrow svg,
+.caption-file-language-arrow svg path {
+  fill: #6e6e6e;
+}
+
+.caption-file-delete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.caption-file-delete svg,
+.caption-file-delete svg path,
+.caption-file-delete svg rect {
+  fill: #6e6e6e;
+}
+
+.ProseMirror .figure.placeholder.caption-file-unsupported {
+  height: auto;
+  min-height: 180px;
+  max-height: none;
+  padding: 24px 16px;
+}
+
+.ProseMirror .caption-file-unsupported .instructions {
+  height: auto;
+  max-height: none;
+}
+
+.ProseMirror .caption-file-unsupported .unsupported-icon-wrapper {
+  padding: 0 0 8px;
+}
+
+.ProseMirror .caption-file-unsupported .caption-file-unsupported-name,
+.ProseMirror .caption-file-unsupported .caption-file-unsupported-action {
+  color: #6e6e6e;
+  font-family: Lato, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.3;
+}
+
+.ProseMirror .caption-file-unsupported .unsupported-format-label {
+  padding: 8px 0;
+  color: #353535;
+  font-family: Lato, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.3;
 }
 
 .popper[data-popper-placement] .tools-panel {

@@ -13,14 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { EmbedNode } from '@manuscripts/transform'
+import { AddCircleIcon } from '@manuscripts/style-guide'
+import { Button } from '@manuscripts/style-guide/mui'
+import { EmbedNode, ExtLink } from '@manuscripts/transform'
 import isEqual from 'lodash/isEqual'
 import { NodeSelection } from 'prosemirror-state'
+import React from 'react'
 
 import {
   NoPreviewMessageWithLink,
   openEmbedDialog,
 } from '../components/toolbar/InsertEmbedDialog'
+import {
+  addCaptionLink,
+  CaptionFileItem,
+  captionFileAccept,
+  captionLinkType,
+  createCaptionFileList,
+  createCaptionFilePlaceholder,
+  createUnsupportedCaptionFile,
+  isCaptionFile,
+  removeCaptionLink,
+  setCaptionLinkLanguage,
+} from '../lib/captions'
 import { getMediaTypeInfo } from '../lib/get-media-type'
 import {
   addInteractionHandlers,
@@ -42,6 +57,7 @@ import ReactSubView from './ReactSubView'
 export class EmbedView extends BlockView<Trackable<EmbedNode>> {
   private container: HTMLElement
   private figureBlock: HTMLElement
+  private captionFileContainer: HTMLElement
   private preview: HTMLElement | null = null
   public reactTools: HTMLDivElement | null = null
   public ignoreMutation = () => true
@@ -50,6 +66,7 @@ export class EmbedView extends BlockView<Trackable<EmbedNode>> {
     href?: string
     mimetype?: string
     mimeSubtype?: string
+    extLinks?: ExtLink[]
   } = {}
 
   public createElement = () => {
@@ -63,7 +80,137 @@ export class EmbedView extends BlockView<Trackable<EmbedNode>> {
     this.contentDOM = document.createElement('div')
     figureBlock.appendChild(this.contentDOM)
 
+    this.captionFileContainer = document.createElement('div')
+    this.captionFileContainer.classList.add('add-caption-file-button')
+    figureBlock.appendChild(this.captionFileContainer)
+
     this.figureBlock = figureBlock
+  }
+
+  private getCaptionFiles = (): CaptionFileItem[] => {
+    const extLinks = (this.node.attrs.extLinks || []) as ExtLink[]
+    const files = this.props.getFiles()
+
+    return extLinks
+      .filter((link) => link.type === captionLinkType)
+      .map((link) => ({
+        id: link.href,
+        name:
+          link.label ||
+          files.find((file) => file.id === link.href)?.name ||
+          link.href,
+        language: link.lang || '',
+      }))
+  }
+
+  private setExtLinks = (extLinks: ExtLink[]) => {
+    const pos = this.getPos()
+    const tr = this.view.state.tr
+    tr.setNodeMarkup(pos, undefined, {
+      ...this.node.attrs,
+      extLinks,
+    })
+    this.view.dispatch(tr)
+  }
+
+  private appendCaptionFiles = () => {
+    const captionFiles = this.getCaptionFiles()
+    if (!captionFiles.length) {
+      return
+    }
+    this.captionFileContainer.appendChild(
+      createCaptionFileList(
+        captionFiles,
+        this.props.languages || [],
+        this.updateCaptionFileLanguage,
+        this.deleteCaptionFile,
+        this.showCaptionLanguageMenu
+      )
+    )
+  }
+
+  private renderCaptionFileSection = (extra?: HTMLElement) => {
+    this.captionFileContainer.innerHTML = ''
+    this.appendCaptionFiles()
+    this.captionFileContainer.appendChild(
+      extra || this.createAddCaptionFileButton()
+    )
+  }
+
+  private createAddCaptionFileButton = () =>
+    ReactSubView(
+      this.props,
+      () =>
+        React.createElement(
+          Button,
+          {
+            variant: 'tertiary',
+            startIcon: React.createElement(AddCircleIcon),
+            onClick: this.renderCaptionFilePlaceholder,
+          },
+          'Add caption file'
+        ),
+      {},
+      this.node,
+      this.getPos,
+      this.view,
+      ['add-caption-file-inner']
+    )
+
+  private renderCaptionFilePlaceholder = () => {
+    const placeholder = createCaptionFilePlaceholder(
+      () => this.renderCaptionFileSection()
+    )
+    addInteractionHandlers(
+      placeholder,
+      this.uploadCaptionFile,
+      captionFileAccept
+    )
+    this.renderCaptionFileSection(placeholder)
+  }
+
+  private uploadCaptionFile = async (file: File) => {
+    if (!isCaptionFile(file)) {
+      this.renderUnsupportedCaptionFile(file.name)
+      return
+    }
+
+    const result = await this.props.fileManagement.upload(file)
+    this.setExtLinks(
+      addCaptionLink(this.node.attrs.extLinks, {
+        id: result.id,
+        name: file.name,
+      })
+    )
+  }
+
+  private showCaptionLanguageMenu = (anchor: HTMLElement, menu: HTMLElement) => {
+    this.props.popper.destroy()
+    this.props.popper.show(anchor, menu, 'bottom-end', false)
+    return () => this.props.popper.destroy()
+  }
+
+  private updateCaptionFileLanguage = (id: string, language: string) => {
+    this.setExtLinks(
+      setCaptionLinkLanguage(this.node.attrs.extLinks, id, language)
+    )
+  }
+
+  private deleteCaptionFile = (id: string) => {
+    this.setExtLinks(removeCaptionLink(this.node.attrs.extLinks, id))
+  }
+
+  private renderUnsupportedCaptionFile = (filename: string) => {
+    const placeholder = createUnsupportedCaptionFile(
+      filename,
+      () => this.renderCaptionFileSection()
+    )
+    addInteractionHandlers(
+      placeholder,
+      this.uploadCaptionFile,
+      captionFileAccept
+    )
+    this.renderCaptionFileSection(placeholder)
   }
 
   upload = async (file: File) => {
@@ -85,17 +232,28 @@ export class EmbedView extends BlockView<Trackable<EmbedNode>> {
 
   public updateContents() {
     super.updateContents()
-    const { href, mimetype, mimeSubtype } = this.node.attrs
+    const { href, mimetype, mimeSubtype, extLinks } = this.node.attrs
 
-    const currentAttrs = { href, mimetype, mimeSubtype }
+    const currentAttrs = { href, mimetype, mimeSubtype, extLinks }
     const contentChanged =
       !this.initialized || !isEqual(this.previousAttrs, currentAttrs)
+    const mediaChanged =
+      !this.initialized ||
+      this.previousAttrs.href !== href ||
+      this.previousAttrs.mimetype !== mimetype ||
+      this.previousAttrs.mimeSubtype !== mimeSubtype
+    const captionsChanged = !isEqual(this.previousAttrs.extLinks, extLinks)
 
     if (contentChanged) {
       this.initialized = true
       this.previousAttrs = currentAttrs
-      this.updateMediaPreview()
-      this.manageReactTools()
+      if (captionsChanged) {
+        this.renderCaptionFileSection()
+      }
+      if (mediaChanged) {
+        this.updateMediaPreview()
+        this.manageReactTools()
+      }
     }
   }
 
