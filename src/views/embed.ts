@@ -158,8 +158,8 @@ export class EmbedView extends BlockView<Trackable<EmbedNode>> {
     )
 
   private renderCaptionFilePlaceholder = () => {
-    const placeholder = createCaptionFilePlaceholder(
-      () => this.renderCaptionFileSection()
+    const placeholder = createCaptionFilePlaceholder(() =>
+      this.renderCaptionFileSection()
     )
     addInteractionHandlers(
       placeholder,
@@ -184,7 +184,10 @@ export class EmbedView extends BlockView<Trackable<EmbedNode>> {
     )
   }
 
-  private showCaptionLanguageMenu = (anchor: HTMLElement, menu: HTMLElement) => {
+  private showCaptionLanguageMenu = (
+    anchor: HTMLElement,
+    menu: HTMLElement
+  ) => {
     this.props.popper.destroy()
     this.props.popper.show(anchor, menu, 'bottom-end', false)
     return () => this.props.popper.destroy()
@@ -201,9 +204,8 @@ export class EmbedView extends BlockView<Trackable<EmbedNode>> {
   }
 
   private renderUnsupportedCaptionFile = (filename: string) => {
-    const placeholder = createUnsupportedCaptionFile(
-      filename,
-      () => this.renderCaptionFileSection()
+    const placeholder = createUnsupportedCaptionFile(filename, () =>
+      this.renderCaptionFileSection()
     )
     addInteractionHandlers(
       placeholder,

@@ -72,12 +72,7 @@ export const ReferenceForm: React.FC<{
   onChange: (values: BibliographyItemAttrs) => void
   onSave: (values: BibliographyItemAttrs) => void
   actionsRef?: MutableRefObject<ReferenceFormActions | undefined>
-}> = ({
-  values,
-  onChange,
-  onSave,
-  actionsRef,
-}) => {
+}> = ({ values, onChange, onSave, actionsRef }) => {
   const fieldsRef = useRef<HTMLDivElement>(null)
   const formRef = useRef<FormikProps<BibliographyItemAttrs>>(null)
   const [newAuthorIndex, setNewAuthorIndex] = useState<number>()
