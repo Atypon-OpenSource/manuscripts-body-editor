@@ -15,6 +15,7 @@
  */
 import {
   ManuscriptNode,
+  ManuscriptNodeType,
   ManuscriptTransaction,
   schema,
 } from '@manuscripts/transform'
@@ -25,6 +26,7 @@ import { createToggleButton } from '../lib/utils'
 
 export interface PluginState {
   expandButtonDecorations: Decoration[]
+  ariaLabelsDecorations: Decoration[]
   expandedElementDecorations: Decoration[]
   expandedElementIDs: Set<string>
 }
@@ -101,6 +103,33 @@ const buildExpandButtonDecorations = (doc: ManuscriptNode) => {
   return decorations
 }
 
+const ariaLabels: Map<ManuscriptNodeType, Record<string, string>> = new Map([
+  [
+    schema.nodes.headshot_element,
+    { caption: 'Headshot Summary', caption_title: 'Headshot Name' },
+  ],
+])
+
+const isCaptionNode = (node: ManuscriptNode) =>
+  node.type === schema.nodes.caption_title || node.type === schema.nodes.caption
+
+const buildAriaLabelsDecorations = (doc: ManuscriptNode) => {
+  const decorations: Decoration[] = []
+  doc.descendants((node, pos, parent) => {
+    if (isCaptionNode(node) && parent && ariaLabels.has(parent.type)) {
+      const arialLabel = ariaLabels.get(parent.type)
+      if (arialLabel) {
+        decorations.push(
+          Decoration.node(pos, pos + node.nodeSize, {
+            'aria-label': arialLabel[node.type.name],
+          })
+        )
+      }
+    }
+  })
+  return decorations
+}
+
 const buildExpandedElementsDecorations = (
   doc: ManuscriptNode,
   expandedElementIDs: Set<string>,
@@ -130,6 +159,7 @@ export default () => {
       init(config, instance) {
         return {
           expandButtonDecorations: buildExpandButtonDecorations(instance.doc),
+          ariaLabelsDecorations: buildAriaLabelsDecorations(instance.doc),
           expandedElementDecorations: [],
           expandedElementIDs: new Set(),
         }
@@ -137,12 +167,14 @@ export default () => {
       apply(tr, value, oldState, newState) {
         const s = {
           expandButtonDecorations: value.expandButtonDecorations,
+          ariaLabelsDecorations: value.ariaLabelsDecorations,
           expandedElementDecorations: value.expandedElementDecorations,
           expandedElementIDs: new Set(value.expandedElementIDs),
         }
 
         if (tr.docChanged) {
           s.expandButtonDecorations = buildExpandButtonDecorations(newState.doc)
+          s.ariaLabelsDecorations = buildAriaLabelsDecorations(newState.doc)
         }
 
         let expandedElementIDsChanged = false
@@ -191,6 +223,7 @@ export default () => {
         if (pluginState) {
           return DecorationSet.create(state.doc, [
             ...pluginState.expandButtonDecorations,
+            ...pluginState.ariaLabelsDecorations,
             ...pluginState.expandedElementDecorations,
           ])
         }
