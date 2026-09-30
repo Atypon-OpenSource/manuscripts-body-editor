@@ -315,7 +315,8 @@
 /* Shared typography for all label variants */
 .ProseMirror .element-label,
 .ProseMirror .caption-title[element-label]::before,
-.ProseMirror .caption-description > [element-label]::before {
+.ProseMirror .caption-description > [element-label]::before,
+.ProseMirror .attribution::before {
   color: #353535;
   font-style: normal;
   font-weight: 700;
@@ -324,7 +325,8 @@
 }
 
 .ProseMirror .caption-title[element-label]::before,
-.ProseMirror .caption-description > [element-label]::before {
+.ProseMirror .caption-description > [element-label]::before,
+.ProseMirror .attribution::before {
   content: attr(element-label) ':';
 }
 
@@ -344,7 +346,7 @@
 .ProseMirror .caption-description,
 .ProseMirror .caption-title,
 .ProseMirror .element-label,
-.ProseMirror :not(.pullquote, blockquote) > .attribution {
+.ProseMirror .attribution {
   font-size: 14px;
   outline: none;
   margin: 0;
@@ -634,7 +636,7 @@
   fill: #6e6e6e !important;
 }
 
-.ProseMirror .empty-node:hover::before {
+.ProseMirror .empty-node:not(.attribution):hover::before {
   color: #6e6e6e;
 }
 

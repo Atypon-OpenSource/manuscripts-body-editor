@@ -114,7 +114,7 @@ export default () =>
                 parent?.type === schema.nodes.blockquote_element
               const placeholder = isQuoteParent
                 ? 'Insert reference here'
-                : 'Attribution'
+                : 'Add image attributions e.g Photo: Jane Grey ....'
               decorations.push(
                 Decoration.widget(pos + 1, placeholderWidget(placeholder))
                 )

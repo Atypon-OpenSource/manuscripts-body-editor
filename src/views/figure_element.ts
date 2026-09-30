@@ -88,7 +88,7 @@ export class FigureElementView extends ImageElementView {
     const containerRect = this.container.getBoundingClientRect()
 
     // Calculate position relative to container
-    const relativeTop = lastFigureRect.bottom - containerRect.top + 20
+    const relativeTop = lastFigureRect.bottom - containerRect.top
     this.addFigureBtn.style.top = `${relativeTop}px`
   }
 
