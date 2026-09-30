@@ -20,6 +20,7 @@ import { NodeViewCreator } from '../types'
 import abstracts from '../views/abstracts'
 import accessibilityElement from '../views/accessibility_element'
 import affiliations from '../views/affiliations'
+import attribution from '../views/attribution'
 import alt_title from '../views/alt_title'
 import alt_titles_section from '../views/alt_titles_section'
 import attachment from '../views/attachment'
@@ -84,6 +85,7 @@ export default (
     title: title(props, dispatch),
     subtitles: subtitles(props, dispatch),
     subtitle: subtitle(props, dispatch),
+    attribution: attribution(props),
     alt_title: alt_title(props),
     alt_titles: alt_titles_section(props),
     bibliography_element: bibliographyElement(props, dispatch),
