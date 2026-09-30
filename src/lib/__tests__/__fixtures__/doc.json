@@ -272,6 +272,9 @@
                   "content": [{ "type": "text_block" }]
                 },
                 {
+                  "type": "attribution"
+                },
+                {
                   "type": "alt_text"
                 },
                 {

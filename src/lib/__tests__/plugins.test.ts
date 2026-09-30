@@ -153,7 +153,7 @@ describe('editor view', () => {
     )
 
     const figureElement = sectionWithFigure.content.child(1)
-    expect(figureElement.childCount).toBe(5)
+    expect(figureElement.childCount).toBe(6)
     expect(figureElement.type).toBe(schema.nodes.figure_element)
     expect(figureElement.content.child(0).type).toBe(schema.nodes.figure)
     expect(figureElement.content.child(1).type).toBe(schema.nodes.caption)
