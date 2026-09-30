@@ -147,9 +147,7 @@ export class CrossReferenceEditableView extends CrossReferenceView {
 
     const can = this.props.getCapabilities()
 
-    const targets = objectsKey.getState(this.view.state) as Map<string, Target>
-    const rid = this.node.attrs.rids[0]
-    const isOrphaned = !targets?.get(rid)
+    const isOrphaned = this.isOrphaned()
 
     const actions: ContextMenuProps['actions'] = [
       {
@@ -173,7 +171,6 @@ export class CrossReferenceEditableView extends CrossReferenceView {
         label: 'Edit',
         icon: 'Edit',
         action: () => this.handleEdit(),
-        disabled: isOrphaned,
       })
     }
 
