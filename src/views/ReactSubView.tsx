@@ -53,7 +53,7 @@ export interface ReactViewComponentProps<NodeT extends ManuscriptNode> {
     getPos: () => number
     node: ManuscriptNode | Trackable<ManuscriptNode>
   }
-  container: HTMLDivElement
+  container: SubViewContainer
 }
 /*
   This is to render components that affect the Prosemirror Document indirectly. Such as dropdown buttons, inputs, advanced UX elements etc.

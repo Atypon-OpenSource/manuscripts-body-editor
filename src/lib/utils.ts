@@ -33,6 +33,7 @@ import {
 import { EditorState, Selection } from 'prosemirror-state'
 import {
   ContentNodeWithPos,
+  findChildren,
   findChildrenByType,
   findParentNode,
   findParentNodeOfTypeClosestToPos,
@@ -331,4 +332,27 @@ export const getLastTitleNode = (state: ManuscriptEditorState) => {
 
   const titleNode = findChildrenByType(state.doc, state.schema.nodes.title)[0]
   return titleNode
+}
+
+export const getSurroundingText = (pos: ResolvedPos, node: ManuscriptNode) => {
+  const nodeContent = findChildren(
+    pos.node(),
+    (child) => child.attrs.id === node.attrs.id
+  )[0]
+
+  const content = pos.node().content
+  const MAX_LENGTH = 40
+
+  const nodeStart = nodeContent.pos
+  const nodeEnd = nodeContent.pos + node.nodeSize
+
+  const leftHandText = content.textBetween(
+    nodeStart > MAX_LENGTH ? nodeStart - MAX_LENGTH : 0,
+    nodeStart
+  )
+  const rightHandText = content.textBetween(
+    nodeEnd,
+    Math.min(nodeEnd + MAX_LENGTH, content.size)
+  )
+  return { leftHandText, rightHandText }
 }
