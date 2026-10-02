@@ -14,24 +14,28 @@
  * limitations under the License.
  */
 
-export interface Language {
-  code: string
-  name: string
-  nativeName: string
+const englishNames = new Intl.DisplayNames(['en'], { type: 'language' })
+
+const labelCache = new Map<string, string>()
+
+export const getLanguageLabel = (code: string): string => {
+  const cached = labelCache.get(code)
+  if (cached !== undefined) {
+    return cached
+  }
+  const label = computeLanguageLabel(code)
+  labelCache.set(code, label)
+  return label
 }
 
-const ENGLISH = {
-  code: 'en',
-  name: 'English',
-  nativeName: 'English',
-}
-
-export const getLanguage = (code: string, languages: Language[]) => {
-  return languages.find((l) => l.code === code) || ENGLISH
-}
-
-export const getLanguageLabel = (language: Language) => {
-  return language.nativeName && language.nativeName !== language.name
-    ? `${language.name} (${language.nativeName})`
-    : language.name
+const computeLanguageLabel = (code: string): string => {
+  try {
+    const name = englishNames.of(code) ?? code
+    const nativeName = new Intl.DisplayNames([code], { type: 'language' }).of(
+      code
+    )
+    return nativeName && nativeName !== name ? `${name} (${nativeName})` : name
+  } catch {
+    return code || 'English'
+  }
 }
