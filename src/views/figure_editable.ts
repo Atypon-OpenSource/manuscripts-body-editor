@@ -29,10 +29,11 @@ import {
 } from '../lib/media'
 import { createEditableNodeView } from './creators'
 import { FigureView } from './figure'
+import { SubViewContainer } from './ReactSubView'
 import { isDeleted } from '@manuscripts/track-changes-plugin'
 
 export class FigureEditableView extends FigureView {
-  public reactTools: HTMLDivElement | null = null
+  public reactTools: SubViewContainer | null = null
   positionMenuWrapper: HTMLDivElement
   figurePosition: string
   private dragHandle: HTMLDivElement | undefined
@@ -289,7 +290,7 @@ export class FigureEditableView extends FigureView {
   }
 
   private manageReactTools() {
-    this.reactTools?.remove()
+    this.reactTools?.destroy()
 
     const handlers = createFileHandlers(
       this.node.attrs,

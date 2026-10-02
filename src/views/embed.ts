@@ -37,13 +37,13 @@ import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createEditableNodeView } from './creators'
 import { EditableBlock } from './editable_block'
-import ReactSubView from './ReactSubView'
+import ReactSubView, { SubViewContainer } from './ReactSubView'
 
 export class EmbedView extends BlockView<Trackable<EmbedNode>> {
   private container: HTMLElement
   private figureBlock: HTMLElement
   private preview: HTMLElement | null = null
-  public reactTools: HTMLDivElement | null = null
+  public reactTools: SubViewContainer | null = null
   public ignoreMutation = () => true
   private initialized = false
   private previousAttrs: {
@@ -100,7 +100,7 @@ export class EmbedView extends BlockView<Trackable<EmbedNode>> {
   }
 
   private manageReactTools() {
-    this.reactTools?.remove()
+    this.reactTools?.destroy()
 
     let handlers: FileHandlers | undefined
     const can = this.props.getCapabilities()
