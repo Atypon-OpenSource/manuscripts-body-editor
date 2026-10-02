@@ -24,6 +24,8 @@ import {
   TertiaryButton,
   RadioButton,
   WebLinkIcon,
+  withFocusTrap,
+  IconButton,
 } from '@manuscripts/style-guide'
 import { ManuscriptNode, schema } from '@manuscripts/transform'
 import { NodeType, ResolvedPos } from 'prosemirror-model'
