@@ -210,6 +210,13 @@ export class CitationEditableView extends CitationView {
     }
   }
 
+  public deselectNode() {
+    if (!this.editor) {
+      this.props.popper.destroy()
+    }
+    this.dom.classList.remove('ProseMirror-selectednode')
+  }
+
   private handleSave = (attrs: BibliographyItemAttrs[]) => {
     saveBibliographyItem(this.view, attrs)
   }
@@ -231,6 +238,7 @@ export class CitationEditableView extends CitationView {
 
     this.view.dispatch(tr)
     this.props.popper.destroy()
+    this.editor?.destroy();
     this.editor = null
   }
 
