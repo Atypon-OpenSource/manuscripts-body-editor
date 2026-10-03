@@ -195,7 +195,7 @@ export class CitationEditableView extends CitationView {
     this.showPopper()
   }
 
-  private handleCancel = () => {
+  private handleCancel = (destroy = true) => {
     // move the cursor after this node
     const selection = TextSelection.create(
       this.view.state.tr.doc,
@@ -203,8 +203,11 @@ export class CitationEditableView extends CitationView {
     )
     this.view.dispatch(this.view.state.tr.setSelection(selection))
 
-    this.props.popper.destroy()
-    this.editor = null
+    if (destroy) {
+      this.props.popper.destroy()
+      this.editor?.destroy()
+      this.editor = null
+    }
   }
 
   private handleSave = (attrs: BibliographyItemAttrs[]) => {
@@ -259,7 +262,7 @@ export class CitationEditableView extends CitationView {
     tr.setNodeAttribute(pos, 'rids', rids)
 
     this.view.dispatch(tr)
-    this.handleCancel()
+    this.handleCancel(false)
   }
 
   private handleDelete = (item: BibliographyItemAttrs) => {
