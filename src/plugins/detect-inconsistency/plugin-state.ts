@@ -1,5 +1,5 @@
 /*!
- * © 2025 Atypon Systems LLC
+ * © 2026 Atypon Systems LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,39 +23,9 @@ import { affiliationsKey } from '../affiliations'
 import { getBibliographyPluginState } from '../bibliography'
 import { footnotesKey } from '../footnotes'
 import { objectsKey } from '../objects'
-import { ValidatorContext, validators } from './validators'
-
-export type Inconsistency = {
-  type: 'warning'
-  category: 'missing-reference' | 'not-used' | 'empty-content'
-  severity: 'error' | 'warning'
-  message: string
-  nodeDescription: string
-  node: ManuscriptNode
-  pos: number
-}
-
-export type PluginState = {
-  decorations: DecorationSet
-  inconsistencies: Array<Inconsistency>
-  showDecorations: boolean
-}
-
-export const createDecoration = (
-  node: ManuscriptNode,
-  pos: number,
-  selectedPos: number | null
-) => {
-  const classNames = ['inconsistency-highlight']
-  if (selectedPos === pos) {
-    classNames.push('selected-suggestion')
-  }
-
-  return Decoration.node(pos, pos + node.nodeSize, {
-    class: classNames.join(' '),
-    'data-inconsistency-type': 'warning',
-  })
-}
+import { toEnabledValidations, validationKey } from './issue'
+import type { Inconsistency, PluginState, ValidatorContext } from './types'
+import { validators } from './validators'
 
 export const buildPluginState = (
   state: ManuscriptEditorState,
@@ -85,18 +55,24 @@ export const buildPluginState = (
     decorations,
     props,
     doc: state.doc,
+    enabledValidations: toEnabledValidations(
+      props.getValidations?.() ?? props.validations
+    ),
   }
 
-  state.doc.descendants((node, pos) => {
+  const collect = (node: ManuscriptNode, pos: number) => {
     const validator = validators[node.type.name]
     if (validator) {
       inconsistencies.push(...validator(node, pos, context))
     }
-  })
+  }
+  collect(state.doc, 0)
+  state.doc.descendants(collect)
 
   return {
     decorations: DecorationSet.create(state.doc, decorations),
     inconsistencies,
     showDecorations,
+    validationKey: validationKey(props.getValidations?.() ?? props.validations),
   }
 }

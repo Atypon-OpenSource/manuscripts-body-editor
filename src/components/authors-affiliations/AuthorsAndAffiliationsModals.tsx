@@ -142,7 +142,8 @@ export const AuthorsAndAffiliationsModals: React.FC<
 export const openAuthorsAndAffiliationsModals = (
   pos: number,
   view: ManuscriptEditorView | EditorView | undefined,
-  initialModal: 'authors' | 'affiliations'
+  initialModal: 'authors' | 'affiliations',
+  { addNew = true }: { addNew?: boolean } = {}
 ) => {
   if (!view) {
     return
@@ -153,8 +154,8 @@ export const openAuthorsAndAffiliationsModals = (
   const componentProps: AuthorsAndAffiliationsModalsProps = {
     initialModal,
     view: view as ManuscriptEditorView,
-    addNewAuthor: initialModal === 'authors',
-    addNewAffiliation: initialModal === 'affiliations',
+    addNewAuthor: addNew && initialModal === 'authors',
+    addNewAffiliation: addNew && initialModal === 'affiliations',
   }
 
   const dialog = ReactSubView(

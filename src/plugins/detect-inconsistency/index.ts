@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-// This plugin is used to detect inconsistencies in the document.
-// The plugin will check for cross-references, footnotes, table-footnotes, and citations.
-// If one of these doesn't have a linked node, it will add a warning to the node.
-
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { DecorationSet } from 'prosemirror-view'
 
 import { EditorProps } from '../../configs/ManuscriptsEditor'
-import { buildPluginState, PluginState } from './detect-inconsistency-utils'
+import { validationKey } from './issue'
+import { buildPluginState } from './plugin-state'
+import type { PluginState } from './types'
 
-export { Inconsistency } from './detect-inconsistency-utils'
+export type { Inconsistency, InconsistencyAction } from './types'
 
 export const detectInconsistencyKey = new PluginKey<PluginState>(
   'detectInconsistency'
@@ -39,7 +37,12 @@ export default (props: EditorProps) => {
         const metaValue = tr.getMeta(detectInconsistencyKey)
         const showDecorations =
           metaValue !== undefined ? metaValue : value.showDecorations
-        if (!tr.docChanged && metaValue === undefined) {
+        const nextValidations = props.getValidations?.() ?? props.validations
+        if (
+          !tr.docChanged &&
+          metaValue === undefined &&
+          validationKey(nextValidations) === value.validationKey
+        ) {
           return value
         }
         return buildPluginState(newState, props, showDecorations)
