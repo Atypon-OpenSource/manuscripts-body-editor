@@ -40,6 +40,7 @@ import omit from 'lodash/omit'
 import React, {
   useCallback,
   useEffect,
+  useMemo,
   useReducer,
   useRef,
   useState,
@@ -52,6 +53,9 @@ import {
   authorComparator,
   ContributorAttrs,
 } from '../../lib/authors'
+import { BioValues, emptyBio } from '../../lib/bio'
+import { Capabilities } from '../../lib/capabilities'
+import { FileAttachment, FileManagement } from '../../lib/files'
 import { normalizeAuthor } from '../../lib/normalize'
 import { ConfirmationDialog, DialogType } from '../dialog/ConfirmationDialog'
 import FormFooter from '../form/FormFooter'
@@ -78,6 +82,11 @@ export interface AuthorsModalProps {
   affiliations: AffiliationAttrs[]
   onSaveAuthor: (author: ContributorAttrs) => void
   onDeleteAuthor: (author: ContributorAttrs) => void
+  getBio: (author: ContributorAttrs) => BioValues
+  onSaveBio: (author: ContributorAttrs, bio: BioValues) => void
+  fileManagement: FileManagement
+  getFiles: () => FileAttachment[]
+  getCapabilities: () => Capabilities
   addNewAuthor?: boolean
   onOpenAffiliationsModal?: () => void
   onClose?: () => void
@@ -89,6 +98,11 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   author,
   onSaveAuthor,
   onDeleteAuthor,
+  getBio,
+  onSaveBio,
+  fileManagement,
+  getFiles,
+  getCapabilities,
   addNewAuthor = false,
   onOpenAffiliationsModal,
   onClose,
@@ -106,6 +120,9 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     prevIsOpenRef.current = isOpen
   }, [isOpen, onClose])
   const [isDisableSave, setDisableSave] = useState(true)
+  const [isAuthorValid, setAuthorValid] = useState(false)
+  const [bioChanged, setBioChanged] = useState(false)
+  const [bioRevision, setBioRevision] = useState(0)
   const [isEmailRequired, setEmailRequired] = useState(false)
   const [showConfirmationDialog, setShowConfirmationDialog] = useState(false)
   const [
@@ -129,6 +146,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
 
   const valuesRef = useRef<ContributorAttrs>(undefined)
   const actionsRef = useRef<FormActions>(undefined)
+  const bioActionsRef = useRef<FormActions>(undefined)
   const authorFormRef = useRef<HTMLFormElement>(null)
   const [authors, dispatchAuthors] = useReducer(
     authorsReducer,
@@ -143,6 +161,17 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   }, [addNewAuthor])
 
   const [selection, setSelection] = useState(author)
+
+  // read again when another author is selected and when the bio is saved
+  const bio = useMemo(
+    () => (selection ? getBio(selection) : emptyBio),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [selection?.id, bioRevision]
+  )
+
+  // the bio can be saved on its own, as long as the author details are valid
+  const disableSave = isDisableSave && !(bioChanged && isAuthorValid)
+  const hasUnsavedChanges = unSavedChanges || bioChanged
 
   const {
     selectedAffiliations,
@@ -161,15 +190,16 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   }, [])
 
   useEffect(() => {
-    if (!unSavedChanges) {
+    if (!hasUnsavedChanges) {
       setAuthorDetailsUnsavedContinue(false)
       setAuthorDetailsRequiredContinue(false)
     }
-  }, [unSavedChanges])
+  }, [hasUnsavedChanges])
 
   useEffect(() => {
     setAuthorDetailsUnsavedContinue(false)
     setAuthorDetailsRequiredContinue(false)
+    setBioChanged(false)
     if (selection?.id) {
       setAuthorTabIndex(0)
     }
@@ -186,12 +216,13 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       const normalizedSelection = normalizeAuthor(selection)
       const normalizedValues = normalizeAuthor(values)
 
-      const hasChanges = !isEqual(normalizedSelection, normalizedValues)
+      const hasChanges =
+        !isEqual(normalizedSelection, normalizedValues) || bioChanged
 
-      if (hasChanges && !isDisableSave) {
+      if (hasChanges && !disableSave) {
         setShowConfirmationDialog(true)
         setNextAuthor(author)
-      } else if (hasChanges && isDisableSave) {
+      } else if (hasChanges && disableSave) {
         setShowRequiredFieldConfirmationDialog(true)
         setNextAuthor(author)
       } else {
@@ -212,8 +243,8 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     setSelectedAffiliations(relevantAffiliations)
   }
   const close = () => {
-    if (unSavedChanges) {
-      if (isDisableSave) {
+    if (hasUnsavedChanges) {
+      if (disableSave) {
         setShowRequiredFieldConfirmationDialog(true)
       } else {
         setShowConfirmationDialog(true)
@@ -238,7 +269,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       setNewAuthor(false)
       setIsCreatingNewAuthor(false)
       setUnSavedChanges(false)
-    } else if (newAuthor && unSavedChanges && !isSwitchingAuthor) {
+    } else if (newAuthor && hasUnsavedChanges && !isSwitchingAuthor) {
       setNewAuthor(false)
       setIsCreatingNewAuthor(false)
       setOpen(false)
@@ -259,7 +290,13 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       ...values,
     }
 
-    onSaveAuthor(author)
+    // the author is left untouched when only the bio was changed
+    if (unSavedChanges) {
+      onSaveAuthor(author)
+    }
+    if (bioChanged) {
+      void bioActionsRef.current?.submitForm()
+    }
     setLastSavedAuthor(author.id)
     setTimeout(() => {
       setLastSavedAuthor(null)
@@ -318,9 +355,10 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     if (
       values &&
       selection &&
-      !isEqual(normalizeAuthor(values), normalizeAuthor(selection))
+      (!isEqual(normalizeAuthor(values), normalizeAuthor(selection)) ||
+        bioChanged)
     ) {
-      if (isDisableSave) {
+      if (disableSave) {
         setShowRequiredFieldConfirmationDialog(true)
       } else {
         setShowConfirmationDialog(true)
@@ -338,6 +376,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     onDeleteAuthor(selection)
     setSelection(undefined)
     setUnSavedChanges(false)
+    setBioChanged(false)
     dispatchAuthors({
       type: 'delete',
       item: selection,
@@ -346,6 +385,8 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
 
   const resetAuthor = () => {
     actionsRef.current?.reset()
+    bioActionsRef.current?.reset()
+    setBioChanged(false)
     const selectedAffs = selection?.affiliationIDs || []
     setSelectedAffiliations(
       affiliations.filter((item) => selectedAffs.includes(item.id))
@@ -378,17 +419,24 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     const { given, family, email, isCorresponding } = values
     const isNameFilled = given?.length || family?.length
 
-    if (hasChanges && isNameFilled) {
-      if (isCorresponding) {
-        setDisableSave(!email?.length)
-      } else {
-        setDisableSave(false)
-      }
-    } else {
-      setDisableSave(true)
-    }
+    const isValid = !!isNameFilled && (!isCorresponding || !!email?.length)
+    setAuthorValid(isValid)
+    setDisableSave(!hasChanges || !isValid)
 
     setEmailRequired(isCorresponding)
+  }
+
+  const changeBio = (values: BioValues) => {
+    setBioChanged(!isEqual(values, bio))
+  }
+
+  const saveBio = (values: BioValues) => {
+    if (!selection) {
+      return
+    }
+    onSaveBio(selection, values)
+    setBioRevision((revision) => revision + 1)
+    setBioChanged(false)
   }
 
   const {
@@ -397,6 +445,8 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
     setSelectedCreditRoles,
     vocabTermItems,
   } = useManageCredit(selection)
+
+  const can = getCapabilities()
 
   const newEntity =
     newAuthor ||
@@ -464,11 +514,15 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                       authorHasError,
                       ...(onOpenAffiliationsModal ? [false] : []),
                       false,
+                      false,
                     ]}
                     tabWarningIndicators={[
-                      authorDetailsUnsavedContinue && !authorHasError,
+                      authorDetailsUnsavedContinue &&
+                        unSavedChanges &&
+                        !authorHasError,
                       ...(onOpenAffiliationsModal ? [false] : []),
                       false,
+                      authorDetailsUnsavedContinue && bioChanged,
                     ]}
                   />
                   <InspectorTabPanels>
@@ -516,7 +570,18 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                       />
                     </AuthorTabPanel>
                     <AuthorTabPanel>
-                      <BioDetails />
+                      <BioDetails
+                        key={selection.id}
+                        values={bio}
+                        onChange={changeBio}
+                        onSave={saveBio}
+                        actionsRef={bioActionsRef}
+                        fileManagement={fileManagement}
+                        getFiles={getFiles}
+                        canUpload={can.uploadFile}
+                        canDetach={can.detachFile}
+                        unsavedContinueActive={authorDetailsUnsavedContinue}
+                      />
                     </AuthorTabPanel>
                   </InspectorTabPanels>
                 </AuthorTabs>
@@ -559,7 +624,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
             selection ? (
               <ModalFormSaveButton
                 form="author-details-form"
-                isDisableSave={isDisableSave}
+                isDisableSave={disableSave}
                 onSubmitForm={() => actionsRef.current?.submitForm?.()}
               />
             ) : undefined

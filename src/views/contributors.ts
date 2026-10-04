@@ -27,7 +27,9 @@ import {
   AuthorsAndAffiliationsModals,
   AuthorsAndAffiliationsModalsProps,
 } from '../components/authors-affiliations/AuthorsAndAffiliationsModals'
+import { BioPopper, BioPopperProps } from '../components/authors/BioPopper'
 import { authorComparator, authorLabel, ContributorAttrs } from '../lib/authors'
+import { getBio, hasBio } from '../lib/bio'
 import { handleComment } from '../lib/comments'
 import { createKeyboardInteraction } from '../lib/navigation-utils'
 import { findChildByID, findChildrenAttrsByType } from '../lib/view'
@@ -36,14 +38,21 @@ import { selectedSuggestionKey } from '../plugins/selected-suggestion'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-import ReactSubView from './ReactSubView'
+import ReactSubView, { SubViewContainer } from './ReactSubView'
 import { ORCIDIcon } from '../icons'
+
+const BIO_POPPER_DELAY = 300
+
 export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   contextMenu: HTMLElement
   container: HTMLElement
   inner: HTMLElement
   popper?: HTMLElement
   version: string
+  // the bio popper and the author it is shown for
+  bioPopper?: SubViewContainer
+  bioPopperTarget?: Element
+  bioPopperTimer?: number
 
   public ignoreMutation = () => true
   public stopEvent = () => true
@@ -60,6 +69,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       return
     }
     this.version = affs.version
+    this.hideBioPopper()
     this.container.innerHTML = ''
 
     this.buildAuthors(affs)
@@ -123,6 +133,10 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     container.setAttribute('id', attrs.id)
     container.setAttribute('contenteditable', 'false')
     container.tabIndex = index === 0 ? 0 : -1
+    container.addEventListener('mouseenter', () =>
+      this.handleMouseEnter(container)
+    )
+    container.addEventListener('mouseleave', this.scheduleHideBioPopper)
 
     addTrackChangesAttributes(attrs, container)
 
@@ -246,9 +260,12 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     }
   }
   private handleClick = (event: Event) => {
-    this.props.popper.destroy()
     const element = event.target as HTMLElement
     const author = element.closest('.contributor')
+    // the bio popper may already be shown for the author on hover
+    if (!author || author !== this.bioPopperTarget) {
+      this.props.popper.destroy()
+    }
     if (!author) {
       return
     }
@@ -257,7 +274,11 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       return
     }
     if (!isDeleted(node)) {
-      this.showContextMenu(author)
+      if (author === this.bioPopperTarget) {
+        this.bioPopper?.querySelector('button')?.focus()
+      } else {
+        this.showBioPopper(author, true)
+      }
     }
     const view = this.view
     const tr = view.state.tr
@@ -279,28 +300,109 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     }
   }
 
-  public showContextMenu = (element: Element) => {
-    this.props.popper.destroy() // destroy the old context menu
-
-    const componentProps: ContextMenuProps = {
-      actions: [
-        {
-          label: 'Edit',
-          action: () => this.handleEdit(element.id),
-          icon: 'Edit',
-        },
-      ],
+  private handleMouseEnter = (element: Element) => {
+    window.clearTimeout(this.bioPopperTimer)
+    if (element === this.bioPopperTarget) {
+      return
     }
-    this.contextMenu = ReactSubView(
+    this.bioPopperTimer = window.setTimeout(() => {
+      // a popper of another kind (a menu, a form...) is not to be replaced
+      if (this.props.popper.isActive() && !this.bioPopperTarget) {
+        return
+      }
+      const node = findChildByID(this.view, element.id)?.node
+      if (node && !isDeleted(node) && hasBio(getBio(node))) {
+        this.showBioPopper(element)
+      } else {
+        this.hideBioPopper()
+      }
+    }, BIO_POPPER_DELAY)
+  }
+
+  private scheduleHideBioPopper = () => {
+    window.clearTimeout(this.bioPopperTimer)
+    this.bioPopperTimer = window.setTimeout(
+      this.hideBioPopper,
+      BIO_POPPER_DELAY
+    )
+  }
+
+  private hideBioPopper = () => {
+    window.clearTimeout(this.bioPopperTimer)
+    if (this.bioPopperTarget) {
+      this.props.popper.destroy()
+    }
+  }
+
+  private handleClickOutsideBioPopper = (event: Event) => {
+    const target = event.target as Node
+    if (
+      !this.bioPopper?.contains(target) &&
+      !this.bioPopperTarget?.contains(target)
+    ) {
+      this.hideBioPopper()
+    }
+  }
+
+  public showBioPopper = (element: Element, autoFocus = false) => {
+    window.clearTimeout(this.bioPopperTimer)
+    const node = findChildByID(this.view, element.id)?.node
+    if (!node) {
+      return
+    }
+    const bio = getBio(node)
+    const file = this.props.getFiles().find((f) => f.id === bio.image)
+    const can = this.props.getCapabilities()
+    const componentProps: BioPopperProps = {
+      author: node.attrs as ContributorAttrs,
+      bio,
+      image: file && this.props.fileManagement.previewLink(file),
+      onEdit: can.editMetadata ? () => this.handleEdit(element.id) : undefined,
+    }
+    const popper = ReactSubView(
       this.props,
-      ContextMenu,
+      BioPopper,
       componentProps,
       this.node,
       this.getPos,
       this.view,
-      ['context-menu']
+      ['author-bio-popper']
     )
-    this.props.popper.show(element, this.contextMenu, 'right-start')
+    popper.addEventListener('mouseenter', () =>
+      window.clearTimeout(this.bioPopperTimer)
+    )
+    popper.addEventListener('mouseleave', this.scheduleHideBioPopper)
+    popper.addEventListener('focusout', (event) => {
+      if (
+        !popper.contains(event.relatedTarget as Node) &&
+        !popper.matches(':hover')
+      ) {
+        this.scheduleHideBioPopper()
+      }
+    })
+
+    this.props.popper.show(
+      element,
+      popper,
+      'bottom-start',
+      false,
+      [{ name: 'offset', options: { offset: [0, 4] } }],
+      autoFocus,
+      true,
+      () => {
+        window.removeEventListener('click', this.handleClickOutsideBioPopper)
+        // not while React handles the click on the edit button
+        window.setTimeout(() => popper.unmount())
+        if (this.bioPopper === popper) {
+          this.bioPopper = undefined
+          this.bioPopperTarget = undefined
+        }
+      }
+    )
+    // set after the previous popper is destroyed by show()
+    this.bioPopper = popper
+    this.bioPopperTarget = element
+    window.addEventListener('click', this.handleClickOutsideBioPopper)
   }
 
   handleEdit = (id: string, addNew?: boolean) => {
@@ -334,6 +436,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
 
   public destroy() {
     this.removeKeydownListener?.()
+    this.hideBioPopper()
     super.destroy()
   }
 }

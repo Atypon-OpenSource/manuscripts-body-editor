@@ -27,10 +27,12 @@ import {
   upsertAuthor,
   upsertAffiliation,
 } from '../../lib/authors-and-affiliations'
+import { emptyBio, getBio, saveBio } from '../../lib/bio'
 import { getEditorProps } from '../../plugins/editor-props'
 import ReactSubView from '../../views/ReactSubView'
 import {
   deleteNode,
+  findChildByID,
   findChildrenAttrsByType,
   updateNodeAttrs,
 } from '../../lib/view'
@@ -81,6 +83,10 @@ export const AuthorsAndAffiliationsModals: React.FC<
     )
   }
 
+  const { fileManagement, getFiles, getCapabilities } = getEditorProps(
+    view.state
+  )
+
   const authorsProps: AuthorsModalProps = {
     author,
     authors,
@@ -88,6 +94,14 @@ export const AuthorsAndAffiliationsModals: React.FC<
     addNewAuthor,
     onSaveAuthor: (a) => upsertAuthor(view, a),
     onDeleteAuthor: (a) => deleteNode(view, a.id),
+    getBio: (a) => {
+      const contributor = findChildByID(view, a.id)
+      return contributor ? getBio(contributor.node) : emptyBio
+    },
+    onSaveBio: (a, bio) => saveBio(view, a.id, bio),
+    fileManagement,
+    getFiles,
+    getCapabilities,
   }
 
   const affiliationsProps: AffiliationsModalProps = {
