@@ -211,7 +211,7 @@ export class CitationEditableView extends CitationView {
   }
 
   public deselectNode() {
-    if (!this.editor) {
+    if (!this.editor) { // handleCancel updates selection which will cause editor to get destructed without this condition
       this.props.popper.destroy()
     }
     this.dom.classList.remove('ProseMirror-selectednode')
