@@ -28,6 +28,7 @@ import {
   addCaptionLink,
   CaptionFileItem,
   captionFileAccept,
+  captionLanguages,
   captionLinkType,
   createCaptionFileList,
   createCaptionFilePlaceholder,
@@ -121,7 +122,7 @@ export class EmbedView extends BlockView<Trackable<EmbedNode>> {
     this.captionFileContainer.appendChild(
       createCaptionFileList(
         captionFiles,
-        this.props.languages || [],
+        captionLanguages,
         this.updateCaptionFileLanguage,
         this.deleteCaptionFile,
         this.showCaptionLanguageMenu
@@ -131,10 +132,16 @@ export class EmbedView extends BlockView<Trackable<EmbedNode>> {
 
   private renderCaptionFileSection = (extra?: HTMLElement) => {
     this.captionFileContainer.innerHTML = ''
+    if (!this.canAttachCaptions()) {
+      return
+    }
     this.appendCaptionFiles()
-    this.captionFileContainer.appendChild(
-      extra || this.createAddCaptionFileButton()
-    )
+    const canAddMore = this.getCaptionFiles().length < captionLanguages.length
+    if (extra || canAddMore) {
+      this.captionFileContainer.appendChild(
+        extra || this.createAddCaptionFileButton()
+      )
+    }
   }
 
   private createAddCaptionFileButton = () =>
@@ -177,10 +184,14 @@ export class EmbedView extends BlockView<Trackable<EmbedNode>> {
 
     const result = await this.props.fileManagement.upload(file)
     this.setExtLinks(
-      addCaptionLink(this.node.attrs.extLinks, {
-        id: result.id,
-        name: file.name,
-      })
+      addCaptionLink(
+        this.node.attrs.extLinks,
+        {
+          id: result.id,
+          name: file.name,
+        },
+        this.view.state.doc.attrs.primaryLanguageCode || 'en'
+      )
     )
   }
 
@@ -249,7 +260,7 @@ export class EmbedView extends BlockView<Trackable<EmbedNode>> {
     if (contentChanged) {
       this.initialized = true
       this.previousAttrs = currentAttrs
-      if (captionsChanged) {
+      if (captionsChanged || mediaChanged) {
         this.renderCaptionFileSection()
       }
       if (mediaChanged) {
@@ -322,6 +333,16 @@ export class EmbedView extends BlockView<Trackable<EmbedNode>> {
 
     const files = this.props.getFiles()
     return files.some((file) => file.id === href)
+  }
+
+  private canAttachCaptions() {
+    if (!this.isUploadedFile()) {
+      return false
+    }
+    const file = this.props
+      .getFiles()
+      .find((attachment) => attachment.id === this.node.attrs.href)
+    return !!file && getMediaTypeInfo(file.name).isVideo
   }
 
   private isEmbedLink(): boolean {

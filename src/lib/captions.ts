@@ -51,6 +51,16 @@ const captionFileExtensions = new Set(['vtt', 'srt'])
 export const captionFileAccept = '.vtt,.srt'
 export const captionLinkType = 'transcript'
 
+export const captionLanguages: Language[] = [
+  { code: 'en', name: 'English', nativeName: 'English' },
+  { code: 'ar', name: 'Arabic', nativeName: 'العربية' },
+  { code: 'zh', name: 'Chinese', nativeName: '中文' },
+  { code: 'fr', name: 'French', nativeName: 'Français' },
+  { code: 'de', name: 'German', nativeName: 'Deutsch' },
+  { code: 'no', name: 'Norwegian', nativeName: 'Norsk' },
+  { code: 'es', name: 'Spanish', nativeName: 'Español' },
+]
+
 export const isCaptionFile = (file: File | string) => {
   const name = typeof file === 'string' ? file : file.name
   const extension = name.toLowerCase().split('.').pop()?.trim() || ''
@@ -62,6 +72,24 @@ const isCaptionLink = (
   href?: string
 ): link is ExtLink & { href: string } =>
   link.type === captionLinkType && !!link.href && (!href || link.href === href)
+
+export const nextCaptionLanguage = (
+  links: ExtLink[] = [],
+  preferredCode?: string
+) => {
+  const used = new Set(
+    links
+      .filter((link) => isCaptionLink(link) && link.lang)
+      .map((link) => link.lang)
+  )
+  const preferred = captionLanguages.find(
+    (language) => language.code === preferredCode && !used.has(language.code)
+  )
+  return (
+    preferred?.code ||
+    captionLanguages.find((language) => !used.has(language.code))?.code
+  )
+}
 
 export const removeCaptionLink = (links: ExtLink[] = [], href: string) =>
   links.filter((link) => !isCaptionLink(link, href))
@@ -79,22 +107,33 @@ export const replaceCaptionLink = (
 
 export const addCaptionLink = (
   links: ExtLink[] = [],
-  file: { id: string; name: string }
-) => [
-  ...removeCaptionLink(links, file.id),
-  {
-    type: captionLinkType,
-    href: file.id,
-    lang: '',
-    label: file.name,
-  },
-]
+  file: { id: string; name: string },
+  preferredLanguage?: string
+) => {
+  const lang = nextCaptionLanguage(links, preferredLanguage)
+  if (!lang) {
+    return links
+  }
+
+  return [
+    ...removeCaptionLink(links, file.id),
+    {
+      type: captionLinkType,
+      href: file.id,
+      lang,
+      label: file.name,
+    },
+  ]
+}
 
 export const setCaptionLinkLanguage = (
   links: ExtLink[] = [],
   href: string,
   language: string
 ) => {
+  if (!captionLanguages.some((option) => option.code === language)) {
+    return links
+  }
   if (
     links.some(
       (link) =>
@@ -259,9 +298,7 @@ export const createCaptionFileList = (
     }
     row.appendChild(file)
 
-    const options = languages.length
-      ? languages
-      : [{ code: 'en', name: 'English', nativeName: 'English' }]
+    const options = languages
     const selected = item.language
       ? options.find((option) => option.code === item.language) ||
         getLanguage(item.language, options)

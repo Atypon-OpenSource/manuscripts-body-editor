@@ -635,6 +635,13 @@
   cursor: pointer;
 }
 
+.caption-file-language-trigger:focus-visible,
+.caption-file-delete:focus-visible {
+  outline: 4px solid var(--focus-outline-color);
+  outline-offset: var(--focus-outline-offset);
+  border-radius: var(--focus-outline-radius);
+}
+
 .caption-file-language-value {
   white-space: nowrap;
 }
