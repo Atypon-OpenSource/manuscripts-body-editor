@@ -15,13 +15,13 @@
  */
 
 import {
-  Avatar,
   CorrespondingAuthorIcon,
   CrclTickAnimation,
   DeleteIcon,
   DraggableIcon,
   withNavigableListItem,
 } from '@manuscripts/style-guide'
+import { Avatar } from '@manuscripts/style-guide/mui'
 import React, { useRef, useState } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 import styled from 'styled-components'
