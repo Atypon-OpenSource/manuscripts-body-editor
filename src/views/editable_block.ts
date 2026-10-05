@@ -100,7 +100,9 @@ export const EditableBlock = <T extends Constructor<BlockView<ManuscriptNode>>>(
     }
 
     public createEditButton(): HTMLElement | null {
-      if (!this.props.getCapabilities()?.editArticle) {
+      const can = this.props.getCapabilities()
+      // without editArticle the menu only offers commenting
+      if (!can?.editArticle && !can?.createComment) {
         return null
       }
 

@@ -106,11 +106,16 @@ export class BibliographyElementBlockView extends BlockView<
         icon: 'Edit',
       })
     }
-    componentProps.actions.push({
-      label: 'Comment',
-      action: () => handleComment(item, this.view),
-      icon: 'AddComment',
-    })
+    if (can.createComment) {
+      componentProps.actions.push({
+        label: 'Comment',
+        action: () => handleComment(item, this.view),
+        icon: 'AddComment',
+      })
+    }
+    if (!componentProps.actions.length) {
+      return
+    }
 
     this.contextMenu = ReactSubView(
       this.props,

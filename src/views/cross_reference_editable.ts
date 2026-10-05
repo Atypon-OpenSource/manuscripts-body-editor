@@ -151,20 +151,23 @@ export class CrossReferenceEditableView extends CrossReferenceView {
 
     const actions: ContextMenuProps['actions'] = [
       {
-        label: 'Comment',
-        icon: 'AddComment',
-        action: () => {
-          this.props.popper.destroy()
-          handleComment(this.node, this.view)
-        },
-      },
-      {
         label: 'Go to content',
         icon: 'Scroll',
         action: () => this.navigateToTarget(),
         disabled: isOrphaned,
       },
     ]
+
+    if (can?.createComment) {
+      actions.unshift({
+        label: 'Comment',
+        icon: 'AddComment',
+        action: () => {
+          this.props.popper.destroy()
+          handleComment(this.node, this.view)
+        },
+      })
+    }
 
     if (can?.editArticle) {
       actions.unshift({

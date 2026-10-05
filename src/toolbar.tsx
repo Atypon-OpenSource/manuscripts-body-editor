@@ -47,6 +47,7 @@ import React, { ReactNode } from 'react'
 import {
   addInlineComment,
   blockActive,
+  canCreateComment,
   canInsert,
   canInsertCrossReference,
   canInsertInlineComment,
@@ -180,8 +181,10 @@ export const toolbar: ToolbarConfig = {
     comment: {
       title: 'Insert comment',
       content: <AddCommentIcon />,
-      isEnabled: isEnabled((state) =>
-        canInsertInlineComment(state.selection.$from)
+      isEnabled: isEnabled(
+        (state) =>
+          canCreateComment(state) &&
+          canInsertInlineComment(state.selection.$from)
       ),
       run: addInlineComment,
     },

@@ -190,12 +190,14 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
       actions: [],
     }
 
-    if (can.editArticle) {
+    if (can.createComment) {
       componentProps.actions.push({
         label: 'Comment',
         action: () => handleComment(this.node, this.view),
         icon: 'AddComment',
       })
+    }
+    if (can.editArticle) {
       componentProps.actions.push({
         label: 'New Affiliation',
         action: () => this.handleEdit('', true),
@@ -206,20 +208,21 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
         action: () => this.handleEdit(''),
         icon: 'Edit',
       })
-
-      this.contextMenu = ReactSubView(
-        this.props,
-        ContextMenu,
-        componentProps,
-        this.node,
-        this.getPos,
-        this.view,
-        ['context-menu']
-      )
-      return this.contextMenu
+    }
+    if (!componentProps.actions.length) {
+      return undefined
     }
 
-    return undefined
+    this.contextMenu = ReactSubView(
+      this.props,
+      ContextMenu,
+      componentProps,
+      this.node,
+      this.getPos,
+      this.view,
+      ['context-menu']
+    )
+    return this.contextMenu
   }
 
   public showContextMenu = (element: Element) => {

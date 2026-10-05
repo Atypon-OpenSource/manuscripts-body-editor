@@ -196,12 +196,14 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     const componentProps: ContextMenuProps = {
       actions: [],
     }
-    if (can.editArticle) {
+    if (can.createComment) {
       componentProps.actions.push({
         label: 'Comment',
         action: () => handleComment(this.node, this.view),
         icon: 'AddComment',
       })
+    }
+    if (can.editArticle) {
       componentProps.actions.push({
         label: 'New Author',
         action: () => this.handleEdit('', true),
