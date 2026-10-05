@@ -21,7 +21,6 @@ import {
   ManuscriptNodeType,
   schema,
   SectionCategory,
-  UserProfile,
 } from '@manuscripts/transform'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
@@ -31,7 +30,6 @@ import { DefaultTheme } from 'styled-components'
 import { CollabProvider } from '../classes/collabProvider'
 import { clipboardParser } from '../clipboard'
 import { Dispatch } from '../commands'
-import { Language } from '../lib/languages'
 import { Capabilities } from '../lib/capabilities'
 import { transformCopied } from '../lib/copy'
 import { FileAttachment, FileManagement } from '../lib/files'
@@ -57,7 +55,6 @@ export interface EditorProps {
   attributes?: { [key: string]: string }
   locale: string
   theme: DefaultTheme
-  getCurrentUser: () => UserProfile
 
   projectID: string
   doc: ManuscriptNode
@@ -70,7 +67,7 @@ export interface EditorProps {
   userID: string
   debug: boolean
   cslProps: CSLProps
-  languages: Language[]
+  languageCodes: string[]
   sectionCategories: Map<string, SectionCategory>
   collabProvider?: CollabProvider
   navigate: NavigateFunction
