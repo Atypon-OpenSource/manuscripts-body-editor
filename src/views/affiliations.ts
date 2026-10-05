@@ -36,14 +36,14 @@ import { selectedSuggestionKey } from '../plugins/selected-suggestion'
 import { Trackable } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-import ReactSubView from './ReactSubView'
+import ReactSubView, { SubViewContainer } from './ReactSubView'
 
 //todo update AffiliationNode to AffiliationsNode
 export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
   contextMenu: HTMLElement
   version: string
   container: HTMLElement
-  popper?: HTMLElement
+  popper?: SubViewContainer
 
   public ignoreMutation = () => true
   public stopEvent = () => true
@@ -169,9 +169,13 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
       view: this.view,
       affiliation,
       addNewAffiliation: addNew,
+      onClose: () => {
+        this.popper?.destroy()
+        this.popper = undefined
+      },
     }
 
-    this.popper?.remove()
+    this.popper?.destroy()
 
     this.popper = ReactSubView(
       this.props,
@@ -181,7 +185,7 @@ export class AffiliationsView extends BlockView<Trackable<AffiliationNode>> {
       this.getPos,
       this.view
     )
-    this.container.appendChild(this.popper)
+    document.body.appendChild(this.popper)
   }
 
   public showGroupContextMenu = (): HTMLElement | undefined => {
