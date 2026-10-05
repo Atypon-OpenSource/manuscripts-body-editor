@@ -28,7 +28,7 @@ import {
   upsertAffiliation,
 } from '../../lib/authors-and-affiliations'
 import { getEditorProps } from '../../plugins/editor-props'
-import ReactSubView from '../../views/ReactSubView'
+import ReactSubView, { SubViewContainer } from '../../views/ReactSubView'
 import {
   deleteNode,
   findChildrenAttrsByType,
@@ -49,6 +49,7 @@ export interface AuthorsAndAffiliationsModalsProps {
   affiliation?: AffiliationAttrs
   addNewAuthor?: boolean
   addNewAffiliation?: boolean
+  onClose: () => void
 }
 
 export const AuthorsAndAffiliationsModals: React.FC<
@@ -60,6 +61,7 @@ export const AuthorsAndAffiliationsModals: React.FC<
   affiliation,
   addNewAuthor,
   addNewAffiliation,
+  onClose,
 }) => {
   const [showOverlay, setShowOverlay] = useState(false)
   const [authors, setAuthors] = useState(() =>
@@ -108,6 +110,7 @@ export const AuthorsAndAffiliationsModals: React.FC<
       <>
         <AuthorsModal
           {...authorsProps}
+          onClose={onClose}
           onOpenAffiliationsModal={handleOpenOverlay}
         />
         {showOverlay && (
@@ -126,6 +129,7 @@ export const AuthorsAndAffiliationsModals: React.FC<
       <AffiliationsModal
         {...affiliationsProps}
         openAuthorsModal={handleOpenOverlay}
+        onClose={onClose}
       />
       {showOverlay && (
         <CreateAuthorModal
@@ -144,6 +148,7 @@ export const openAuthorsAndAffiliationsModals = (
   view: ManuscriptEditorView | EditorView | undefined,
   initialModal: 'authors' | 'affiliations'
 ) => {
+  let dialog: SubViewContainer | null = null
   if (!view) {
     return
   }
@@ -155,9 +160,13 @@ export const openAuthorsAndAffiliationsModals = (
     view: view as ManuscriptEditorView,
     addNewAuthor: initialModal === 'authors',
     addNewAffiliation: initialModal === 'affiliations',
+    onClose: () => {
+      dialog?.destroy()
+      dialog = null
+    },
   }
 
-  const dialog = ReactSubView(
+  dialog = ReactSubView(
     props,
     AuthorsAndAffiliationsModals,
     componentProps,
@@ -167,6 +176,4 @@ export const openAuthorsAndAffiliationsModals = (
   )
   view.focus()
   document.body.appendChild(dialog)
-  // @TODO refactor to allow cleaning it up
-  return dialog
 }
