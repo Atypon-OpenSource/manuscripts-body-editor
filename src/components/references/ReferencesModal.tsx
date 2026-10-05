@@ -28,7 +28,7 @@ import {
   ModalSidebarTitle,
   ScrollableModalContent,
   SidebarContent,
-  StyledModal,
+  StyledModalContent,
   useScrollDetection,
   withListNavigation,
   withNavigableListItem,
@@ -66,6 +66,7 @@ const dropLimit = 36 // basically maximum amount of items that can exist at the 
 export interface ReferencesModalProps {
   isOpen: boolean
   onCancel: () => void
+  onClose?: () => void
   items: BibliographyItemAttrs[]
   item?: BibliographyItemAttrs
   citationCounts: Map<string, number>
@@ -83,6 +84,7 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
   onSave,
   onDelete,
   handleImport,
+  onClose,
 }) => {
   const [importing, setImporting] = useState(false)
   const [importSuccessCount, setImportSuccessCount] = useState<number | null>(
@@ -259,42 +261,46 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
           onSave={handleImportSave}
         />
       )}
-      <StyledModal isOpen={isOpen} onRequestClose={onCancel}>
-        <Dialog
-          isOpen={confirm}
-          category={Category.confirmation}
-          header="You've made changes to this option"
-          message="Would you like to save or discard your changes?"
-          actions={{
-            secondary: {
-              action: () => reset(),
-              title: 'Discard',
+      <Dialog
+        isOpen={confirm}
+        category={Category.confirmation}
+        header="You've made changes to this option"
+        message="Would you like to save or discard your changes?"
+        actions={{
+          secondary: {
+            action: () => reset(),
+            title: 'Discard',
+          },
+          primary: {
+            action: () => handleSave(valuesRef.current),
+            title: 'Save',
+          },
+        }}
+      />
+      <Dialog
+        isOpen={showDeleteDialog}
+        category={Category.confirmation}
+        header="Delete Reference"
+        message="Are you sure you want to delete this reference from the list?"
+        actions={{
+          secondary: {
+            action: () => {
+              handleDelete()
+              setShowDeleteDialog(false)
             },
-            primary: {
-              action: () => handleSave(valuesRef.current),
-              title: 'Save',
-            },
-          }}
-        />
-        <Dialog
-          isOpen={showDeleteDialog}
-          category={Category.confirmation}
-          header="Delete Reference"
-          message="Are you sure you want to delete this reference from the list?"
-          actions={{
-            secondary: {
-              action: () => {
-                handleDelete()
-                setShowDeleteDialog(false)
-              },
-              title: 'Delete',
-            },
-            primary: {
-              action: () => setShowDeleteDialog(false),
-              title: 'Cancel',
-            },
-          }}
-        />
+            title: 'Delete',
+          },
+          primary: {
+            action: () => setShowDeleteDialog(false),
+            title: 'Cancel',
+          },
+        }}
+      />
+      <StyledModalContent
+        isOpen={isOpen}
+        onRequestClose={onCancel}
+        onExited={() => onClose?.()}
+      >
         <ReferencesModalContainer data-cy={'references-editor'}>
           <ModalHeader>
             <CloseButton data-cy="modal-close-button" onClick={onCancel} />
@@ -412,7 +418,7 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({
             </Button>
           </Footer>
         </ReferencesModalContainer>
-      </StyledModal>
+      </StyledModalContent>
     </>
   )
 }

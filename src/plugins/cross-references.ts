@@ -34,13 +34,14 @@ import {
   XrefGroup,
 } from '../components/cross-ref-check-modal/CrossRefWarningModal'
 import { openCrossRefWarningModal } from '../components/cross-ref-check-modal/openModal'
+import { SubViewContainer } from '../views/ReactSubView'
 import { objectsKey } from './objects'
 
 export const DELETE_WITHOUT_REF = 'delete-without-ref'
 export const SELECTED_CROSS_REF_CLASS = 'selected-cross-reference'
 
 let modalActive = false
-let modalElement: HTMLDivElement | null = null
+let modalElement: SubViewContainer | null = null
 let scrollTargetEl: HTMLElement | null = null
 
 export default () => {
@@ -91,7 +92,7 @@ export default () => {
         modalActive = false
         if (modalElement) {
           modalElement.classList.remove('modal-bottom')
-          modalElement.remove()
+          modalElement.destroy()
           modalElement = null
         }
         if (scrollTargetEl) {
@@ -259,15 +260,15 @@ const onConfirmCreator =
       // Collect positions in reverse order so deletions don't shift
       // positions of earlier entries.
       const xrefPositions: { from: number; to: number }[] = []
-    newTr.doc.descendants((node, pos) => {
-      if (node.type === schema.nodes.cross_reference) {
-        const rids = node.attrs.rids as string[]
-        if (rids.some((rid) => deletedIds.has(rid))) {
-          xrefPositions.push({ from: pos, to: pos + node.nodeSize })
+      newTr.doc.descendants((node, pos) => {
+        if (node.type === schema.nodes.cross_reference) {
+          const rids = node.attrs.rids as string[]
+          if (rids.some((rid) => deletedIds.has(rid))) {
+            xrefPositions.push({ from: pos, to: pos + node.nodeSize })
+          }
         }
-        }
-    })
-    for (let i = xrefPositions.length - 1; i >= 0; i--) {
+      })
+      for (let i = xrefPositions.length - 1; i >= 0; i--) {
         const { from, to } = xrefPositions[i]
         newTr.delete(from, to)
       }
