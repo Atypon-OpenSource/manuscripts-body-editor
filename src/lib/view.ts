@@ -180,4 +180,3 @@ export const isSelectionInsideNode = (
 
   return from >= pos && to <= end
 }
-

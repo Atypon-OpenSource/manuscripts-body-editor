@@ -288,7 +288,8 @@ export const addInteractionHandlers = (
   element.addEventListener('click', handlePlaceholderClick)
   element.addEventListener(
     'keydown',
-    handleEnterKey(() => {
+    handleEnterKey((event) => {
+      event.stopPropagation()
       const target = document.activeElement as HTMLElement
       handlePlaceholderInteraction(target)
     })
