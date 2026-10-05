@@ -154,6 +154,17 @@ export interface CaptionFileItem {
   language: string
 }
 
+const activateCaptionControl = (action: (event: Event) => void) => {
+  return (event: KeyboardEvent) => {
+    if (event.key !== 'Enter' && event.key !== ' ') {
+      return
+    }
+    event.preventDefault()
+    event.stopPropagation()
+    action(event)
+  }
+}
+
 const appendCaptionCloseButton = (
   element: HTMLElement,
   onClose: () => void
@@ -164,10 +175,13 @@ const appendCaptionCloseButton = (
   closeButton.dataset.action = 'close'
   closeButton.setAttribute('aria-label', 'Close')
   closeButton.innerHTML = xIcon
-  closeButton.addEventListener('click', (e) => {
-    e.stopPropagation()
+  const close = (event: Event) => {
+    event.preventDefault()
+    event.stopPropagation()
     onClose()
-  })
+  }
+  closeButton.addEventListener('click', close)
+  closeButton.addEventListener('keydown', activateCaptionControl(close))
   element.appendChild(closeButton)
 }
 
@@ -279,6 +293,7 @@ export const createCaptionFileList = (
 ): HTMLElement => {
   const list = document.createElement('div')
   list.classList.add('caption-file-list')
+  list.setAttribute('contenteditable', 'false')
 
   const title = document.createElement('div')
   title.classList.add('caption-file-list-title')
@@ -351,8 +366,21 @@ export const createCaptionFileList = (
         destroyMenu()
       }
     }
-    trigger.addEventListener('mousedown', openMenu)
-    trigger.addEventListener('keydown', handleEnterKey(openMenu))
+    let openedByMouse = false
+    trigger.addEventListener('mousedown', (event) => {
+      openedByMouse = true
+      openMenu(event)
+    })
+    trigger.addEventListener('click', (event) => {
+      if (openedByMouse) {
+        openedByMouse = false
+        event.preventDefault()
+        event.stopPropagation()
+        return
+      }
+      openMenu(event)
+    })
+    trigger.addEventListener('keydown', activateCaptionControl(openMenu))
 
     const remove = document.createElement('button')
     remove.type = 'button'
@@ -360,10 +388,13 @@ export const createCaptionFileList = (
     remove.setAttribute('aria-label', `Delete ${item.name}`)
     remove.setAttribute('data-tooltip-content', 'Delete')
     remove.innerHTML = deleteIcon
-    remove.addEventListener('click', (event) => {
+    const deleteCaption = (event: Event) => {
+      event.preventDefault()
       event.stopPropagation()
       onDelete(item.id)
-    })
+    }
+    remove.addEventListener('click', deleteCaption)
+    remove.addEventListener('keydown', activateCaptionControl(deleteCaption))
 
     language.appendChild(languageLabel)
     language.appendChild(trigger)

@@ -83,6 +83,7 @@ export class EmbedView extends BlockView<Trackable<EmbedNode>> {
 
     this.captionFileContainer = document.createElement('div')
     this.captionFileContainer.classList.add('add-caption-file-button')
+    this.captionFileContainer.setAttribute('contenteditable', 'false')
     figureBlock.appendChild(this.captionFileContainer)
 
     this.figureBlock = figureBlock
@@ -153,7 +154,23 @@ export class EmbedView extends BlockView<Trackable<EmbedNode>> {
           {
             variant: 'tertiary',
             startIcon: React.createElement(AddCircleIcon),
-            onClick: this.renderCaptionFilePlaceholder,
+            onMouseDown: (event: React.MouseEvent) => {
+              event.preventDefault()
+              event.stopPropagation()
+            },
+            onClick: (event: React.MouseEvent) => {
+              event.preventDefault()
+              event.stopPropagation()
+              this.renderCaptionFilePlaceholder()
+            },
+            onKeyDown: (event: React.KeyboardEvent) => {
+              if (event.key !== 'Enter' && event.key !== ' ') {
+                return
+              }
+              event.preventDefault()
+              event.stopPropagation()
+              this.renderCaptionFilePlaceholder()
+            },
           },
           'Add caption file'
         ),
@@ -164,16 +181,22 @@ export class EmbedView extends BlockView<Trackable<EmbedNode>> {
       ['add-caption-file-inner']
     )
 
-  private renderCaptionFilePlaceholder = () => {
-    const placeholder = createCaptionFilePlaceholder(() =>
-      this.renderCaptionFileSection()
-    )
+  private showCaptionFileDropzone = (placeholder: HTMLElement) => {
     addInteractionHandlers(
       placeholder,
       this.uploadCaptionFile,
       captionFileAccept
     )
     this.renderCaptionFileSection(placeholder)
+    requestAnimationFrame(() => {
+      placeholder.focus()
+    })
+  }
+
+  private renderCaptionFilePlaceholder = () => {
+    this.showCaptionFileDropzone(
+      createCaptionFilePlaceholder(() => this.renderCaptionFileSection())
+    )
   }
 
   private uploadCaptionFile = async (file: File) => {
@@ -215,15 +238,11 @@ export class EmbedView extends BlockView<Trackable<EmbedNode>> {
   }
 
   private renderUnsupportedCaptionFile = (filename: string) => {
-    const placeholder = createUnsupportedCaptionFile(filename, () =>
-      this.renderCaptionFileSection()
+    this.showCaptionFileDropzone(
+      createUnsupportedCaptionFile(filename, () =>
+        this.renderCaptionFileSection()
+      )
     )
-    addInteractionHandlers(
-      placeholder,
-      this.uploadCaptionFile,
-      captionFileAccept
-    )
-    this.renderCaptionFileSection(placeholder)
   }
 
   upload = async (file: File) => {
