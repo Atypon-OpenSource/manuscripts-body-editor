@@ -90,6 +90,31 @@ export const getChildOfType = (
 ): boolean =>
   !!getMatchingChild(parent, (node) => node.type.name === nodeType.name, deep)
 
+export const getChildOfTypeWithPos = (
+  parent: ManuscriptNode,
+  parentPos: number,
+  nodeType: ManuscriptNodeType,
+  doc: ManuscriptNode
+): { node: ManuscriptNode; pos: number } | undefined => {
+  const origin = parent === doc ? parentPos : parentPos + 1
+  let found: { node: ManuscriptNode; pos: number } | undefined
+  parent.forEach((child, offset) => {
+    if (!found && child.type === nodeType) {
+      found = { node: child, pos: origin + offset }
+    }
+  })
+  return found
+}
+
+export const getTextOfType = (
+  parent: ManuscriptNode,
+  type: ManuscriptNodeType
+) =>
+  getMatchingDescendant(
+    parent,
+    (node) => node.type === type
+  )?.textContent.trim() ?? ''
+
 export const findParentNodeWithId: (
   selection: Selection
 ) => ContentNodeWithPos | undefined = findParentNode(

@@ -22,6 +22,7 @@ import {
   schema,
   SectionCategory,
   UserProfile,
+  ValidationConfig,
 } from '@manuscripts/transform'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
@@ -81,6 +82,8 @@ export interface EditorProps {
   lockBody: boolean
   isViewingMode?: boolean
   hiddenNodeTypes?: ManuscriptNodeType[] | undefined
+  validations?: ValidationConfig[]
+  getValidations?: () => ValidationConfig[] | undefined
   fetchOEmbedHtml: FetchOEmbedHtml
 }
 
