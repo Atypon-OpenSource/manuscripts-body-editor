@@ -31,7 +31,7 @@ export const selectInconsistency = (
 ): HTMLElement | undefined => {
   const { pos } = inconsistency
   const { doc } = view.state
-  if (!Number.isInteger(pos) || pos < 0 || pos >= doc.content.size) {
+  if (pos < 0 || pos >= doc.content.size) {
     return
   }
 
@@ -56,7 +56,7 @@ export const openAccessibilityFields = (
   const element = selectInconsistency(inconsistency, view)
   const { pos, node } = inconsistency
   const { doc } = view.state
-  if (!Number.isInteger(pos) || pos < 0 || pos >= doc.content.size) {
+  if (pos < 0 || pos >= doc.content.size) {
     return element
   }
 

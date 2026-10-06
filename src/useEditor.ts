@@ -150,10 +150,6 @@ export const useEditor = (externalProps: ExternalProps) => {
   )
 
   const isViewingMode = props.isViewingMode
-  const enabledValidationKey = (externalProps.validations ?? [])
-    .map((rule) => `${rule.id}:${rule.group}`)
-    .join('|')
-  
 
   const onRender = useCallback(
     (el: HTMLDivElement | null) => {
@@ -170,7 +166,7 @@ export const useEditor = (externalProps: ExternalProps) => {
       view.current = createEditorView(props, el, freshState || state, dispatch)
       setState(view.current.state)
     },
-    [isViewingMode, enabledValidationKey] // eslint-disable-line react-hooks/exhaustive-deps
+    [isViewingMode] // eslint-disable-line react-hooks/exhaustive-deps
   )
 
   const isCommandValid = useCallback(

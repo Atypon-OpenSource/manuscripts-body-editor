@@ -14,22 +14,18 @@
  * limitations under the License.
  */
 
-import {
-  configuredValidators,
-  layeredValidators,
-} from './configured-validators'
+import { configuredValidators } from './configured-validators'
 import { staticValidators } from './static-validators'
 import type { NodeValidator } from './types'
 
 export type { NodeValidator, ValidatorContext } from './types'
-export { toEnabledValidations } from './issue'
+export { toEnabledValidations } from './inconsistency'
 
 export const validators: Record<string, NodeValidator> = {
   ...staticValidators,
-  ...configuredValidators,
 }
 
-for (const [name, extras] of Object.entries(layeredValidators)) {
+for (const [name, extras] of Object.entries(configuredValidators)) {
   const base = validators[name]
   validators[name] = (node, pos, context) => [
     ...(base ? base(node, pos, context) : []),

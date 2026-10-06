@@ -18,7 +18,6 @@ import { Plugin, PluginKey } from 'prosemirror-state'
 import { DecorationSet } from 'prosemirror-view'
 
 import { EditorProps } from '../../configs/ManuscriptsEditor'
-import { validationKey } from './issue'
 import { buildPluginState } from './plugin-state'
 import type { PluginState } from './types'
 
@@ -41,7 +40,7 @@ export default (props: EditorProps) => {
         if (
           !tr.docChanged &&
           metaValue === undefined &&
-          validationKey(nextValidations) === value.validationKey
+          nextValidations === value.validations
         ) {
           return value
         }

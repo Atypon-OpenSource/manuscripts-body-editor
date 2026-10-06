@@ -15,12 +15,7 @@
  */
 
 import { isDeleted } from '@manuscripts/track-changes-plugin'
-import {
-  findMatchingCategory,
-  ManuscriptNode,
-  schema,
-  SectionCategory,
-} from '@manuscripts/transform'
+import { findMatchingCategory, schema } from '@manuscripts/transform'
 import { NodeSelection } from 'prosemirror-state'
 import { findChildrenByType } from 'prosemirror-utils'
 import type { EditorView } from 'prosemirror-view'
@@ -32,41 +27,33 @@ import {
 } from '../../commands'
 import { openAuthorsAndAffiliationsModals } from '../../components/authors-affiliations/AuthorsAndAffiliationsModals'
 import { openInsertAwardModal } from '../../components/awards/AwardModal'
+import { getTextOfType } from '../../lib/utils'
 import { getEditorProps } from '../editor-props'
-import { backmatterCategories } from './configured-validators'
+import { getValidationCategory } from './configured-validators'
+import { toEnabledValidations } from './inconsistency'
+import { inconsistencyDefinitions } from './inconsistency-definitions'
 import type { MetadataTab } from './types'
-
-const fallbackAbstract: SectionCategory = {
-  id: 'abstract',
-  titles: ['Abstract'],
-  synonyms: [''],
-  group: 'abstracts',
-  isUnique: true,
-}
 
 const scrollToNode = (view: EditorView, pos: number) => {
   const node = view.state.doc.nodeAt(pos)
-  if (!node) {
+  if (!node || !NodeSelection.isSelectable(node)) {
     return
   }
-  if (NodeSelection.isSelectable(node)) {
-    view.dispatch(
-      view.state.tr
-        .setSelection(NodeSelection.create(view.state.doc, pos))
-        .scrollIntoView()
-    )
-  }
   view.focus()
-  const dom = view.nodeDOM(pos)
-  if (dom instanceof HTMLElement) {
-    dom.scrollIntoView({ block: 'center' })
-  }
+  view.dispatch(
+    view.state.tr
+      .setSelection(NodeSelection.create(view.state.doc, pos))
+      .scrollIntoView()
+  )
 }
 
 const openAbstract = (view: EditorView) => {
   const categories = getEditorProps(view.state)?.sectionCategories
-  const category = categories?.get('abstract') ?? fallbackAbstract
-  insertAbstractSection(category)(view.state, view.dispatch, view)
+  insertAbstractSection(categories?.get('abstract'))(
+    view.state,
+    view.dispatch,
+    view
+  )
 }
 
 const openKeywords = (view: EditorView) => {
@@ -82,27 +69,21 @@ const backmatterTabs = {
   'conflict-of-interest': 'missing-conflict-of-interest',
   'data-availability': 'missing-data-availability',
   'ethics-statement': 'missing-ethics-statement',
-} as const satisfies Record<string, keyof typeof backmatterCategories>
-
-const sectionTitle = (section: ManuscriptNode) => {
-  let title = ''
-  section.forEach((child) => {
-    if (child.type === schema.nodes.section_title) {
-      title = child.textContent
-    }
-  })
-  return title
-}
+} as const satisfies Record<string, keyof typeof inconsistencyDefinitions>
 
 const openBackmatterSection = (
   view: EditorView,
   tab: keyof typeof backmatterTabs
 ) => {
-  const fallback = backmatterCategories[backmatterTabs[tab]]
-  const fromTemplate = getEditorProps(view.state)?.sectionCategories?.get(
-    fallback.id
+  const props = getEditorProps(view.state)
+  const category = getValidationCategory(
+    toEnabledValidations(props?.getValidations?.() ?? props?.validations),
+    props?.sectionCategories,
+    backmatterTabs[tab]
   )
-  const category = fromTemplate ?? fallback
+  if (!category) {
+    return
+  }
   const backmatter = findChildrenByType(
     view.state.doc,
     schema.nodes.backmatter
@@ -114,7 +95,7 @@ const openBackmatterSection = (
           findMatchingCategory(
             [category],
             section.node.attrs.category,
-            sectionTitle(section.node)
+            getTextOfType(section.node, schema.nodes.section_title)
           )
       )
     : undefined

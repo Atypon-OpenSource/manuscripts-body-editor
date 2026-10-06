@@ -21,37 +21,34 @@ import {
 } from '@manuscripts/transform'
 import { Decoration } from 'prosemirror-view'
 
-import { issueDefinitions } from './issue-definitions'
+import { inconsistencyDefinitions } from './inconsistency-definitions'
 import type { Inconsistency } from './types'
 
 export const toEnabledValidations = (
   validations: ValidationConfig[] | undefined
-): Map<string, Inconsistency['severity']> => {
-  const enabled = new Map<string, Inconsistency['severity']>()
+): Map<string, ValidationConfig> => {
+  const enabled = new Map<string, ValidationConfig>()
   for (const rule of validations ?? []) {
     if (rule.group === 'error' || rule.group === 'warning') {
-      enabled.set(rule.id, rule.group)
+      enabled.set(rule.id, rule)
     }
   }
   return enabled
 }
 
-export const validationKey = (validations: ValidationConfig[] | undefined) =>
-  (validations ?? []).map((rule) => `${rule.id}:${rule.group}`).join('|')
-
 const nodeDescription = (node: ManuscriptNode, custom?: string) =>
   custom || nodeNames.get(node.type) || node.type?.name || 'node'
 
-export const createIssue = (
+export const createInconsistency = (
   node: ManuscriptNode,
   pos: number,
-  definition: keyof typeof issueDefinitions,
+  definition: keyof typeof inconsistencyDefinitions,
   customNodeDescription?: string,
   severity?: Inconsistency['severity']
 ): Inconsistency => ({
   type: 'warning',
   action: { type: 'navigate-to-node' },
-  ...issueDefinitions[definition],
+  ...inconsistencyDefinitions[definition],
   ...(severity ? { severity } : {}),
   nodeDescription: nodeDescription(node, customNodeDescription),
   node,
@@ -74,14 +71,14 @@ export const createDecoration = (
   })
 }
 
-export const whenConfigured = (
-  definition: keyof typeof issueDefinitions,
-  context: { enabledValidations: Map<string, Inconsistency['severity']> },
+export const createInconsistencyIfConfigured = (
+  definition: keyof typeof inconsistencyDefinitions,
+  context: { enabledValidations: Map<string, ValidationConfig> },
   node: ManuscriptNode,
   pos: number
 ): Inconsistency[] => {
-  const severity = context.enabledValidations.get(definition)
-  return severity
-    ? [createIssue(node, pos, definition, undefined, severity)]
+  const rule = context.enabledValidations.get(definition)
+  return rule
+    ? [createInconsistency(node, pos, definition, undefined, rule.group)]
     : []
 }

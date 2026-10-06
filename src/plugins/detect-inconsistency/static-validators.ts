@@ -23,18 +23,18 @@ import {
 
 import { allowedHref } from '../../lib/url'
 import { isChildOfNodeTypes } from '../../lib/utils'
-import { createDecoration, createIssue } from './issue'
-import { issueDefinitions } from './issue-definitions'
+import { createDecoration, createInconsistency } from './inconsistency'
+import { inconsistencyDefinitions } from './inconsistency-definitions'
 import type { Inconsistency, NodeValidator, ValidatorContext } from './types'
 
 const highlight = (
-  issues: Inconsistency[],
+  inconsistencies: Inconsistency[],
   node: ManuscriptNode,
   pos: number,
-  definition: keyof typeof issueDefinitions,
+  definition: keyof typeof inconsistencyDefinitions,
   context: ValidatorContext
 ) => {
-  issues.push(createIssue(node, pos, definition))
+  inconsistencies.push(createInconsistency(node, pos, definition))
   if (context.showDecorations) {
     context.decorations.push(createDecoration(node, pos, context.selectedPos))
   }
@@ -104,7 +104,7 @@ const validateFigure: NodeValidator = (node, pos, context) => {
   const files = new Set(context.props.getFiles().map((file) => file.id))
   // An empty panel is reported on its container, not as a missing file too.
   if (node.attrs.src && !files.has(node.attrs.src)) {
-    return [createIssue(node, pos, 'missing-figure-file')]
+    return [createInconsistency(node, pos, 'missing-figure-file')]
   }
   return []
 }
@@ -112,14 +112,14 @@ const validateFigure: NodeValidator = (node, pos, context) => {
 const validateMedia: NodeValidator = (node, pos, context) => {
   const files = new Set(context.props.getFiles().map((file) => file.id))
   if (!(files.has(node.attrs.href) || allowedHref(node.attrs.href))) {
-    return [createIssue(node, pos, 'missing-embedded-media')]
+    return [createInconsistency(node, pos, 'missing-embedded-media')]
   }
   return []
 }
 
 const validateLink: NodeValidator = (node, pos) => {
   if (!allowedHref(node.attrs.href)) {
-    return [createIssue(node, pos, 'invalid-link')]
+    return [createInconsistency(node, pos, 'invalid-link')]
   }
   return []
 }
@@ -139,7 +139,7 @@ const validateFootnote: NodeValidator = (node, pos, context) => {
   ])
 
   return [
-    createIssue(
+    createInconsistency(
       node,
       pos,
       'orphaned-footnote',
@@ -151,7 +151,7 @@ const validateFootnote: NodeValidator = (node, pos, context) => {
 const validateAffiliation: NodeValidator = (node, pos, context) => {
   const unused = !context.pluginStates.affiliations?.has(node.attrs.id)
   if (unused && !isDeleted(node)) {
-    return [createIssue(node, pos, 'orphaned-affiliation')]
+    return [createInconsistency(node, pos, 'orphaned-affiliation')]
   }
   return []
 }
@@ -172,7 +172,7 @@ export const hasImageSource = (
 const validateFigurePanel: NodeValidator = (node, pos) =>
   hasImageSource(node, schema.nodes.figure)
     ? []
-    : [createIssue(node, pos, 'empty-figure-panel')]
+    : [createInconsistency(node, pos, 'empty-figure-panel')]
 
 const normalizeIdentity = (value: unknown): string =>
   typeof value === 'string'
@@ -199,7 +199,9 @@ const duplicateAuthorValidator: NodeValidator = (node, pos) => {
     const key = JSON.stringify(identity)
     if (seen.has(key) && !reported.has(key)) {
       reported.add(key)
-      inconsistencies.push(createIssue(child, pos + 1 + offset, 'duplicate-author'))
+      inconsistencies.push(
+        createInconsistency(child, pos + 1 + offset, 'duplicate-author')
+      )
     }
 
     seen.add(key)
@@ -229,7 +231,7 @@ const duplicateAffiliationValidator: NodeValidator = (node, pos) => {
     if (seen.has(key) && !reported.has(key)) {
       reported.add(key)
       inconsistencies.push(
-        createIssue(child, pos + 1 + offset, 'duplicate-affiliation')
+        createInconsistency(child, pos + 1 + offset, 'duplicate-affiliation')
       )
     }
 

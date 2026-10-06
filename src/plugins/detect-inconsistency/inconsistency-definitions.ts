@@ -16,13 +16,13 @@
 
 import type { Inconsistency } from './types'
 
-type IssueDefinition = Pick<
+type InconsistencyDefinition = Pick<
   Inconsistency,
   'title' | 'message' | 'severity' | 'category' | 'action'
 >
 
 // Validators describe intent; the article editor executes the UI action.
-export const issueDefinitions = {
+export const inconsistencyDefinitions = {
   'missing-title': {
     title: 'Missing Title',
     message: 'Title has no content.',
@@ -188,4 +188,4 @@ export const issueDefinitions = {
     category: 'empty-content',
     action: { type: 'open-metadata', tab: 'keywords' },
   },
-} satisfies Record<string, IssueDefinition>
+} satisfies Record<string, InconsistencyDefinition>

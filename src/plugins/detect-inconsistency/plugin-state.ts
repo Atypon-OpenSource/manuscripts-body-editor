@@ -23,7 +23,7 @@ import { affiliationsKey } from '../affiliations'
 import { getBibliographyPluginState } from '../bibliography'
 import { footnotesKey } from '../footnotes'
 import { objectsKey } from '../objects'
-import { toEnabledValidations, validationKey } from './issue'
+import { toEnabledValidations } from './inconsistency'
 import type { Inconsistency, PluginState, ValidatorContext } from './types'
 import { validators } from './validators'
 
@@ -34,6 +34,7 @@ export const buildPluginState = (
 ): PluginState => {
   const inconsistencies: Inconsistency[] = []
   const decorations: Decoration[] = []
+  const validations = props.getValidations?.() ?? props.validations
 
   const selection = state.selection
   let selectedPos: number | null = null
@@ -55,9 +56,7 @@ export const buildPluginState = (
     decorations,
     props,
     doc: state.doc,
-    enabledValidations: toEnabledValidations(
-      props.getValidations?.() ?? props.validations
-    ),
+    enabledValidations: toEnabledValidations(validations),
   }
 
   const collect = (node: ManuscriptNode, pos: number) => {
@@ -73,6 +72,6 @@ export const buildPluginState = (
     decorations: DecorationSet.create(state.doc, decorations),
     inconsistencies,
     showDecorations,
-    validationKey: validationKey(props.getValidations?.() ?? props.validations),
+    validations,
   }
 }

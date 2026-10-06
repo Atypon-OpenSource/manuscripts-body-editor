@@ -18,6 +18,7 @@ import {
   BibliographyItemAttrs,
   ManuscriptNode,
   Target,
+  ValidationConfig,
 } from '@manuscripts/transform'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 
@@ -56,7 +57,7 @@ export type PluginState = {
   decorations: DecorationSet
   inconsistencies: Array<Inconsistency>
   showDecorations: boolean
-  validationKey: string
+  validations: ValidationConfig[] | undefined
 }
 
 export type ValidatorContext = {
@@ -72,7 +73,7 @@ export type ValidatorContext = {
   decorations: Decoration[]
   props: EditorProps
   doc: ManuscriptNode
-  enabledValidations: Map<string, Inconsistency['severity']>
+  enabledValidations: Map<string, ValidationConfig>
 }
 
 export type NodeValidator = (
