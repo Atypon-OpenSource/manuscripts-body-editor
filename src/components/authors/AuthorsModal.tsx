@@ -64,7 +64,6 @@ import { AuthorList } from './AuthorList'
 import { CreditContributionsCheckboxes } from './CreditDrawer'
 import { useManageAffiliations } from './useManageAffiliations'
 import { useManageCredit } from './useManageCredit'
-import { BioDetails } from './BioDetails'
 
 const MODAL_ON_CLOSE_NOTIFY_DELAY_MS = 220
 
@@ -458,7 +457,6 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                       'Author Details',
                       ...(onOpenAffiliationsModal ? ['Affiliations'] : []),
                       'Contributions',
-                      'Bio',
                     ]}
                     tabErrorIndicators={[
                       authorHasError,
@@ -514,9 +512,6 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                         }))}
                         onSelect={selectCreditRole}
                       />
-                    </AuthorTabPanel>
-                    <AuthorTabPanel>
-                      <BioDetails />
                     </AuthorTabPanel>
                   </InspectorTabPanels>
                 </AuthorTabs>
