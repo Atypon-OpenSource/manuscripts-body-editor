@@ -41,6 +41,7 @@ import {
   insertGeneralTableFootnote,
   insertInlineTableFootnote,
 } from '../commands'
+import { getEditorProps } from '../plugins/editor-props'
 import { PopperManager } from './popper'
 import { HorizontalPositionMenu } from './position-menu'
 import { templateAllows } from './template'
@@ -253,6 +254,15 @@ export class ContextMenu {
     const menu = document.createElement('div')
     menu.className = 'menu'
 
+    const can = getEditorProps(this.view.state).getCapabilities()
+    // without editArticle the menu only offers commenting
+    if (!can.editArticle) {
+      menu.appendChild(this.createCommentSection())
+      popper.show(target, menu, 'right', true)
+      this.addPopperEventListeners()
+      return
+    }
+
     const $pos = this.resolvePos()
     const boxParent = getBoxElementOfSectionTitle($pos, this.node)
     const type = boxParent ? schema.nodes.box_element : this.node.type
@@ -348,17 +358,9 @@ export class ContextMenu {
       }
     }
 
-    const commentTarget = this.getCommentTarget()
-    menu.appendChild(
-      this.createMenuSection((section: HTMLElement) => {
-        section.appendChild(
-          this.createMenuItem('Comment', () => {
-            addNodeComment(commentTarget, this.view.state, this.view.dispatch)
-            popper.destroy()
-          })
-        )
-      })
-    )
+    if (can.createComment) {
+      menu.appendChild(this.createCommentSection())
+    }
 
     if (type === schema.nodes.table_element) {
       const items: Node[] = []
@@ -747,6 +749,18 @@ export class ContextMenu {
 
   private trimTitle = (title: string, max: number) => {
     return title.length > max ? title.substring(0, max) + '…' : title
+  }
+
+  private createCommentSection = () => {
+    const commentTarget = this.getCommentTarget()
+    return this.createMenuSection((section: HTMLElement) => {
+      section.appendChild(
+        this.createMenuItem('Comment', () => {
+          addNodeComment(commentTarget, this.view.state, this.view.dispatch)
+          popper.destroy()
+        })
+      )
+    })
   }
 
   private getCommentTarget = () => {

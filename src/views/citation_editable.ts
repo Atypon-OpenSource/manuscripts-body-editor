@@ -97,20 +97,24 @@ export class CitationEditableView extends CitationView {
     this.props.popper.destroy()
 
     const can = this.props.getCapabilities()
-    const actions = [
-      {
-        label: 'Comment',
-        action: () => handleComment(this.node, this.view),
-        icon: 'AddComment',
-      },
-    ]
+    const actions: ContextMenuProps['actions'] = []
 
     if (can.editArticle) {
-      actions.unshift({
+      actions.push({
         label: 'Edit',
         action: () => this.handleEdit(),
         icon: 'Edit',
       })
+    }
+    if (can.createComment) {
+      actions.push({
+        label: 'Comment',
+        action: () => handleComment(this.node, this.view),
+        icon: 'AddComment',
+      })
+    }
+    if (!actions.length) {
+      return
     }
     const componentProps: ContextMenuProps = {
       actions,

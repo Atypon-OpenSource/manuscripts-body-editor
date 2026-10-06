@@ -1913,11 +1913,17 @@ const getParentNode = (selection: Selection) => {
   return node
 }
 
+export const canCreateComment = (state: ManuscriptEditorState) =>
+  getEditorProps(state).getCapabilities().createComment
+
 export const addNodeComment = (
   node: ManuscriptNode,
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ) => {
+  if (!canCreateComment(state)) {
+    return false
+  }
   const props = getEditorProps(state)
   const attrs = {
     id: generateNodeID(schema.nodes.comment),
@@ -1953,6 +1959,9 @@ export const addInlineComment = (
   state: ManuscriptEditorState,
   dispatch?: Dispatch
 ): boolean => {
+  if (!canCreateComment(state)) {
+    return false
+  }
   const selection = state.selection
   const node = getParentNode(selection)
   if (!node) {

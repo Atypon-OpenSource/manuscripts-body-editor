@@ -203,7 +203,7 @@ const activeBoxStyle = css`
   border: 1px dashed #bce7f6;
 `
 
-const DropContainer = styled.div<{ $active: boolean }>`
+export const DropContainer = styled.div<{ $active: boolean }>`
   background: ${(props) => props.theme.colors.background.secondary};
   border: 1px dashed ${(props) => props.theme.colors.border.secondary};
   box-sizing: border-box;
