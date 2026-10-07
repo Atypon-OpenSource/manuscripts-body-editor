@@ -23,7 +23,7 @@ import {
   fileCorruptedIcon,
   xIcon,
 } from '../icons'
-import { getLanguage, getLanguageLabel, Language } from './languages'
+import { getLanguageLabel } from './languages'
 import { createKeyboardInteraction, handleEnterKey } from './navigation-utils'
 
 export const createCaptionFilePlaceholder = (
@@ -51,15 +51,7 @@ const captionFileExtensions = new Set(['vtt', 'srt'])
 export const captionFileAccept = '.vtt,.srt'
 export const captionLinkType = 'transcript'
 
-export const captionLanguages: Language[] = [
-  { code: 'en', name: 'English', nativeName: 'English' },
-  { code: 'ar', name: 'Arabic', nativeName: 'العربية' },
-  { code: 'zh', name: 'Chinese', nativeName: '中文' },
-  { code: 'fr', name: 'French', nativeName: 'Français' },
-  { code: 'de', name: 'German', nativeName: 'Deutsch' },
-  { code: 'no', name: 'Norwegian', nativeName: 'Norsk' },
-  { code: 'es', name: 'Spanish', nativeName: 'Español' },
-]
+export const captionLanguages = ['en', 'ar', 'zh', 'fr', 'de', 'no', 'es']
 
 export const isCaptionFile = (file: File | string) => {
   const name = typeof file === 'string' ? file : file.name
@@ -83,12 +75,9 @@ export const nextCaptionLanguage = (
       .map((link) => link.lang)
   )
   const preferred = captionLanguages.find(
-    (language) => language.code === preferredCode && !used.has(language.code)
+    (code) => code === preferredCode && !used.has(code)
   )
-  return (
-    preferred?.code ||
-    captionLanguages.find((language) => !used.has(language.code))?.code
-  )
+  return preferred || captionLanguages.find((code) => !used.has(code))
 }
 
 export const removeCaptionLink = (links: ExtLink[] = [], href: string) =>
@@ -134,7 +123,7 @@ export const setCaptionLinkLanguage = (
   href: string,
   language: string
 ) => {
-  if (!captionLanguages.some((option) => option.code === language)) {
+  if (!captionLanguages.includes(language)) {
     return links
   }
   if (
@@ -230,7 +219,7 @@ export const createUnsupportedCaptionFile = (
 }
 
 const createCaptionLanguageMenu = (
-  languages: Language[],
+  languages: string[],
   selectedCode: string,
   disabledCodes: Set<string>,
   onSelect: (code: string) => void,
@@ -254,13 +243,13 @@ const createCaptionLanguageMenu = (
     },
   })
 
-  languages.forEach((language) => {
+  languages.forEach((code) => {
     const item = document.createElement('div')
-    const disabled = disabledCodes.has(language.code)
-    item.className = `menu-item${
-      language.code === selectedCode ? ' selected' : ''
-    }${disabled ? ' disabled' : ''}`
-    item.textContent = getLanguageLabel(language)
+    const disabled = disabledCodes.has(code)
+    item.className = `menu-item${code === selectedCode ? ' selected' : ''}${
+      disabled ? ' disabled' : ''
+    }`
+    item.textContent = getLanguageLabel(code)
     item.setAttribute('role', 'menuitem')
     item.setAttribute('aria-disabled', String(disabled))
     if (disabled) {
@@ -273,7 +262,7 @@ const createCaptionLanguageMenu = (
     const select = (event: Event) => {
       event.preventDefault()
       event.stopPropagation()
-      onSelect(language.code)
+      onSelect(code)
       onClose()
     }
     item.addEventListener('mousedown', select)
@@ -290,7 +279,7 @@ const createCaptionLanguageMenu = (
 
 export const createCaptionFileList = (
   items: CaptionFileItem[],
-  languages: Language[],
+  languages: string[],
   onLanguageChange: (id: string, language: string) => void,
   onDelete: (id: string) => void,
   showLanguageMenu: (anchor: HTMLElement, menu: HTMLElement) => () => void
@@ -318,10 +307,7 @@ export const createCaptionFileList = (
     row.appendChild(file)
 
     const options = languages
-    const selected = item.language
-      ? options.find((option) => option.code === item.language) ||
-        getLanguage(item.language, options)
-      : undefined
+    const selected = item.language || undefined
     const usedLanguages = new Set(
       items
         .filter((caption) => caption.id !== item.id && caption.language)
@@ -353,12 +339,12 @@ export const createCaptionFileList = (
       event.stopPropagation()
       closeMenu?.()
       const menuOptions =
-        selected && !options.some((option) => option.code === selected.code)
+        selected && !options.includes(selected)
           ? [selected, ...options]
           : options
       const menu = createCaptionLanguageMenu(
         menuOptions,
-        selected?.code || '',
+        selected || '',
         usedLanguages,
         (code) => onLanguageChange(item.id, code),
         () => closeMenu?.()
