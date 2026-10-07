@@ -13,9 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ManuscriptNode, schema, SupplementNode } from '@manuscripts/transform'
+import {
+  ExtLink,
+  ManuscriptNode,
+  schema,
+  SupplementNode,
+} from '@manuscripts/transform'
 import { findChildrenByType } from 'prosemirror-utils'
 
+import { captionLinkType } from './captions'
 import { isHidden } from './track-changes-utils'
 
 import { NodeWeblink } from './supplements'
@@ -32,6 +38,7 @@ export type NodeFile = {
   node: ManuscriptNode
   pos: number
   file: FileAttachment
+  caption?: boolean
 }
 
 export type ElementFiles = {
@@ -122,6 +129,24 @@ export const groupFiles = (
           node,
           pos,
           file: getFile(node.attrs.href),
+        })
+      }
+      const extLinks = (node.attrs.extLinks || []) as ExtLink[]
+      for (const link of extLinks) {
+        if (link.type !== captionLinkType || !link.href) {
+          continue
+        }
+        const file = getFile(link.href)
+        figureFiles.push({
+          node,
+          pos,
+          file: file.id
+            ? file
+            : {
+                id: link.href,
+                name: link.label || link.href,
+              },
+          caption: true,
         })
       }
     } else {
