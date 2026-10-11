@@ -90,9 +90,9 @@ export const createMediaPlaceholder = (
       <p>Drag or click here to upload ${MediaLabels[mediaType]} <br>
       ${
         mediaType === MediaType.ExternalLink
-          ? ` or drag items here from the file <a data-action='open-other-files'>'Other files'</a> in the inspector.</p>`
+          ? ` or drag items here from the file <a data-action='open-temp-files'>'Temp Files'</a> in the inspector.</p>`
           : `or drag items here from the file inspector tabs <br>
-      <a data-action='open-other-files'>'Other files'</a> |
+      <a data-action='open-temp-files'>'Temp Files'</a> |
       <a data-action='open-supplement-files'>'Supplements'</a>`
       }
 
@@ -128,7 +128,7 @@ export const createMediaPlaceholder = (
   }
 
   const links = instructions.querySelectorAll<HTMLElement>(
-    `[data-action='open-other-files'], [data-action='open-supplement-files'] `
+    `[data-action='open-temp-files'], [data-action='open-supplement-files'] `
   )
   links.forEach((link) => {
     link.tabIndex = 0
