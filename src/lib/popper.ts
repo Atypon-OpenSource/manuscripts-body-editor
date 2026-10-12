@@ -107,6 +107,7 @@ export class PopperManager {
       })
 
       this.handleDocumentClick = (e) => {
+        console.log("handling click out of target")
         const node = e.target as Node
         if (!container.contains(node) && !target.contains(node)) {
           this.destroy()
@@ -115,8 +116,10 @@ export class PopperManager {
       // add EventListener for checking if click was done outside of editor
       // only if popper has class 'context-menu'
       if (
+        // @TODO clean it up - it's weird that popper needs such class based conditions in addition to just passing 'autoCloseOnOutsideClick'
         (contents.classList.contains('context-menu') ||
           contents.classList.contains('language') ||
+          contents.classList.contains('anchored-popover') ||
           contents.classList.contains('section-category')) &&
         autoCloseOnOutsideClick
       ) {

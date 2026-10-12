@@ -37,6 +37,7 @@ import { generateNodeID, schema } from '@manuscripts/transform'
 import cloneDeep from 'lodash/cloneDeep'
 import isEqual from 'lodash/isEqual'
 import omit from 'lodash/omit'
+import { NodeType } from 'prosemirror-model'
 import React, {
   useCallback,
   useEffect,
@@ -69,6 +70,7 @@ import { CreditContributionsCheckboxes } from './CreditDrawer'
 import { useManageAffiliations } from './useManageAffiliations'
 import { useManageCredit } from './useManageCredit'
 import { BioDetails } from './BioDetails'
+import { templateAllows } from '../../lib/template'
 
 export const authorsReducer = arrayReducer<ContributorAttrs>(
   (a, b) => a.id === b.id
@@ -87,7 +89,8 @@ export interface AuthorsModalProps {
   getCapabilities: () => Capabilities
   addNewAuthor?: boolean
   onOpenAffiliationsModal?: () => void
-  onClose?: () => void
+  onClose?: () => void,
+  templateAllows: (type: NodeType) => boolean
 }
 
 export const AuthorsModal: React.FC<AuthorsModalProps> = ({
@@ -104,6 +107,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   addNewAuthor = false,
   onOpenAffiliationsModal,
   onClose,
+  templateAllows
 }) => {
   const [isOpen, setOpen] = useState(true)
   const [isDisableSave, setDisableSave] = useState(true)
@@ -441,6 +445,21 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       !showConfirmationDialog &&
       !showRequiredFieldConfirmationDialog)
 
+  const bioOn = templateAllows(schema.nodes.bio);
+
+  const tabLabels = useMemo(() => {
+    let labels = [
+      'Author Details',
+      ...(onOpenAffiliationsModal ? ['Affiliations'] : []),
+      'Contributions',
+    ]
+    if (bioOn) {
+    tabLabels.push('Bio')
+  }
+  return labels
+  }, [bioOn])
+
+
   return (
     <StyledModalContent
       isOpen={isOpen}
@@ -492,12 +511,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                     }
                   />
                   <ModalTabs
-                    tabLabels={[
-                      'Author Details',
-                      ...(onOpenAffiliationsModal ? ['Affiliations'] : []),
-                      'Contributions',
-                      'Bio',
-                    ]}
+                    tabLabels={tabLabels}
                     tabErrorIndicators={[
                       authorHasError,
                       ...(onOpenAffiliationsModal ? [false] : []),
@@ -557,7 +571,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                         onSelect={selectCreditRole}
                       />
                     </AuthorTabPanel>
-                    <AuthorTabPanel>
+                    {bioOn && <AuthorTabPanel>
                       <BioDetails
                         key={selection.id}
                         values={bio}
@@ -570,7 +584,8 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                         canDetach={can.detachFile}
                         unsavedContinueActive={authorDetailsUnsavedContinue}
                       />
-                    </AuthorTabPanel>
+                    </AuthorTabPanel>}
+                    
                   </InspectorTabPanels>
                 </AuthorTabs>
                 <ConfirmationDialog
