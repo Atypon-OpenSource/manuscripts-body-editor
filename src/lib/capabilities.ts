@@ -44,12 +44,3 @@ export type Capabilities = {
   seeEditorToolbar: boolean
   seeReferencesButtons: boolean
 }
-
-export enum Actions {
-  // proceed = 'proceed',
-  updateAttachment = 'update-attachment',
-  updateDueDate = 'update-due-date',
-  addNote = 'add-note',
-  setMainManuscript = 'set-main-manuscript',
-  editWithoutTracking = 'edit-without-tracking',
-}
