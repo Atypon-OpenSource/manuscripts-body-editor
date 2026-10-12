@@ -225,7 +225,8 @@
   width: 250px;
 }
 
-.popper .link-editor {
+.popper .link-editor,
+.popper .author-bio-popper {
   position: relative;
   background: #fff;
   border-radius: 8px;

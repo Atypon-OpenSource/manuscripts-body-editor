@@ -54,6 +54,16 @@ export const authorLabel = (author: ContributorAttrs) => {
   return parts.length ? parts.join(' ') : 'Unknown Author'
 }
 
+export const authorFullName = (author: ContributorAttrs) => {
+  const parts = [
+    author.prefix,
+    author.given,
+    author.family,
+    author.suffix,
+  ].filter(Boolean)
+  return parts.length ? parts.join(' ') : 'Unknown Author'
+}
+
 export const initials = (contributor: ContributorAttrs): string =>
   contributor.given
     ? contributor.given
