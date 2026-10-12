@@ -29,7 +29,7 @@ import { defaultEditorProps } from '../../testing/default-editor-data'
 import { polyfillDom } from '../../testing/polyfill-dom'
 import { ContributorAttrs } from '../authors'
 import { upsertAuthor } from '../authors-and-affiliations'
-import { diffText, getBio, saveBio } from '../bio'
+import { getBio, saveBio } from '../bio'
 import { findChildByID, updateNodeAttrs } from '../view'
 
 const AUTHOR_ID = 'MPContributor:test'
@@ -84,41 +84,6 @@ const getTextNodes = (view: ManuscriptEditorView) => {
   })
   return nodes
 }
-
-describe('diffText', () => {
-  it('should find no change in equal strings', () => {
-    expect(diffText('abc', 'abc')).toEqual({ start: 3, endA: 3, endB: 3 })
-  })
-
-  it('should find an insertion', () => {
-    expect(diffText('Hello world', 'Hello brave world')).toEqual({
-      start: 6,
-      endA: 6,
-      endB: 12,
-    })
-  })
-
-  it('should find a deletion', () => {
-    expect(diffText('Hello brave world', 'Hello world')).toEqual({
-      start: 6,
-      endA: 12,
-      endB: 6,
-    })
-  })
-
-  it('should treat everything between the first and the last change as one change', () => {
-    expect(diffText('a quick brown fox', 'a slow brown cat')).toEqual({
-      start: 2,
-      endA: 17,
-      endB: 16,
-    })
-  })
-
-  it('should not overlap the common start and end', () => {
-    expect(diffText('aa', 'aaa')).toEqual({ start: 2, endA: 2, endB: 3 })
-    expect(diffText('aaa', 'aa')).toEqual({ start: 2, endA: 3, endB: 2 })
-  })
-})
 
 describe('bio', () => {
   it('should read an empty bio from an author without bio', () => {

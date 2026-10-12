@@ -70,7 +70,6 @@ import { CreditContributionsCheckboxes } from './CreditDrawer'
 import { useManageAffiliations } from './useManageAffiliations'
 import { useManageCredit } from './useManageCredit'
 import { BioDetails } from './BioDetails'
-import { templateAllows } from '../../lib/template'
 
 export const authorsReducer = arrayReducer<ContributorAttrs>(
   (a, b) => a.id === b.id
@@ -89,7 +88,7 @@ export interface AuthorsModalProps {
   getCapabilities: () => Capabilities
   addNewAuthor?: boolean
   onOpenAffiliationsModal?: () => void
-  onClose?: () => void,
+  onClose?: () => void
   templateAllows: (type: NodeType) => boolean
 }
 
@@ -107,7 +106,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   addNewAuthor = false,
   onOpenAffiliationsModal,
   onClose,
-  templateAllows
+  templateAllows,
 }) => {
   const [isOpen, setOpen] = useState(true)
   const [isDisableSave, setDisableSave] = useState(true)
@@ -445,7 +444,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       !showConfirmationDialog &&
       !showRequiredFieldConfirmationDialog)
 
-  const bioOn = templateAllows(schema.nodes.bio);
+  const bioOn = templateAllows(schema.nodes.bio)
 
   const tabLabels = useMemo(() => {
     let labels = [
@@ -454,11 +453,10 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       'Contributions',
     ]
     if (bioOn) {
-    tabLabels.push('Bio')
-  }
-  return labels
+      labels.push('Bio')
+    }
+    return labels
   }, [bioOn])
-
 
   return (
     <StyledModalContent
@@ -571,21 +569,22 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
                         onSelect={selectCreditRole}
                       />
                     </AuthorTabPanel>
-                    {bioOn && <AuthorTabPanel>
-                      <BioDetails
-                        key={selection.id}
-                        values={bio}
-                        onChange={changeBio}
-                        onSave={saveBio}
-                        actionsRef={bioActionsRef}
-                        fileManagement={fileManagement}
-                        getFiles={getFiles}
-                        canUpload={can.uploadFile}
-                        canDetach={can.detachFile}
-                        unsavedContinueActive={authorDetailsUnsavedContinue}
-                      />
-                    </AuthorTabPanel>}
-                    
+                    {bioOn && (
+                      <AuthorTabPanel>
+                        <BioDetails
+                          key={selection.id}
+                          values={bio}
+                          onChange={changeBio}
+                          onSave={saveBio}
+                          actionsRef={bioActionsRef}
+                          fileManagement={fileManagement}
+                          getFiles={getFiles}
+                          canUpload={can.uploadFile}
+                          canDetach={can.detachFile}
+                          unsavedContinueActive={authorDetailsUnsavedContinue}
+                        />
+                      </AuthorTabPanel>
+                    )}
                   </InspectorTabPanels>
                 </AuthorTabs>
                 <ConfirmationDialog

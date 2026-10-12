@@ -43,6 +43,8 @@ import {
 import { CreateAffiliationModal } from '../affiliations/CreateAffiliationModal'
 import { AuthorsModal, AuthorsModalProps } from '../authors/AuthorsModal'
 import { CreateAuthorModal } from '../authors/CreateAuthorModal'
+import { NodeType } from 'prosemirror-model'
+import { templateAllows } from '../../lib/template'
 
 export interface AuthorsAndAffiliationsModalsProps {
   initialModal: 'authors' | 'affiliations'
@@ -104,6 +106,7 @@ export const AuthorsAndAffiliationsModals: React.FC<
     fileManagement,
     getFiles,
     getCapabilities,
+    templateAllows: (node: NodeType) => templateAllows(view.state, node)
   }
 
   const affiliationsProps: AffiliationsModalProps = {

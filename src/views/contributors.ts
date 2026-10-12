@@ -29,7 +29,7 @@ import {
 } from '../components/authors-affiliations/AuthorsAndAffiliationsModals'
 import { BioPopper, BioPopperProps } from '../components/authors/BioPopper'
 import { authorComparator, authorLabel, ContributorAttrs } from '../lib/authors'
-import { getBio, hasBio } from '../lib/bio'
+import { getBio } from '../lib/bio'
 import { handleComment } from '../lib/comments'
 import { createKeyboardInteraction } from '../lib/navigation-utils'
 import { findChildByID, findChildrenAttrsByType } from '../lib/view'
@@ -40,8 +40,6 @@ import BlockView from './block_view'
 import { createNodeView } from './creators'
 import ReactSubView, { SubViewContainer } from './ReactSubView'
 import { ORCIDIcon } from '../icons'
-
-const BIO_POPPER_DELAY = 300
 
 export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   contextMenu: HTMLElement
@@ -132,10 +130,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     container.setAttribute('id', attrs.id)
     container.setAttribute('contenteditable', 'false')
     container.tabIndex = index === 0 ? 0 : -1
-    // container.addEventListener('mouseenter', () =>
-    //   this.handleMouseEnter(container)
-    // )
-    // container.addEventListener('mouseleave', this.scheduleHideBioPopper)
 
     addTrackChangesAttributes(attrs, container)
 
@@ -286,7 +280,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   private handleClick = (event: Event) => {
     const element = event.target as HTMLElement
     const author = element.closest('.contributor')
-    // the bio popper may already be shown for the author on hover
     if (!author || author !== this.bioPopperTarget) {
       this.props.popper.destroy()
     }
@@ -324,30 +317,12 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     }
   }
 
-  // private scheduleHideBioPopper = () => {
-  //   window.clearTimeout(this.bioPopperTimer)
-  //   this.bioPopperTimer = window.setTimeout(
-  //     this.hideBioPopper,
-  //     BIO_POPPER_DELAY
-  //   )
-  // }
-
   private hideBioPopper = () => {
     // window.clearTimeout(this.bioPopperTimer)
     if (this.bioPopperTarget) {
       this.props.popper.destroy()
     }
   }
-
-  // private handleClickOutsideBioPopper = (event: Event) => {
-  //   const target = event.target as Node
-  //   if (
-  //     !this.bioPopper?.contains(target) &&
-  //     !this.bioPopperTarget?.contains(target)
-  //   ) {
-  //     this.hideBioPopper()
-  //   }
-  // }
 
   public showBioPopper = (element: Element, autoFocus = true) => {
     // window.clearTimeout(this.bioPopperTimer)
@@ -373,18 +348,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       this.view,
       ['author-bio-popper', 'anchored-popover']
     )
-    // popper.addEventListener('mouseenter', () =>
-    //   window.clearTimeout(this.bioPopperTimer)
-    // )
-    // popper.addEventListener('mouseleave', this.scheduleHideBioPopper)
-    // popper.addEventListener('focusout', (event) => {
-    //   if (
-    //     !popper.contains(event.relatedTarget as Node) &&
-    //     !popper.matches(':hover')
-    //   ) {
-    //     this.scheduleHideBioPopper()
-    //   }
-    // })
 
     this.props.popper.show(
       element,
@@ -395,9 +358,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       autoFocus,
       true,
       () => {
-        console.log("on destroy called")
-        // window.removeEventListener('click', this.handleClickOutsideBioPopper)
-        // not while React handles the click on the edit button
         if (this.bioPopper === popper) {
           this.bioPopper = undefined
           this.bioPopperTarget = undefined
@@ -407,7 +367,6 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
     // set after the previous popper is destroyed by show()
     this.bioPopper = popper
     this.bioPopperTarget = element
-    // window.addEventListener('click', this.handleClickOutsideBioPopper)
   }
 
   handleEdit = (id: string, addNew?: boolean) => {

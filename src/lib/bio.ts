@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { isDeletedText } from '@manuscripts/track-changes-plugin'
+import { getActualTextContent } from '@manuscripts/track-changes-plugin'
 import {
   generateNodeID,
   ManuscriptEditorView,
@@ -29,8 +29,8 @@ import { findChildByID } from './view'
 export const BIO_TEXT_MAX_LENGTH = 500
 
 /**
- * Plain representation of the `bio` node of a contributor as it is edited in
- * the Bio tab of the authors modal: the text of its first paragraph and the id
+ * Plain representation of the `bio` form values in authors modal:
+ * the text of its first paragraph and the id
  * of the file used as the bio image.
  */
 export interface BioValues {
@@ -52,24 +52,6 @@ const findChild = (node: ManuscriptNode, type: ManuscriptNodeType) => {
   return found
 }
 
-/**
- * Text of a paragraph as plain text. Text that is pending deletion is left
- * out, `positions` holds the offset in the paragraph of every returned char.
- */
-const getPlainText = (paragraph: ManuscriptNode) => {
-  let text = ''
-  const positions: number[] = []
-  paragraph.descendants((node, pos) => {
-    if (node.isText && node.text && !isDeletedText(node)) {
-      text += node.text
-      for (let i = 0; i < node.text.length; i++) {
-        positions.push(pos + i)
-      }
-    }
-  })
-  return { text, positions }
-}
-
 export const getBio = (contributor: ManuscriptNode): BioValues => {
   const bio = findChild(contributor, schema.nodes.bio)?.node
   if (!bio) {
@@ -78,76 +60,29 @@ export const getBio = (contributor: ManuscriptNode): BioValues => {
   const paragraph = findChild(bio, schema.nodes.paragraph)?.node
   const image = findChild(bio, schema.nodes.image_element)?.node
   const figure = image && findChild(image, schema.nodes.figure)?.node
+  
   return {
-    text: paragraph ? getPlainText(paragraph).text : '',
+    text: paragraph ? getActualTextContent(paragraph.content) : '',
     image: figure?.attrs.src || '',
   }
 }
 
-/**
- * Finds the only range in which the two strings differ: everything between
- * their common start and their common end is treated as a single change.
- */
-export const diffText = (a: string, b: string) => {
-  const max = Math.min(a.length, b.length)
-  let start = 0
-  while (start < max && a[start] === b[start]) {
-    start++
-  }
-  let endA = a.length
-  let endB = b.length
-  while (endA > start && endB > start && a[endA - 1] === b[endB - 1]) {
-    endA--
-    endB--
-  }
-  return { start, endA, endB }
-}
-
-/**
- * Changes only the differing part of the paragraph text, so that the tracked
- * change (and the formatting of the untouched text) is limited to the actual
- * edit instead of the whole paragraph.
- */
 const updateText = (tr: Transaction, pos: number, text: string) => {
   const paragraph = tr.doc.nodeAt(pos)
   if (!paragraph) {
     return
   }
-  const { text: current, positions } = getPlainText(paragraph)
-  if (current === text) {
-    return
-  }
-  const { start, endA, endB } = diffText(current, text)
-  const base = pos + 1
-  let from: number
-  let to: number
-  if (endA > start) {
-    from = base + positions[start]
-    to = base + positions[endA - 1] + 1
-  } else {
-    // nothing is removed - insert right after the char preceding the change
-    from = base + (start > 0 ? positions[start - 1] + 1 : (positions[0] ?? 0))
-    to = from
-  }
-  const inserted = text.slice(start, endB)
-  if (!inserted) {
+  const from = pos + 1;
+  const to = pos + paragraph.nodeSize - 1;
+  if (!text) { // cant replace with emtpy - tr.replaceWith will throw with empty
     tr.delete(from, to)
     return
   }
-  // the new text takes over the formatting at the place of the change, but
-  // not the tracking marks of its neighbours
-  const $from = tr.doc.resolve(from)
-  const marks =
-    (from === to ? $from.marks() : $from.marksAcross(tr.doc.resolve(to))) || []
-  const { tracked_insert, tracked_delete } = schema.marks
   tr.replaceWith(
     from,
     to,
     schema.text(
-      inserted,
-      marks.filter(
-        (m) => m.type !== tracked_insert && m.type !== tracked_delete
-      )
+      text
     )
   )
 }
