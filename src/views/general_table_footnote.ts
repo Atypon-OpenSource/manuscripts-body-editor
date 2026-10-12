@@ -28,7 +28,7 @@ import {
 import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
-import ReactSubView from './ReactSubView'
+import ReactSubView, { SubViewContainer } from './ReactSubView'
 import { isDeleted, isPendingInsert } from '@manuscripts/track-changes-plugin'
 import { handleEnterKey } from '../lib/navigation-utils'
 import { isSelectionInsideNode } from '../lib/view'
@@ -36,7 +36,7 @@ import { isSelectionInsideNode } from '../lib/view'
 export class GeneralTableFootnoteView extends BaseNodeView<
   Trackable<GeneralTableFootnoteNode>
 > {
-  dialog: HTMLElement
+  dialog: SubViewContainer | null = null
   contextMenu: HTMLDivElement
   isMenuShown: boolean = false
 
@@ -118,6 +118,10 @@ export class GeneralTableFootnoteView extends BaseNodeView<
       header: 'Delete table general note',
       message: 'This action will entirely remove the table general note.',
       handleDelete: this.handleDelete,
+      onClose: () => {
+        this.dialog?.destroy()
+        this.dialog = null
+      },
     }
 
     this.dialog = ReactSubView(
@@ -129,7 +133,7 @@ export class GeneralTableFootnoteView extends BaseNodeView<
       this.view
     )
 
-    this.props.popper.show(this.dom, this.dialog, 'auto', false)
+    document.body.appendChild(this.dialog)
   }
 
   handleDelete = () => {

@@ -26,13 +26,12 @@ import { updateNodeAttrs } from '../lib/view'
 import { Trackable, TrackableAttributes } from '../types'
 import BlockView from './block_view'
 import { createNodeView } from './creators'
-import ReactSubView from './ReactSubView'
+import ReactSubView, { SubViewContainer } from './ReactSubView'
 import { isDeleted } from '@manuscripts/track-changes-plugin'
 
 export type AwardAttrs = TrackableAttributes<AwardNode>
 export class AwardView extends BlockView<Trackable<AwardNode>> {
-  protected popperContainer: HTMLDivElement
-  private dialog: HTMLElement
+  protected modalContainer: SubViewContainer | null
   contextMenu: HTMLElement
 
   public ignoreMutation = () => true
@@ -138,14 +137,17 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
   }
 
   showAwardModal = (award: AwardNode) => {
-    this.dialog?.remove()
-    this.popperContainer?.remove()
+    this.modalContainer?.destroy()
 
     const componentProps: AwardModalProps = {
       initialData: award?.attrs || ({} as AwardAttrs),
       onSaveAward: this.handleSaveAward,
+      onClose: () => {
+        this.modalContainer?.destroy()
+        this.modalContainer = null
+      },
     }
-    this.popperContainer = ReactSubView(
+    this.modalContainer = ReactSubView(
       this.props,
       AwardModal,
       componentProps,
@@ -154,16 +156,19 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
       this.view,
       ['award-editor']
     )
-    this.props.popper.show(this.dom, this.popperContainer, 'auto', false)
+    document.body.appendChild(this.modalContainer)
   }
 
   showDeleteAwardDialog = () => {
-    this.dialog?.remove()
     const componentProps: DeleteAwardDialogProps = {
       handleDelete: this.handleDeleteAward,
+      onClose: () => {
+        this.modalContainer?.destroy()
+        this.modalContainer = null
+      },
     }
 
-    this.popperContainer = ReactSubView(
+    this.modalContainer = ReactSubView(
       this.props,
       DeleteAwardDialog,
       componentProps,
@@ -172,7 +177,7 @@ export class AwardView extends BlockView<Trackable<AwardNode>> {
       this.view,
       ['award-editor']
     )
-    this.props.popper.show(this.dom, this.popperContainer, 'auto', false)
+    document.body.appendChild(this.modalContainer)
   }
 
   handleSaveAward = (award: AwardAttrs) => {

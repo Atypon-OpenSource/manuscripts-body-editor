@@ -29,7 +29,7 @@ import {
 import { EditorProps } from '../configs/ManuscriptsEditor'
 import { fileCorruptedIcon } from '../icons'
 import { Trackable } from '../types'
-import ReactSubView from '../views/ReactSubView'
+import ReactSubView, { SubViewContainer } from '../views/ReactSubView'
 import { FileAttachment } from './files'
 
 export const createUnsupportedFormat = (
@@ -216,7 +216,7 @@ export const createReactTools = <T extends ManuscriptNode>(
   handlers: FileHandlers,
   isEmbed: boolean,
   hasSiblings: () => boolean
-): HTMLDivElement | null => {
+): SubViewContainer | null => {
   if (!props.dispatch || !props.theme) {
     return null
   }

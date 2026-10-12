@@ -36,14 +36,14 @@ import {
 import { Trackable } from '../types'
 import { BaseNodeView } from './base_node_view'
 import { createNodeView } from './creators'
-import ReactSubView from './ReactSubView'
+import ReactSubView, { SubViewContainer } from './ReactSubView'
 import { isDeleted, isPendingInsert } from '@manuscripts/track-changes-plugin'
 
 export class InlineFootnoteView
   extends BaseNodeView<Trackable<InlineFootnoteNode>>
   implements ManuscriptNodeView
 {
-  protected popperContainer: HTMLDivElement
+  protected popperContainer: SubViewContainer
 
   showContextMenu = () => {
     this.props.popper.destroy()
@@ -200,7 +200,7 @@ export class InlineFootnoteView
 
   public destroy = () => {
     this.props.popper.destroy()
-    this.popperContainer?.remove()
+    this.popperContainer?.destroy()
   }
 
   handleCancel = () => {

@@ -19,17 +19,21 @@ import React, { useState } from 'react'
 export interface DeleteKeywordDialogProps {
   keyword: string
   handleDelete: () => void
+  onClose: () => void
 }
 
 export const DeleteKeywordDialog: React.FC<DeleteKeywordDialogProps> = ({
   keyword,
   handleDelete,
+  onClose
 }) => {
   const [isOpen, setOpen] = useState(true)
 
   return (
     <Dialog
       isOpen={isOpen}
+      portaled={false}
+      onExited={onClose}
       actions={{
         primary: {
           action: () => setOpen(false),

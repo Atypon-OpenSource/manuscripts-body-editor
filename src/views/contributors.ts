@@ -47,7 +47,7 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
   contextMenu: HTMLElement
   container: HTMLElement
   inner: HTMLElement
-  popper?: HTMLElement
+  dialog?: SubViewContainer
   version: string
   // the bio popper and the author it is shown for
   bioPopper?: SubViewContainer
@@ -418,11 +418,15 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       view: this.view,
       author,
       addNewAuthor: addNew,
+      onClose: () => {
+        this.dialog?.destroy()
+        this.dialog = undefined
+      },
     }
 
-    this.popper?.remove()
+    this.dialog?.destroy()
 
-    this.popper = ReactSubView(
+    this.dialog = ReactSubView(
       this.props,
       AuthorsAndAffiliationsModals,
       componentProps,
@@ -431,10 +435,11 @@ export class ContributorsView extends BlockView<Trackable<ContributorsNode>> {
       this.view
     )
 
-    this.container.appendChild(this.popper)
+    document.body.appendChild(this.dialog)
   }
 
   public destroy() {
+    this.dialog?.destroy()
     this.removeKeydownListener?.()
     this.hideBioPopper()
     super.destroy()

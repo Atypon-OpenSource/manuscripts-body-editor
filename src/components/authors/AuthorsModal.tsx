@@ -28,10 +28,10 @@ import {
   outlineStyle,
   ScrollableModalContent,
   SidebarContent,
-  StyledModal,
   InspectorTabs,
   InspectorTabPanel,
   InspectorTabPanels,
+  StyledModalContent,
 } from '@manuscripts/style-guide'
 import { generateNodeID, schema } from '@manuscripts/transform'
 import cloneDeep from 'lodash/cloneDeep'
@@ -70,8 +70,6 @@ import { useManageAffiliations } from './useManageAffiliations'
 import { useManageCredit } from './useManageCredit'
 import { BioDetails } from './BioDetails'
 
-const MODAL_ON_CLOSE_NOTIFY_DELAY_MS = 220
-
 export const authorsReducer = arrayReducer<ContributorAttrs>(
   (a, b) => a.id === b.id
 )
@@ -108,17 +106,6 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
   onClose,
 }) => {
   const [isOpen, setOpen] = useState(true)
-  const prevIsOpenRef = useRef(true)
-  useEffect(() => {
-    if (prevIsOpenRef.current && !isOpen) {
-      prevIsOpenRef.current = isOpen
-      const id = window.setTimeout(() => {
-        onClose?.()
-      }, MODAL_ON_CLOSE_NOTIFY_DELAY_MS)
-      return () => window.clearTimeout(id)
-    }
-    prevIsOpenRef.current = isOpen
-  }, [isOpen, onClose])
   const [isDisableSave, setDisableSave] = useState(true)
   const [isAuthorValid, setAuthorValid] = useState(false)
   const [bioChanged, setBioChanged] = useState(false)
@@ -455,8 +442,9 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
       !showRequiredFieldConfirmationDialog)
 
   return (
-    <StyledModal
+    <StyledModalContent
       isOpen={isOpen}
+      onExited={() => onClose?.()}
       onRequestClose={() => close()}
       shouldCloseOnOverlayClick={true}
     >
@@ -631,7 +619,7 @@ export const AuthorsModal: React.FC<AuthorsModalProps> = ({
           }
         />
       </ModalContainer>
-    </StyledModal>
+    </StyledModalContent>
   )
 }
 

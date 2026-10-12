@@ -18,16 +18,19 @@ import React, { useState } from 'react'
 
 export interface DeleteAwardDialogProps {
   handleDelete: () => void
+  onClose?: () => void
 }
 
 export const DeleteAwardDialog: React.FC<DeleteAwardDialogProps> = ({
   handleDelete,
+  onClose
 }) => {
   const [isOpen, setOpen] = useState(true)
 
   return (
     <Dialog
       isOpen={isOpen}
+      onExited={onClose}
       actions={{
         primary: {
           action: () => {
@@ -44,6 +47,7 @@ export const DeleteAwardDialog: React.FC<DeleteAwardDialogProps> = ({
       category={Category.warning}
       header={'Delete Funder Info'}
       message={''}
+      portaled={false}
     >
       <p>This action will delete the funder information.</p>
       <p>Do you want to continue?</p>
