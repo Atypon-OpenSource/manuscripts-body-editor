@@ -31,20 +31,13 @@ import { getTextOfType } from '../../lib/utils'
 import { getEditorProps } from '../editor-props'
 import { getValidationCategory } from './configured-validators'
 import { toEnabledValidations } from './inconsistency'
-import { inconsistencyDefinitions } from './inconsistency-definitions'
+import { InconsistencyDefinitionKey } from './inconsistency-definitions'
 import type { MetadataTab } from './types'
 
 const scrollToNode = (view: EditorView, pos: number) => {
-  const node = view.state.doc.nodeAt(pos)
-  if (!node || !NodeSelection.isSelectable(node)) {
-    return
-  }
+  const tr = view.state.tr.setSelection(NodeSelection.create(view.state.doc, pos))
   view.focus()
-  view.dispatch(
-    view.state.tr
-      .setSelection(NodeSelection.create(view.state.doc, pos))
-      .scrollIntoView()
-  )
+  view.dispatch(tr.scrollIntoView())
 }
 
 const openAbstract = (view: EditorView) => {
@@ -66,10 +59,10 @@ const openKeywords = (view: EditorView) => {
 }
 
 const backmatterTabs = {
-  'conflict-of-interest': 'missing-conflict-of-interest',
-  'data-availability': 'missing-data-availability',
-  'ethics-statement': 'missing-ethics-statement',
-} as const satisfies Record<string, keyof typeof inconsistencyDefinitions>
+  'conflict-of-interest': InconsistencyDefinitionKey.MissingConflictOfInterest,
+  'data-availability': InconsistencyDefinitionKey.MissingDataAvailability,
+  'ethics-statement': InconsistencyDefinitionKey.MissingEthicsStatement,
+} as const satisfies Record<string, InconsistencyDefinitionKey>
 
 const openBackmatterSection = (
   view: EditorView,
@@ -77,7 +70,7 @@ const openBackmatterSection = (
 ) => {
   const props = getEditorProps(view.state)
   const category = getValidationCategory(
-    toEnabledValidations(props?.getValidations?.() ?? props?.validations),
+    toEnabledValidations(props?.validations),
     props?.sectionCategories,
     backmatterTabs[tab]
   )
@@ -131,5 +124,5 @@ export const openMetadataTarget = (
     openBackmatterSection(view, tab as keyof typeof backmatterTabs)
     return
   }
-  openInsertAwardModal(view)
+  openInsertAwardModal()(view)
 }

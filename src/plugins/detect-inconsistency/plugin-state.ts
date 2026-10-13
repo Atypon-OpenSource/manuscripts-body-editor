@@ -34,7 +34,7 @@ export const buildPluginState = (
 ): PluginState => {
   const inconsistencies: Inconsistency[] = []
   const decorations: Decoration[] = []
-  const validations = props.getValidations?.() ?? props.validations
+  const validations = props.validations
 
   const selection = state.selection
   let selectedPos: number | null = null

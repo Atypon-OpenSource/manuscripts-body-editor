@@ -36,7 +36,7 @@ export default (props: EditorProps) => {
         const metaValue = tr.getMeta(detectInconsistencyKey)
         const showDecorations =
           metaValue !== undefined ? metaValue : value.showDecorations
-        const nextValidations = props.getValidations?.() ?? props.validations
+        const nextValidations = props.validations
         if (
           !tr.docChanged &&
           metaValue === undefined &&

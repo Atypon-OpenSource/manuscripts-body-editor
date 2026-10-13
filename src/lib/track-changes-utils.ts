@@ -24,19 +24,6 @@ export function isHidden(node: ProsemirrorNode) {
   return isDeleted(node)
 }
 
-export const getVisibleText = (node: ProsemirrorNode) => {
-  let text = ''
-  node.descendants((child) => {
-    if (isDeleted(child)) {
-      return false
-    }
-    if (child.isText) {
-      text += child.text
-    }
-  })
-  return text.trim()
-}
-
 export const getAttrsTrackingButton = (changeID: string) => {
   const el = document.createElement('button')
   el.className = 'attrs-popper-button'

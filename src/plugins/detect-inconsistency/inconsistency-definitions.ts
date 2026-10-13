@@ -21,22 +21,53 @@ type InconsistencyDefinition = Pick<
   'title' | 'message' | 'severity' | 'category' | 'action'
 >
 
+export enum InconsistencyDefinitionKey {
+  MissingTitle = 'missing-title',
+  OrphanedAffiliation = 'orphaned-affiliation',
+  DuplicateAffiliation = 'duplicate-affiliation',
+  MissingCrossReferenceTarget = 'missing-cross-reference-target',
+  BrokenCitation = 'broken-citation',
+  MissingFootnoteTarget = 'missing-footnote-target',
+  MissingFigureFile = 'missing-figure-file',
+  MissingEmbeddedMedia = 'missing-embedded-media',
+  InvalidLink = 'invalid-link',
+  OrphanedFootnote = 'orphaned-footnote',
+  DuplicateAuthor = 'duplicate-author',
+  EmptyFigurePanel = 'empty-figure-panel',
+  EmptyImage = 'empty-image',
+  EmptyHeroImage = 'empty-hero-image',
+  EmptyContributorHeadshot = 'empty-contributor-headshot',
+  MissingAltText = 'missing-alt-text',
+  MissingSupplementCaption = 'missing-supplement-caption',
+  MissingAbstract = 'missing-abstract',
+  MissingMainDocument = 'missing-main-document',
+  NoAffiliations = 'no-affiliations',
+  MissingConflictOfInterest = 'missing-conflict-of-interest',
+  MissingDataAvailability = 'missing-data-availability',
+  MissingFunder = 'missing-funder',
+  MissingEthicsStatement = 'missing-ethics-statement',
+  MissingKeywords = 'missing-keywords',
+}
+
 // Validators describe intent; the article editor executes the UI action.
-export const inconsistencyDefinitions = {
-  'missing-title': {
+export const inconsistencyDefinitions: Record<
+  InconsistencyDefinitionKey,
+  InconsistencyDefinition
+> = {
+  [InconsistencyDefinitionKey.MissingTitle]: {
     title: 'Missing Title',
     message: 'Title has no content.',
     severity: 'error',
     category: 'empty-content',
   },
-  'orphaned-affiliation': {
+  [InconsistencyDefinitionKey.OrphanedAffiliation]: {
     title: 'Orphaned Affiliation',
     message: 'An affiliation entry exists but is not linked to any author.',
     severity: 'warning',
     category: 'not-used',
     action: { type: 'open-metadata', tab: 'affiliations' },
   },
-  'duplicate-affiliation': {
+  [InconsistencyDefinitionKey.DuplicateAffiliation]: {
     title: 'Duplicate Affiliation',
     message:
       'Two or more affiliation entries appear to represent the same institution.',
@@ -44,94 +75,94 @@ export const inconsistencyDefinitions = {
     category: 'duplicate',
     action: { type: 'open-metadata', tab: 'affiliations' },
   },
-  'missing-cross-reference-target': {
+  [InconsistencyDefinitionKey.MissingCrossReferenceTarget]: {
     title: 'Missing Cross-reference Target',
     message: 'One or more referenced object IDs do not exist.',
     severity: 'error',
     category: 'missing-reference',
   },
-  'broken-citation': {
+  [InconsistencyDefinitionKey.BrokenCitation]: {
     title: 'Broken Citation',
     message:
       'Citation is empty or one or more bibliography references do not exist.',
     severity: 'error',
     category: 'missing-reference',
   },
-  'missing-footnote-target': {
+  [InconsistencyDefinitionKey.MissingFootnoteTarget]: {
     title: 'Missing Footnote Target',
     message: 'One or more referenced footnotes do not exist.',
     severity: 'error',
     category: 'missing-reference',
   },
-  'missing-figure-file': {
+  [InconsistencyDefinitionKey.MissingFigureFile]: {
     title: 'Missing Figure/Image File',
     message: 'Referenced uploaded file does not exist.',
     severity: 'error',
     category: 'missing-reference',
   },
-  'missing-embedded-media': {
+  [InconsistencyDefinitionKey.MissingEmbeddedMedia]: {
     title: 'Missing Embedded Media',
     message: 'Neither a valid URL nor an existing uploaded file is provided.',
     severity: 'error',
     category: 'missing-reference',
   },
-  'invalid-link': {
+  [InconsistencyDefinitionKey.InvalidLink]: {
     title: 'Invalid Link',
     message: 'URL is empty or invalid/unsupported.',
     severity: 'error',
     category: 'missing-reference',
   },
-  'orphaned-footnote': {
+  [InconsistencyDefinitionKey.OrphanedFootnote]: {
     title: 'Orphaned Footnote',
     message: 'Footnote exists but is not referenced in the document.',
     severity: 'warning',
     category: 'not-used',
   },
-  'duplicate-author': {
+  [InconsistencyDefinitionKey.DuplicateAuthor]: {
     title: 'Duplicate Author',
     message: 'Two or more author entries appear to represent the same person.',
     severity: 'warning',
     category: 'duplicate',
     action: { type: 'open-metadata', tab: 'authors' },
   },
-  'empty-figure-panel': {
+  [InconsistencyDefinitionKey.EmptyFigurePanel]: {
     title: 'Empty Figure Panel',
     message: 'A Figure Panel block exists with no image ever uploaded.',
     severity: 'error',
     category: 'empty-content',
   },
-  'empty-image': {
+  [InconsistencyDefinitionKey.EmptyImage]: {
     title: 'Empty Image',
     message: 'A standalone Image block exists with no image ever uploaded.',
     severity: 'error',
     category: 'empty-content',
   },
-  'empty-hero-image': {
+  [InconsistencyDefinitionKey.EmptyHeroImage]: {
     title: 'Empty Hero Image',
     message: 'Hero Image is inserted with no image ever chosen.',
     severity: 'error',
     category: 'empty-content',
   },
-  'empty-contributor-headshot': {
+  [InconsistencyDefinitionKey.EmptyContributorHeadshot]: {
     title: 'Empty Contributor Headshot',
     message: 'A headshot card exists with no image ever chosen.',
     severity: 'error',
     category: 'empty-content',
   },
-  'missing-alt-text': {
+  [InconsistencyDefinitionKey.MissingAltText]: {
     title: 'Missing Alt Text',
     message: 'A Figure Panel, Table, or Media block has no alt text entered.',
     severity: 'warning',
     category: 'empty-content',
     action: { type: 'open-accessibility' },
   },
-  'missing-supplement-caption': {
+  [InconsistencyDefinitionKey.MissingSupplementCaption]: {
     title: 'Missing Supplement Caption',
     message: 'A Supplementary item has no caption title or caption text.',
     severity: 'warning',
     category: 'empty-content',
   },
-  'missing-abstract': {
+  [InconsistencyDefinitionKey.MissingAbstract]: {
     title: 'Missing Abstract',
     message:
       'No standard abstract element is present. A Graphical Abstract alone does not satisfy this check.',
@@ -139,53 +170,53 @@ export const inconsistencyDefinitions = {
     category: 'empty-content',
     action: { type: 'open-metadata', tab: 'abstract' },
   },
-  'missing-main-document': {
+  [InconsistencyDefinitionKey.MissingMainDocument]: {
     title: 'Missing Main document',
     message: 'No body content on the canvas and no main document uploaded.',
     severity: 'error',
     category: 'empty-content',
     action: { type: 'open-files', tab: 'main-document' },
   },
-  'no-affiliations': {
+  [InconsistencyDefinitionKey.NoAffiliations]: {
     title: 'No Affiliations',
     message: 'No affiliation is assigned to any author.',
     severity: 'warning',
     category: 'empty-content',
     action: { type: 'open-metadata', tab: 'affiliations' },
   },
-  'missing-conflict-of-interest': {
+  [InconsistencyDefinitionKey.MissingConflictOfInterest]: {
     title: 'Missing Conflict of Interest statement',
     message: 'No COI back-matter section is present.',
     severity: 'warning',
     category: 'empty-content',
     action: { type: 'open-metadata', tab: 'conflict-of-interest' },
   },
-  'missing-data-availability': {
+  [InconsistencyDefinitionKey.MissingDataAvailability]: {
     title: 'Missing Data Availability statement',
     message: 'No Data Availability back-matter section is present.',
     severity: 'warning',
     category: 'empty-content',
     action: { type: 'open-metadata', tab: 'data-availability' },
   },
-  'missing-funder': {
+  [InconsistencyDefinitionKey.MissingFunder]: {
     title: 'Missing Funder information',
     message: 'No Funder Information section is present.',
     severity: 'warning',
     category: 'empty-content',
     action: { type: 'open-metadata', tab: 'funder' },
   },
-  'missing-ethics-statement': {
+  [InconsistencyDefinitionKey.MissingEthicsStatement]: {
     title: 'Missing Ethics Statement',
     message: 'No Ethics Statement back-matter section is present.',
     severity: 'warning',
     category: 'empty-content',
     action: { type: 'open-metadata', tab: 'ethics-statement' },
   },
-  'missing-keywords': {
+  [InconsistencyDefinitionKey.MissingKeywords]: {
     title: 'Missing Keywords',
     message: 'No keyword has been added to the document.',
     severity: 'warning',
     category: 'empty-content',
     action: { type: 'open-metadata', tab: 'keywords' },
   },
-} satisfies Record<string, InconsistencyDefinition>
+}

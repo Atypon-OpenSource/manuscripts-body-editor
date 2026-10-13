@@ -83,7 +83,6 @@ export interface EditorProps {
   isViewingMode?: boolean
   hiddenNodeTypes?: ManuscriptNodeType[] | undefined
   validations?: ValidationConfig[]
-  getValidations?: () => ValidationConfig[] | undefined
   fetchOEmbedHtml: FetchOEmbedHtml
 }
 

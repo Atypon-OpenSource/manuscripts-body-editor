@@ -21,7 +21,10 @@ import {
 } from '@manuscripts/transform'
 import { Decoration } from 'prosemirror-view'
 
-import { inconsistencyDefinitions } from './inconsistency-definitions'
+import {
+  InconsistencyDefinitionKey,
+  inconsistencyDefinitions,
+} from './inconsistency-definitions'
 import type { Inconsistency } from './types'
 
 export const toEnabledValidations = (
@@ -42,7 +45,7 @@ const nodeDescription = (node: ManuscriptNode, custom?: string) =>
 export const createInconsistency = (
   node: ManuscriptNode,
   pos: number,
-  definition: keyof typeof inconsistencyDefinitions,
+  definition: InconsistencyDefinitionKey,
   customNodeDescription?: string,
   severity?: Inconsistency['severity']
 ): Inconsistency => ({
@@ -72,7 +75,7 @@ export const createDecoration = (
 }
 
 export const createInconsistencyIfConfigured = (
-  definition: keyof typeof inconsistencyDefinitions,
+  definition: InconsistencyDefinitionKey,
   context: { enabledValidations: Map<string, ValidationConfig> },
   node: ManuscriptNode,
   pos: number

@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { isDeleted } from '@manuscripts/track-changes-plugin'
+import {
+  getActualTextContent,
+  isDeleted,
+} from '@manuscripts/track-changes-plugin'
 import {
   findMatchingCategory,
   ManuscriptNode,
@@ -23,26 +26,26 @@ import {
   SectionCategory,
   ValidationConfig,
 } from '@manuscripts/transform'
-import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils'
+import {
+  findChildrenByType,
+  findParentNodeOfTypeClosestToPos,
+} from 'prosemirror-utils'
 
 import type { FileAttachment } from '../../lib/files'
-import { getVisibleText } from '../../lib/track-changes-utils'
-import {
-  getChildOfTypeWithPos,
-  getMatchingDescendant,
-  getTextOfType,
-} from '../../lib/utils'
+import { getMatchingDescendant, getTextOfType } from '../../lib/utils'
 import { createInconsistencyIfConfigured } from './inconsistency'
-import { inconsistencyDefinitions } from './inconsistency-definitions'
+import { InconsistencyDefinitionKey } from './inconsistency-definitions'
 import { hasImageSource } from './static-validators'
 import type { Inconsistency, NodeValidator } from './types'
 
+type EmptyImageDefinition =
+  | InconsistencyDefinitionKey.EmptyImage
+  | InconsistencyDefinitionKey.EmptyHeroImage
+  | InconsistencyDefinitionKey.EmptyContributorHeadshot
+
 export const configuredEmptyImage =
   (
-    definition:
-      | 'empty-image'
-      | 'empty-hero-image'
-      | 'empty-contributor-headshot',
+    definition: EmptyImageDefinition,
     imageType: ManuscriptNodeType
   ): NodeValidator =>
   (node, pos, context) => {
@@ -57,12 +60,17 @@ export const configuredEmptyImage =
 
 export const missingAltText: NodeValidator = (node, pos, context) => {
   if (
-    !context.enabledValidations.has('missing-alt-text') ||
+    !context.enabledValidations.has(InconsistencyDefinitionKey.MissingAltText) ||
     getTextOfType(node, schema.nodes.alt_text)
   ) {
     return []
   }
-  return createInconsistencyIfConfigured('missing-alt-text', context, node, pos)
+  return createInconsistencyIfConfigured(
+    InconsistencyDefinitionKey.MissingAltText,
+    context,
+    node,
+    pos
+  )
 }
 
 const findSupplementsSection = (doc: ManuscriptNode, pos: number) =>
@@ -70,7 +78,9 @@ const findSupplementsSection = (doc: ManuscriptNode, pos: number) =>
 
 export const missingSupplementCaption: NodeValidator = (node, pos, context) => {
   if (
-    !context.enabledValidations.has('missing-supplement-caption') ||
+    !context.enabledValidations.has(
+      InconsistencyDefinitionKey.MissingSupplementCaption
+    ) ||
     getTextOfType(node, schema.nodes.caption_title) ||
     getTextOfType(node, schema.nodes.caption)
   ) {
@@ -78,7 +88,7 @@ export const missingSupplementCaption: NodeValidator = (node, pos, context) => {
   }
   const section = findSupplementsSection(context.doc, pos) ?? { node, pos }
   return createInconsistencyIfConfigured(
-    'missing-supplement-caption',
+    InconsistencyDefinitionKey.MissingSupplementCaption,
     context,
     section.node,
     section.pos
@@ -100,10 +110,15 @@ const hasBackmatterSection = (
     )
   })
 
+type BackmatterDefinition =
+  | InconsistencyDefinitionKey.MissingConflictOfInterest
+  | InconsistencyDefinitionKey.MissingDataAvailability
+  | InconsistencyDefinitionKey.MissingEthicsStatement
+
 export const getValidationCategory = (
   validations: Map<string, ValidationConfig> | undefined,
   sectionCategories: Map<string, SectionCategory> | undefined,
-  definition: string
+  definition: BackmatterDefinition
 ) => {
   const categoryId = validations?.get(definition)?.sectionCategory
   return categoryId ? sectionCategories?.get(categoryId) : undefined
@@ -140,10 +155,12 @@ const isUploadedAttachment = (files: FileAttachment[]) => {
 
 const validateManuscript: NodeValidator = (node, pos, context) => {
   const inconsistencies: Inconsistency[] = []
-  const target = (type: ManuscriptNodeType) =>
-    getChildOfTypeWithPos(node, pos, type, context.doc)
+  const target = (type: ManuscriptNodeType) => {
+    const child = findChildrenByType(node, type, false)[0]
+    return child ? { node: child.node, pos: child.pos } : undefined
+  }
   const report = (
-    definition: keyof typeof inconsistencyDefinitions,
+    definition: InconsistencyDefinitionKey,
     type: ManuscriptNodeType
   ) => {
     const located = target(type)
@@ -158,34 +175,32 @@ const validateManuscript: NodeValidator = (node, pos, context) => {
   }
 
   if (!getMatchingDescendant(node, isAbstract)) {
-    report('missing-abstract', schema.nodes.abstracts)
+    report(InconsistencyDefinitionKey.MissingAbstract, schema.nodes.abstracts)
   }
 
   const body = target(schema.nodes.body)
-  const hasBodyText = !!body && !!getVisibleText(body.node)
+  const hasBodyText = !!body && !!getActualTextContent(body.node.content)
   if (
     !hasBodyText &&
     !getMatchingDescendant(node, isUploadedAttachment(context.props.getFiles()))
   ) {
-    report('missing-main-document', schema.nodes.body)
+    report(InconsistencyDefinitionKey.MissingMainDocument, schema.nodes.body)
   }
 
   if (!getMatchingDescendant(node, isContributorWithAffiliation)) {
-    report('no-affiliations', schema.nodes.contributors)
+    report(InconsistencyDefinitionKey.NoAffiliations, schema.nodes.contributors)
   }
 
   if (!getMatchingDescendant(node, isNonEmptyKeyword)) {
-    report('missing-keywords', schema.nodes.keywords)
+    report(InconsistencyDefinitionKey.MissingKeywords, schema.nodes.keywords)
   }
 
   if (!getMatchingDescendant(node, isAward)) {
-    report('missing-funder', schema.nodes.awards)
+    report(InconsistencyDefinitionKey.MissingFunder, schema.nodes.awards)
   }
 
   const backmatter = target(schema.nodes.backmatter)
-  const reportBackmatter = (
-    definition: keyof typeof inconsistencyDefinitions
-  ) => {
+  const reportBackmatter = (definition: BackmatterDefinition) => {
     if (!backmatter) {
       return
     }
@@ -207,9 +222,9 @@ const validateManuscript: NodeValidator = (node, pos, context) => {
     )
   }
 
-  reportBackmatter('missing-conflict-of-interest')
-  reportBackmatter('missing-data-availability')
-  reportBackmatter('missing-ethics-statement')
+  reportBackmatter(InconsistencyDefinitionKey.MissingConflictOfInterest)
+  reportBackmatter(InconsistencyDefinitionKey.MissingDataAvailability)
+  reportBackmatter(InconsistencyDefinitionKey.MissingEthicsStatement)
 
   return inconsistencies
 }
@@ -220,14 +235,17 @@ export const configuredValidators: Record<string, NodeValidator[]> = {
   [schema.nodes.figure_element.name]: [missingAltText],
   [schema.nodes.embed.name]: [missingAltText],
   [schema.nodes.image_element.name]: [
-    configuredEmptyImage('empty-image', schema.nodes.figure),
+    configuredEmptyImage(InconsistencyDefinitionKey.EmptyImage, schema.nodes.figure),
   ],
   [schema.nodes.hero_image.name]: [
-    configuredEmptyImage('empty-hero-image', schema.nodes.figure),
+    configuredEmptyImage(
+      InconsistencyDefinitionKey.EmptyHeroImage,
+      schema.nodes.figure
+    ),
   ],
   [schema.nodes.headshot_element.name]: [
     configuredEmptyImage(
-      'empty-contributor-headshot',
+      InconsistencyDefinitionKey.EmptyContributorHeadshot,
       schema.nodes.headshot_image
     ),
   ],
