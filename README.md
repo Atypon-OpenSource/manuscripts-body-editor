@@ -2,6 +2,6 @@
 
 A React + ProseMirror editor for manuscripts.
 
-# Install
+# Install 
 
 `yarn add @manuscripts/body-editor`
