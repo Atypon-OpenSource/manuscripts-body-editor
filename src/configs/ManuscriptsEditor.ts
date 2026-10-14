@@ -21,7 +21,6 @@ import {
   ManuscriptNodeType,
   schema,
   SectionCategory,
-  UserProfile,
   ValidationConfig
 } from '@manuscripts/transform'
 import { EditorState } from 'prosemirror-state'
