@@ -40,11 +40,6 @@ export const defaultEditorProps: EditorProps = {
   locale: 'en-GB',
   popper: new PopperManager(),
   projectID: 'test-project-id',
-  getCurrentUser: () => ({
-    _id: 'test-user-profile-1-id',
-    userID: '',
-    connectID: '',
-  }),
   // @ts-ignore
   history: createBrowserHistory(),
   theme: defaultTheme,

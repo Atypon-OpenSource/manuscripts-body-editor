@@ -18,7 +18,9 @@ import {
   AlertIcon,
   ArrowDownCircleIcon,
   ArrowUpIcon,
+  ArrowDownIcon,
   CameraIcon,
+  CaptionIcon,
   DeleteIcon,
   DraggableIcon,
   EditIcon,
@@ -41,6 +43,7 @@ import {
   TickIcon,
   TranslateIcon,
   WebLinkIcon,
+  XIcon,
 } from '@manuscripts/style-guide'
 import React, { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
@@ -52,6 +55,8 @@ export const arrowDown = renderIcon(ArrowDownCircleIcon)
 export const arrowUp = renderIcon(ArrowUpIcon)
 export const alertIcon = renderIcon(AlertIcon)
 export const cameraIcon = renderIcon(CameraIcon)
+export const captionIcon = renderIcon(CaptionIcon)
+export const captionArrowIcon = renderIcon(ArrowDownIcon)
 export const deleteIcon = renderIcon(DeleteIcon)
 export const editIcon = renderIcon(EditIcon)
 export const sectionCategoryIcon = renderIcon(SectionCategoryIcon)
@@ -74,3 +79,4 @@ export const fileMainDocumentIcon = renderIcon(FileMainDocumentIcon)
 export const tickIcon = renderIcon(TickIcon)
 export const ORCIDIcon = renderIcon(ORCID)
 export const webLinkIcon = renderIcon(WebLinkIcon)
+export const xIcon = renderIcon(XIcon)
