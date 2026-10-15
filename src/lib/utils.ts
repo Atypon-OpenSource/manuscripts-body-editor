@@ -90,6 +90,15 @@ export const getChildOfType = (
 ): boolean =>
   !!getMatchingChild(parent, (node) => node.type.name === nodeType.name, deep)
 
+export const getTextOfType = (
+  parent: ManuscriptNode,
+  type: ManuscriptNodeType
+) =>
+  getMatchingDescendant(
+    parent,
+    (node) => node.type === type
+  )?.textContent.trim() ?? ''
+
 export const findParentNodeWithId: (
   selection: Selection
 ) => ContentNodeWithPos | undefined = findParentNode(

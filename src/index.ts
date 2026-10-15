@@ -61,4 +61,13 @@ export {
   AffiliationAttrs,
   ContributorAttrs,
 } from './lib/authors'
-export type { Inconsistency } from './plugins/detect-inconsistency'
+export type {
+  Inconsistency,
+  InconsistencyAction,
+} from './plugins/detect-inconsistency'
+export { openAuthorsAndAffiliationsModals } from './components/authors-affiliations/AuthorsAndAffiliationsModals'
+export { openMetadataTarget } from './plugins/detect-inconsistency/metadata-actions'
+export {
+  openAccessibilityFields,
+  selectInconsistency,
+} from './plugins/detect-inconsistency/select-inconsistency'
